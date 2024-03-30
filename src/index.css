@@ -2,29 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-.racing-sans-one-regular {
-  font-family: "Racing Sans One", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
 @font-face {
   font-family: minerva-modern;
   src: url(https://use.typekit.net/af/2d15e1/00000000000000003b9afd25/27/l?subset_id=2&fvd=n4&v=3);
 }
 
-.racing-sans {
-  font-family: "Racing Sans One", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  src: url("./fonts/RacingSansOne-Regular.ttf") format("truetype");
+@font-face {
+  font-family: "GowunDodum-Regular";
+  font-weight: normal;
+  src: url("./fonts/MaruBuri-Regular.ttf") format("truetype");
 }
 
-.custom-text {
-  font-family: "Racing Sans One", sans-serif;
+@font-face {
+  font-family: "GowunDodum-Light";
+  font-weight: normal;
+  src: url("./fonts/MaruBuri-Light.otf") format("truetype");
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Dongle&family=Racing+Sans+One&display=swap");
+@font-face {
+  font-family: "GowunDodum-semibolde";
+  font-weight: normal;
+  src: url("./fonts/MaruBuri-SemiBold.otf") format("truetype");
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Diphylleia&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Dongle&display=swap");
 
 body {
   margin: 0;
@@ -33,11 +36,36 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  list-style: none;
+
+  height: 100vh;
+  @apply flex flex-col items-center;
+  @apply bg-zinc-900 text-gray-50;
+}
+
+#root {
+  @apply w-full max-w-screen-2xl;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.blinking-text {
+  animation: blink 3s infinite;
 }
 
 /* Slider */
@@ -139,11 +167,7 @@ code {
   display: none;
 }
 
-.full-screen {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  position: relative;
-  background-size: cover;
-  background-position: center;
+/* Arrows */
+.slick-prev,
+.slick-next {
 }

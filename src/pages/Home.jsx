@@ -1,34 +1,32 @@
 import React from "react";
-import Slider from "./Slider";
-import Button from "../components/Button";
+import { BsChevronDoubleDown } from "react-icons/bs";
+import { Element, scroller } from "react-scroll";
 
-const images = [
-  {
-    url: "/imgs/money.jpg",
-    title: "추천 장학금",
-
-    // Add other properties like URL if needed
-  },
-  {
-    url: "/imgs/wpoint.jpg",
-    title: "추천 w-point",
-    // Add other properties like URL if needed
-  },
-  {
-    url: "/imgs/competition.jpg",
-    title: "추천대회",
-    // Add other properties like URL if needed
-  },
-  // Add more images as needed
-];
-
-export default function Home() {
+export default function Home({ scrollToSection }) {
   return (
-    <section className="relative">
-      <div className="">
-        <Slider images={images}></Slider>
-        <Button></Button>
-      </div>
-    </section>
+    <Element name="home" className="section">
+      <section id="home" className="relative flex justify-center">
+        <video
+          src="/videos/home.mp4"
+          alt="Your Image Description"
+          className="w-full h-screen object-cover "
+          autoPlay
+          loop
+          muted
+          playsInline
+        ></video>
+
+        <div
+          className=" text-2xl flex justify-center items-center flex-col blinking-text absolute bottom-12 "
+          onClick={() => scrollToSection("about")}
+        >
+          <h1>scroll</h1>
+          <BsChevronDoubleDown
+            onClick={() => scrollToSection("about")}
+            className="text-2xl "
+          />
+        </div>
+      </section>
+    </Element>
   );
 }
