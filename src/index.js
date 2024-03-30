@@ -5,8 +5,9 @@ import App from "./App";
 import NotFound from "./pages/NotFound";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import Home from "./pages/Home";
-import ProductDetail from "./pages/ProductDetail";
+import Pictures from "./pages/Pictures";
+import PictureDetail from "./pages/PictureDetail";
+import Lists from "./pages/Lists";
 
 const router = createBrowserRouter([
   {
@@ -14,11 +15,10 @@ const router = createBrowserRouter([
     element: <App></App>,
     errorElement: <NotFound></NotFound>,
     children: [
-      { index: true, element: <ProductDetail /> },
-      // { path: "products", element: < },
+      { index: true, element: <Pictures /> },
+      { path: "pictures", element: <Lists /> },
 
-      { path: "detail/1", element: <ProductDetail /> },
-      // { path: "pictures/:pictureId", element: <PictureDetail /> },
+      { path: "pictures/detail", element: <PictureDetail /> },
     ],
   },
 ]);
