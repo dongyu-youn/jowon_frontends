@@ -8,6 +8,8 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Pictures from "./pages/Pictures";
 import PictureDetail from "./pages/PictureDetail";
 import Lists from "./pages/Lists";
+import Message from "./components/Message";
+import Conversation from "./components/Conversation";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +21,8 @@ const router = createBrowserRouter([
       { path: "pictures", element: <Lists /> },
 
       { path: "pictures/detail", element: <PictureDetail /> },
+      { path: "pictures/messages", element: <Message /> },
+      { path: "pictures/conversations", element: <Conversation /> },
     ],
   },
 ]);

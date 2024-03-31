@@ -44,14 +44,17 @@ export default function Navigation() {
           <a className="hover:text-pink-800">Profile</a>
         </li>
 
-        <li className="flex align-top relative p-4 font-customFont hover:underline bg-black text-white items-center hover:bg-white hover:text-black">
+        <Link
+          to="/pictures/messages"
+          className="flex align-top relative p-4 font-customFont hover:underline bg-black text-white items-center hover:bg-white hover:text-black"
+        >
           {/* <a
             class="header__menu__item hover:text-pink-800 pr-8"
             href="{% url 'lists:see-favs' %}"
           ></a> */}
           team matching
           <IoChevronForwardOutline />
-        </li>
+        </Link>
       </ul>
     </div>
   );

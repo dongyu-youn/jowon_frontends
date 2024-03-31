@@ -57,7 +57,7 @@ export default function PictureDetail({}) {
             className="mt-20"
             text="팀원조회"
             onClick={handleButtonClick}
-          />
+          ></Button>
         </div>
       </section>
 
