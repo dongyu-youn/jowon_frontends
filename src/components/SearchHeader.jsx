@@ -28,9 +28,13 @@ export default function SearchHeader() {
   }, []);
 
   const isPictureDetailPage = window.location.pathname.includes("pictures/");
-  const headerClass = `z-10 w-full flex p-4 text-2xl mb-4 justify-between items-center group hover:border-b hover:border-zinc-600 transition-colors duration-300 ease-in-out hover:bg-white hover:text-black ${
+  console.log(window.location.pathname);
+  const isMessagePage = window.location.pathname.includes("/pictures/messages");
+  console.log(isMessagePage);
+  console.log(isPictureDetailPage);
+  const headerClass = `fixed z-10 w-full flex p-4 text-2xl mb-4 justify-between items-center group hover:border-b hover:border-zinc-600 transition-colors duration-300 ease-in-out hover:bg-white hover:text-black ${
     scrolling ? "bg-white text-black" : ""
-  } ${isPictureDetailPage ? "" : "fixed"}  `;
+  } ${isPictureDetailPage || isMessagePage ? "" : "fixed"}  `;
 
   return (
     <>

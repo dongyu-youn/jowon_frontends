@@ -41,9 +41,7 @@ function App() {
       {/* 이 부분에 클래스를 적용합니다. */}
       {/* 특정 페이지에서만 fixed 클래스를 적용하거나 제거합니다. */}
       <SearchHeader></SearchHeader>
-      <div>
-        <Outlet className=" w-4 h-4 bg-black rounded-full pointer-events-none z-10"></Outlet>
-      </div>
+      <Outlet className=" w-4 h-4 bg-black rounded-full pointer-events-none z-10"></Outlet>
     </div>
   );
 }
