@@ -6,6 +6,7 @@ import Slider from "react-slick";
 import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
 import PictureCard from "../components/PictureCard";
 import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
+import axios from "axios";
 
 const NextArrow = (props) => (
   <div {...props}>
@@ -27,15 +28,13 @@ export default function Today() {
     isLoading,
     error,
     data: videos,
-  } = useQuery(["videos"], {
-    // 변경된 부분
-    queryFn: async () => {
-      const res = await fetch("http://127.0.0.1:8000/contests/");
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return res.json();
-    },
+  } = useQuery(["videos"], async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/contests/");
+      return response.data;
+    } catch (error) {
+      throw new Error("Network response was not ok");
+    }
   });
 
   const customDotStyles = {
