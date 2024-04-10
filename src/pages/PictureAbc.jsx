@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
-function PictureDetail(props) {
+export default function PictureAbc() {
   const location = useLocation();
   console.log("Location state:", location.state);
   const video = location.state ? location.state.video : null;
@@ -19,5 +19,3 @@ function PictureDetail(props) {
     </div>
   );
 }
-
-export default PictureDetail;

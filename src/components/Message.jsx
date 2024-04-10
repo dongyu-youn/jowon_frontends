@@ -37,7 +37,7 @@ const Message = () => {
   };
   return (
     <section id="home" className="">
-      <div className="relative w-full h-0" style={{ paddingBottom: "40%" }}>
+      <div className="relative w-full" style={{ paddingBottom: "40%" }}>
         <div className="absolute inset-0 flex items-center justify-center">
           <img
             src="/imgs/pic.jpg"
@@ -50,7 +50,7 @@ const Message = () => {
         </div>
       </div>
 
-      <div className="flex justify-start">
+      <div className="flex flex-col justify-start">
         <TeamButton data={conversationData} teamName="1조원" />
         <TeamButton data={conversationData} teamName="2조원" />
         <TeamButton data={conversationData} teamName="3조원" />

@@ -8,7 +8,7 @@ const TeamButton = ({ data, teamName }) => {
   return (
     <Link to="/pictures/conversations" className="mr-4">
       <div className="flex flex-col items-center">
-        <button className="w-1/2 bg-white text-black px-4 py-2 rounded-lg mt-4 flex items-center">
+        <button className="w-1/2 bg-white text-black hover:bg-black hover:text-white px-4 py-2 rounded-lg mt-4 flex items-center">
           <div className="flex ">
             {participants.map((participant, index) => (
               <div key={index}>
