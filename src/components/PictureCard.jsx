@@ -5,10 +5,7 @@ import PictureDetail from "../pages/PictureDetail";
 export default function PictureCard({ video }) {
   return (
     <Link
-      to={{
-        pathname: `pictures/abc`,
-        state: { video },
-      }}
+      to={`/pictures/${video.id}`} // 여기에서 id 값을 전달
       className="rounded-lg shadow-md  cursor-pointer m-8 flex justify-center  transform hover:scale-105 transition  ease-in-out flex-col"
     >
       <img
