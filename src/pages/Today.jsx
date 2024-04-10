@@ -1,12 +1,11 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { IoIosArrowRoundBack } from "react-icons/io";
-
 import Slider from "react-slick";
 import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
 import PictureCard from "../components/PictureCard";
+import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
 
 const NextArrow = (props) => (
   <div {...props}>
@@ -21,46 +20,65 @@ const PrevArrow = (props) => (
 );
 
 export default function Today() {
+  const { keyword } = useParams();
+  const queryClient = useQueryClient(); // 변경된 부분
+
+  const {
+    isLoading,
+    error,
+    data: videos,
+  } = useQuery(["videos"], {
+    // 변경된 부분
+    queryFn: async () => {
+      const res = await fetch("http://127.0.0.1:8000/contests/");
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return res.json();
+    },
+  });
+
   const customDotStyles = {
-    backgroundColor: "black", // 여기에 원하는 색상으로 변경하세요
-    width: "10px", // 도트의 너비 조절
-    height: "10px", // 도트의 높이 조절
-    borderRadius: "50%", // 도트를 원형으로 만듭니다
+    backgroundColor: "black",
+    width: "10px",
+    height: "10px",
+    borderRadius: "50%",
   };
 
   const settings = {
     dots: 3,
-
     infinite: true,
     speed: 500,
-    slidesToShow: 3, // 3개씩 보여주도록 설정
+    slidesToShow: 3,
     slidesToScroll: 1,
-    prevArrow: <PrevArrow />, // 왼쪽 화살표를 이모티콘으로 대체
+    prevArrow: <PrevArrow />,
     nextArrow: <NextArrow />,
   };
 
-  const { keyword } = useParams();
-
   return (
-    <div className="bg-white text-black p-12  ">
+    <div className="bg-white text-black p-12">
       <h1 className="font-customFont text-5xl flex justify-center">
-        Popular Contest
+        Popular Contest
       </h1>
 
-      <div className="">
-        <Slider {...settings} className="p-12 flex items-center">
-          <PictureCard></PictureCard>
-          <PictureCard></PictureCard>
-          <PictureCard></PictureCard>
-        </Slider>
+      {isLoading && <p>Loading...</p>}
+      {error && <p>Something is wrong...</p>}
+      {videos && (
+        <div>
+          <Slider {...settings} className="p-12 flex items-center">
+            {videos.map((video) => (
+              <PictureCard key={video.id} video={video}></PictureCard>
+            ))}
+          </Slider>
 
-        <Link
-          to="/pictures"
-          className="flex items-center justify-center blinking-text "
-        >
-          <h1 className="text-3xl mb-2 font-diphylleia ">more</h1>
-        </Link>
-      </div>
+          <Link
+            to="/pictures"
+            className="flex items-center justify-center blinking-text"
+          >
+            <h1 className="text-3xl mb-2 font-diphylleia">more</h1>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

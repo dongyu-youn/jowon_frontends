@@ -40,9 +40,12 @@ export default function Navigation() {
           </a>
         </li>
 
-        <li className="inline-block align-top relative p-4 font-customFont   hover:underline pr-8 ">
+        <Link
+          to="/pictures/profile"
+          className="inline-block align-top relative p-4 font-customFont   hover:underline pr-8 "
+        >
           <a className="hover:text-pink-800">Profile</a>
-        </li>
+        </Link>
 
         <Link
           to="/pictures/messages"

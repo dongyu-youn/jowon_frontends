@@ -5,8 +5,17 @@ import SearchHeader from "./components/SearchHeader";
 
 import { useEffect, useState } from "react";
 import pointerImage from "./imgs/yong.jpeg"; // 이미지 파일을 import 합니다.
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "react-query";
 
 function App() {
+  const queryClient = new QueryClient();
+
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const location = useLocation(); // 현재 페이지의 경로를 가져옵니다.
 
@@ -41,7 +50,9 @@ function App() {
       {/* 이 부분에 클래스를 적용합니다. */}
       {/* 특정 페이지에서만 fixed 클래스를 적용하거나 제거합니다. */}
       <SearchHeader></SearchHeader>
-      <Outlet className=" w-4 h-4 bg-black rounded-full pointer-events-none z-10"></Outlet>
+      <QueryClientProvider client={queryClient}>
+        <Outlet className=" w-4 h-4 bg-black rounded-full pointer-events-none z-10"></Outlet>
+      </QueryClientProvider>
     </div>
   );
 }
