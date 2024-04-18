@@ -13,12 +13,12 @@ export default function PictureCard({ video }) {
         alt="Your Image Description"
         className="w-full object-cover object-center p-4 h-[284px]"
       ></img>
-      <div className="flex justify-center p-4"> {video.제목}</div>
-      <div className="flex justify-center p-4">{video.연관학과}</div>
-      <div className="flex justify-center p-4">{video.상금}</div>
-      <div className="flex justify-center p-4">{video.분야}</div>
-      <div className="flex justify-center p-4">{video.위치}</div>
-      <div className="flex justify-center p-4">{video.참고링크}</div>
+      <div className="flex justify-center p-4 text-2xl font-bold">
+        {" "}
+        {video.제목}
+      </div>
+      <div className="flex justify-center p-4">연관학과: {video.연관학과}</div>
+      <div className="flex justify-center p-4">상금: {video.상금}</div>
     </Link>
   );
 }

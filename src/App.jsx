@@ -31,29 +31,31 @@ function App() {
     };
   }, []); //
   return (
-    <div className="App" style={{ position: "relative" }}>
+    <QueryClientProvider client={queryClient}>
       {" "}
-      <img
-        src={pointerImage} // 이미지 파일 경로를 지정합니다.
-        alt="Pointer Image"
-        style={{
-          position: "fixed",
-          left: position.x,
-          top: position.y,
-          borderRadius: "50%",
-          width: "30px", // 이미지의 너비를 지정합니다.
-          height: "30px", // 이미지의 높이를 지정합니다.
-          zIndex: 9999, // 다른 요소 위에 표시될 수 있도록 zIndex를 설정합니다.
-          pointerEvents: "none", // 포인터가 이벤트를 가로채지 않도록 설정합니다.
-        }}
-      />
-      {/* 이 부분에 클래스를 적용합니다. */}
-      {/* 특정 페이지에서만 fixed 클래스를 적용하거나 제거합니다. */}
-      <SearchHeader></SearchHeader>
-      <QueryClientProvider client={queryClient}>
+      {/* 여기에 QueryClientProvider 추가 */}
+      <div className="App" style={{ position: "relative" }}>
+        {" "}
+        <img
+          src={pointerImage} // 이미지 파일 경로를 지정합니다.
+          alt="Pointer Image"
+          style={{
+            position: "fixed",
+            left: position.x,
+            top: position.y,
+            borderRadius: "50%",
+            width: "30px", // 이미지의 너비를 지정합니다.
+            height: "30px", // 이미지의 높이를 지정합니다.
+            zIndex: 9999, // 다른 요소 위에 표시될 수 있도록 zIndex를 설정합니다.
+            pointerEvents: "none", // 포인터가 이벤트를 가로채지 않도록 설정합니다.
+          }}
+        />
+        {/* 이 부분에 클래스를 적용합니다. */}
+        {/* 특정 페이지에서만 fixed 클래스를 적용하거나 제거합니다. */}
+        <SearchHeader></SearchHeader>
         <Outlet className=" w-4 h-4 bg-black rounded-full pointer-events-none z-10"></Outlet>
-      </QueryClientProvider>
-    </div>
+      </div>
+    </QueryClientProvider>
   );
 }
 

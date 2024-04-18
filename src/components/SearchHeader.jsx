@@ -29,7 +29,7 @@ export default function SearchHeader() {
 
   // 페이지 경로를 확인하여 해당 페이지인지 여부를 결정하는 변수들을 업데이트합니다.
   const isPictureDetailPage = location.pathname.includes("pictures/");
-  const isMessagePage = location.pathname.includes("pictures/messages");
+  const isMessagePage = location.pathname.includes("pictures/messages/");
 
   let headerClass = `z-50 w-full flex p-4 text-2xl mb-4 justify-between items-center group hover:border-b hover:border-zinc-600 transition-colors duration-300 ease-in-out hover:bg-white hover:text-black`;
 
@@ -38,15 +38,35 @@ export default function SearchHeader() {
     headerClass += " fixed";
   }
 
+  const [user, setUser] = useState(null);
   return (
     <>
-      <header className={headerClass}>
+      <header
+        className={headerClass}
+        style={{
+          // 제목의 기본 스타일
+          ...(window.location.pathname === "/pictures/messages"
+            ? {
+                // 특정 경로로 이동할 때 추가될 스타일
+                position: "fixed",
+              }
+            : {}),
+          ...(window.location.pathname === "/pictures/conversations"
+            ? {
+                position: "fixed",
+              }
+            : {}),
+        }}
+      >
         <Link to="/" className="flex items-center justify-start">
           <h1 className="text-2xl font-bold inline-block relative w-64 font-customFont hover:text-pink-800">
             1jowon
           </h1>
         </Link>
-        <Navigation className="text-center relative justify-center" />
+        <Navigation
+          user={user}
+          className="text-center relative justify-center"
+        />
       </header>
     </>
   );

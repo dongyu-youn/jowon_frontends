@@ -1,5 +1,5 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { IoIosArrowRoundBack } from "react-icons/io";
@@ -15,7 +15,12 @@ import {
 } from "react-icons/ri";
 import Filtering from "../components/Filtering";
 
+import axios from "axios"; // axios를 import합니다.
+
 export default function List_Pictures() {
+  const location = useLocation();
+  const { state } = location;
+
   const [departmentChecked, setDepartmentChecked] = React.useState(false);
   const [latestChecked, setLatestChecked] = React.useState(false);
   const [periodChecked, setPeriodChecked] = React.useState(false);
@@ -26,11 +31,10 @@ export default function List_Pictures() {
 
   const { keyword } = useParams();
   const {
+    data: videos,
     isLoading,
     error,
-    data: videos,
   } = useQuery(["videos"], {
-    // 변경된 부분
     queryFn: async () => {
       const res = await fetch("http://127.0.0.1:8000/contests/");
       if (!res.ok) {
@@ -39,10 +43,36 @@ export default function List_Pictures() {
       return res.json();
     },
   });
+  const [filteredVideos, setFilteredVideos] = useState([]); // 필터링된 데이터 상태 추가
 
-  const handleSortByDepartment = () => {
-    setDepartmentChecked(!departmentChecked);
-    // 학과순으로 정렬하는 함수
+  useEffect(() => {
+    handleSortByDepartment();
+  }, []);
+
+  const handleSortByDepartment = async () => {
+    try {
+      const userResponse = await axios.get("http://127.0.0.1:8000/contests/");
+
+      if (!userResponse.ok) {
+        throw new Error("Failed to fetch user data");
+      }
+
+      const userData = userResponse.data;
+      const userDepartment = videos.연관학과;
+
+      const filteredResponse = await axios.get(
+        `http://127.0.0.1:8000/contests/filtered/?연관학과=${userDepartment}`
+      );
+
+      if (!filteredResponse.ok) {
+        throw new Error("Failed to fetch filtered data");
+      }
+      const filteredData = filteredResponse.data;
+      setFilteredVideos(filteredData); // 필터링된 데이터 상태 설정
+      console.log(filteredData);
+    } catch (error) {
+      console.error("Error handling sorting by department: ", error);
+    }
   };
 
   const handleSortByLatest = () => {

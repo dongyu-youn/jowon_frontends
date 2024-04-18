@@ -2,6 +2,7 @@ import React from "react";
 
 import Conversation from "./Conversation";
 import TeamButton from "./TeamButton";
+import { CardFooter } from "@chakra-ui/react";
 
 const Message = () => {
   // Conversation 컴포넌트에서 사용할 데이터 정의
@@ -36,7 +37,7 @@ const Message = () => {
     ],
   };
   return (
-    <section id="home" className="">
+    <section id="home" className="overflow-y-auto">
       <div className="relative w-full" style={{ paddingBottom: "40%" }}>
         <div className="absolute inset-0 flex items-center justify-center">
           <img
@@ -50,7 +51,7 @@ const Message = () => {
         </div>
       </div>
 
-      <div className="flex flex-col justify-start">
+      <div className="   flex justify-center    ">
         <TeamButton data={conversationData} teamName="1조원" />
         <TeamButton data={conversationData} teamName="2조원" />
         <TeamButton data={conversationData} teamName="3조원" />

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
 import {
   Avatar,
@@ -19,10 +19,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import LoginModal from "./LoginModal";
+import Profile from "../pages/Profile";
 
 export default function Navigation() {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
   // 로그인 성공 시 호출될 콜백 함수
   const handleLoginSuccess = () => {
@@ -37,11 +39,26 @@ export default function Navigation() {
   // 로그인 상태에 따라 로그인/로그아웃 버튼 텍스트 결정
   const loginButtonText = isLoggedIn ? "Logout" : "Login";
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // user 상태가 변경될 때마다 navigate 함수 호출
+    if (user !== null) {
+      navigate("/pictures/profile", { state: { user: user } });
+    }
+  }, [user, navigate]);
+
+  const handleProfileLinkClick = () => {
+    // 이 부분에서 user 상태를 업데이트하여 원하는 정보를 전달할 수 있습니다.
+    console.log(user);
+    navigate("/pictures", { state: { test: user } });
+  };
+
   // 로그인 상태에 따라 프로필 링크 표시 여부 결정
   const profileLink = isLoggedIn ? (
     <li className="inline-block align-top relative p-4 font-customFont hover:underline">
       <Link
-        to="/pictures/profile"
+        to={{ pathname: "pictures/profile", state: { id: user.id } }}
         className="header__menu__item hover:text-pink-800 pr-8"
       >
         Profile
@@ -109,6 +126,7 @@ export default function Navigation() {
         onLoginSuccess={handleLoginSuccess}
         isOpen={isLoginOpen}
         onClose={handleLoginClose}
+        setUser={setUser}
       />
     </div>
   );
