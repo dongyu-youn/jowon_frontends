@@ -20,7 +20,12 @@ import {
 } from "@chakra-ui/react";
 import SignUpModal from "./SignUpModal";
 
-export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
+export default function LoginModal({
+  isOpen,
+  onClose,
+  onLoginSuccess,
+  setUser,
+}) {
   const [isSignUpIn, setIsSignUpIn] = useState(false);
 
   // 회원가입 버튼 클릭 시
@@ -52,8 +57,10 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       console.log("로그인 성공:", response.data);
       onClose();
       onLoginSuccess();
+      setUser(response.data);
       setShowModal(false); // 모달 닫기
       setIsLoggedIn(true); // 로그인 상태 변경
+      setUser(response.data); // 로그인 성공 시 사용자 정보 설정
     } catch (error) {
       console.error("로그인 요청 중 에러:", error);
       setError("An error occurred while logging in");
