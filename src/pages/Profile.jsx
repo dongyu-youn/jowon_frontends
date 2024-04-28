@@ -25,30 +25,36 @@ const StarRating = ({ totalStars }) => {
   );
 };
 
-export default function Profile({ id }) {
-  console.log(id);
+export default function Profile({}) {
+  console.log();
   const queryClient = useQueryClient(); // 변경된 부분
+
+  const axiosInstance = axios.create({
+    withCredentials: true,
+  });
 
   const {
     isLoading,
     error,
-    data: a,
-  } = useQuery(["a"], async () => {
+    data: userData,
+  } = useQuery(["userData"], async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/users/1");
+      const response = await axiosInstance.get(
+        "http://127.0.0.1:8000/users/me/"
+      );
       return response.data;
     } catch (error) {
       throw new Error("Network response was not ok");
     }
   });
-  console.log(a);
+  console.log(userData);
 
   return (
     <>
       <section className="flex flex-col md:flex-row p-4 items-center justify-center">
         {isLoading && <p>Loading...</p>}
         {error && <p>Something is wrong...</p>}
-        {a && (
+        {userData && (
           <>
             <img
               src="https://firebasestorage.googleapis.com/v0/b/wpoint-1d1be.appspot.com/o/KakaoTalk_Photo_2024-04-01-14-36-50.jpeg?alt=media&token=5b2fac95-0dbd-40c1-a030-a58336997c24"
@@ -57,11 +63,9 @@ export default function Profile({ id }) {
 
             <div className="w-full basis-5/12 flex flex-col p-4">
               <h2 className="text-4xl font-bold py-2 mb-12 font-dongle_semibolde">
-                {a.이름}
+                {userData.이름}
               </h2>
-              <p className="text-2xl font-bold py-2  mb-4 font-dongle">
-                {a.학과}
-              </p>
+              <p className="text-2xl font-bold py-2  mb-4 font-dongle"></p>
               <p className="text-2xl font-bold py-2 mb-8 font-dongle">
                 총 획득 상금 : 2000000 / 올해 예상 상금 : 3000000
               </p>

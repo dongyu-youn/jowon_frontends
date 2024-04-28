@@ -11,6 +11,7 @@ import Lists from "./pages/Lists";
 import Message from "./components/Message";
 import Conversation from "./components/Conversation";
 import Profile from "./pages/Profile";
+import Search from "./pages/Search";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: "pictures/messages", element: <Message /> },
       { path: "pictures/conversations", element: <Conversation /> },
       { path: "pictures/profile", element: <Profile /> },
+      { path: "pictures/search", element: <Search /> },
     ],
   },
 ]);

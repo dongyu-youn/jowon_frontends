@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+
+import axios from "axios";
+
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
@@ -17,11 +20,10 @@ import {
 import Filtering from "../components/Filtering";
 import { FaSearch } from "react-icons/fa";
 
-import axios from "axios"; // axios를 import합니다.
-
 import { useForm } from "react-hook-form";
+import Footer from "../components/Footer";
 
-export default function List_Pictures() {
+export default function Search() {
   const Search = styled.form`
     position: relative;
     color: black;
@@ -143,6 +145,26 @@ export default function List_Pictures() {
 
   const navigate = useNavigate();
 
+  const [contents, setContents] = useState([]);
+
+  useEffect(() => {
+    // URLSearchParams 를 사용하여 현재
+    const queryParams = new URLSearchParams(window.location.search);
+    console.log(queryParams);
+    const keyword = queryParams.get("keyword");
+    console.log(keyword);
+    // axios를 사용하여 HTTP 요청 보내기
+    axios
+      .get(`http://127.0.0.1:8000/contests/search/?keyword=${keyword}`)
+      .then((response) => {
+        // 받은 데이터를 상태로 설정
+        setContents(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching contests:", error);
+      });
+  }, []);
+
   return (
     <div className="bg-white text-black p-12">
       <Search className="flex justify-end" onSubmit={handleSubmit(onValid)}>
@@ -183,21 +205,19 @@ export default function List_Pictures() {
       />
 
       <div>
-        {isLoading && <p>Loading...</p>}
-        {error && <p>Something is wrong...</p>}
-        {videos && (
+        {contents && (
           <div className="grid grid-cols-1 md:grid-cols-3 lg-grid-cols-4 gap-4 p-4 ">
-            {videos.map((video) => (
+            {contents.map((video) => (
               <PictureCard key={video.id} video={video}></PictureCard>
             ))}
-
-            <div className="flex items-center justify-center blinking-text ">
-              <h1 className="text-3xl mb-2 font-diphylleia ">more</h1>
-              <IoIosArrowRoundBack className="text-3xl ml-1 font-diphylleia " />{" "}
-            </div>
           </div>
         )}
+        <div className="flex items-center justify-center blinking-text ">
+          <h1 className="text-3xl mb-2 font-diphylleia ">more</h1>
+          <IoIosArrowRoundBack className="text-3xl ml-1 font-diphylleia " />{" "}
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -26,6 +26,9 @@ export default function Navigation() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
 
+  const [searchOpen, setSearchOpen] = useState(false);
+  const toggleSearch = () => setSearchOpen((prev) => !prev);
+
   // 로그인 성공 시 호출될 콜백 함수
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
@@ -41,13 +44,6 @@ export default function Navigation() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // user 상태가 변경될 때마다 navigate 함수 호출
-    if (user !== null) {
-      navigate("/pictures/profile", { state: { user: user } });
-    }
-  }, [user, navigate]);
-
   const handleProfileLinkClick = () => {
     // 이 부분에서 user 상태를 업데이트하여 원하는 정보를 전달할 수 있습니다.
     console.log(user);
@@ -58,7 +54,7 @@ export default function Navigation() {
   const profileLink = isLoggedIn ? (
     <li className="inline-block align-top relative p-4 font-customFont hover:underline">
       <Link
-        to={{ pathname: "pictures/profile", state: { id: user.id } }}
+        to={{ pathname: "pictures/profile", state: { user: user } }}
         className="header__menu__item hover:text-pink-800 pr-8"
       >
         Profile
