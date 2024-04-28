@@ -171,3 +171,13 @@ code {
 .slick-prev,
 .slick-next {
 }
+
+.Search {
+  position: relative;
+}
+
+.Search svg {
+  position: absolute;
+  left: 0;
+  transition: left 0.3s ease; /* 이동에 애니메이션 적용 */
+}
