@@ -35,7 +35,12 @@ export default function List_Pictures() {
 
   const Input = styled(motion.input)`
     position: absolute;
-    right: 100px;
+
+    width: 300px; /* 너비를 더 크게 조정하세요 */
+    padding: 10px; /* 내부 여백을 추가하여 내용이 너무 가깝게 보이지 않도록 합니다. */
+    border: 1px solid #ccc; /* 테두리를 추가하여 입력란의 모양을 더 강조합니다. */
+    border-radius: 5px; /* 둥근 테두리를 적용합니다. */
+    transition: border-color 0.3s; /* hover 효과를 추가합니다. */
   `;
 
   const location = useLocation();
