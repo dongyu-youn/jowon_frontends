@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
 import {
   Avatar,
@@ -22,6 +22,13 @@ import LoginModal from "./LoginModal";
 import Profile from "../pages/Profile";
 
 export default function Navigation() {
+  const location = useLocation();
+
+  // 현재 페이지의 URL을 가져오는 함수
+  const getCurrentPath = () => {
+    return location.pathname;
+  };
+
   const [isHovered, setIsHovered] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -82,7 +89,11 @@ export default function Navigation() {
   return (
     <div className="">
       <ul className="flex items-center">
-        <li className="inline-block align-top relative p-4 font-customFont hover:underline">
+        <li
+          className={`inline-block align-top relative p-4 font-customFont ${
+            getCurrentPath() === "/pictures" ? "text-pink-800" : ""
+          }`}
+        >
           <Link
             to="/pictures"
             className="header__menu__item hover:text-pink-800 pr-8"
@@ -90,14 +101,12 @@ export default function Navigation() {
             Contests
           </Link>
         </li>
-        <li className="inline-block align-top relative p-4 font-customFont hover:underline">
-          <a
-            className="header__menu__item hover:text-pink-800 pr-8"
-            href="{% url 'lists:see-favs' %}"
-          >
-            Favs
-          </a>
-        </li>
+        <Link
+          to="/pictures/favs"
+          className="inline-block align-top relative p-4 font-customFont hover:underline"
+        >
+          <a className="header__menu__item hover:text-pink-800 pr-8">Favs</a>
+        </Link>
         <li className="inline-block align-top relative p-4 font-customFont hover:underline">
           {/* 로그인/로그아웃 버튼 */}
           <p
