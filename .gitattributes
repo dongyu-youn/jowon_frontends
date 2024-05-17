@@ -1,3 +1,6 @@
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 public/home.mp4 filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.json filter=lfs diff=lfs merge=lfs -text
 public/videos/home.mp4 filter=lfs diff=lfs merge=lfs -text
