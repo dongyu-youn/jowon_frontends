@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { RiRobot2Line } from "react-icons/ri";
 import { FaFile } from "react-icons/fa6";
 import { FaImage } from "react-icons/fa";
+import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
+import axios from "axios";
+import { useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
+
 const Conversation = () => {
   const [isExpanded, setIsExpanded] = useState(true); // 섹션의 확장 상태를 관리합니다.
   const [isThirdExpanded, setIsThirdExpanded] = useState(true); // 세 번째 섹션의 확장 상태를 관리합니다.
+  const [messages, setMessages] = useState(""); // 입력된 메시지 상태
 
   const toggleSection = () => {
     // 섹션의 확장 상태를 변경합니다.
@@ -47,12 +53,67 @@ const Conversation = () => {
     ],
   };
 
+  const location = useLocation();
+  const pathname = location.pathname;
+  const id = pathname.substring(pathname.lastIndexOf("/") + 1);
+  const [video, setVideo] = useState(null);
+
+  useEffect(() => {
+    const fetchVideo = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/conversations/${id}`
+        ); // id 값을 이용하여 서버로 요청
+        setVideo(response.data);
+        console.log(response.data.participants[0].username);
+      } catch (error) {
+        console.error("Error fetching video:", error);
+      }
+    };
+
+    fetchVideo();
+  }, [id]);
+  if (!video) {
+    return <div>Loading...</div>;
+  }
+  const userToken = Cookies.get("csrftoken") || "";
+
+  const axiosInstance = axios.create({
+    withCredentials: true,
+    headers: {
+      "X-CSRFToken": userToken,
+    },
+  });
+
+  // 메시지 전송 함수
+  const sendMessage = async () => {
+    try {
+      // 서버에 메시지를 전송하는 POST 요청
+      const conversationId = window.location.pathname.split("/").pop(); // URL에서 대화의 ID 추출
+      await axiosInstance.post(
+        `http://127.0.0.1:8000/conversations/messages/`,
+        {
+          message: messages, // 메시지 내용
+          conversation: 2,
+        }
+      );
+
+      // 메시지 전송 후 입력 창 비우기
+      setMessages("");
+
+      // 전송 완료 후 필요한 추가 작업 수행 가능
+    } catch (error) {
+      console.error("Error sending message:", error);
+      // 오류 처리 로직 추가 가능
+    }
+  };
+
   return (
     <section id="home" className="">
       <div className="relative w-full h-0" style={{ paddingBottom: "40%" }}>
         <div className="absolute inset-0 flex items-center justify-center">
           <img
-            src="/imgs/pic.jpg"
+            src="/videos/jown.jpeg"
             alt="Your Image Description"
             className="w-full h-full object-cover"
           />
@@ -78,29 +139,19 @@ const Conversation = () => {
             <h2>Conversation for </h2>
           </span>
           <div className="flex justify-between mt-10 items-center">
-            {conversation.participants.map((user, index) => (
-              <div key={index} className="flex flex-col items-center">
-                <img
-                  src={user.avatar}
-                  alt={user.first_name}
-                  className="rounded-full w-16 h-16"
-                />
-                <span
-                  className={`mt-2 text-gray-500 ${
-                    user.id === 1 ? "text-black" : ""
-                  }`}
-                >
-                  {user.first_name}
-                </span>
+            {video.participants.map((participant) => (
+              <div key={participant.id} className="profile-card">
+                <img alt={participant.username} className="profile-picture" />
+                <p className="profile-username">{participant.username}</p>
               </div>
             ))}
           </div>
         </div>
         <div className="border flex-grow ml-10 p-10 flex flex-col">
           <div className="border mb-6 flex items-center justify-center rounded  p-2">
-            제2회 통신망 안정성 확보를 위한 인공지능 해커톤
+            {video.teamName}
           </div>
-          {conversation.messages.map((message, index) => (
+          {video.messages.map((message, index) => (
             <div
               key={index}
               className={`mb-10 flex items-center ${
@@ -108,13 +159,13 @@ const Conversation = () => {
               }`}
             >
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full   ml-4 ${
+                className={`flex items-center justify-center w-20 h-20 rounded-full   ml-4 ${
                   message.user.id !== 1
                     ? "bg-teal-500 text-white"
                     : "bg-gray-300"
                 }`}
               >
-                {message.user.first_name.substring(0, 1)}
+                {video.participants[0].username}
               </div>
               <div
                 className={`p-5 rounded ${
@@ -136,8 +187,13 @@ const Conversation = () => {
               type="text"
               className="rounded w-10/12  border-gray-300 border p-2 mr-2 focus:outline-none focus:border-teal-500"
               placeholder="메시지를 입력하세요..."
+              value={messages}
+              onChange={(e) => setMessages(e.target.value)} // 입력된 메시지 업데이트
             />
-            <button className="bg-teal-500 text-white py-2  px-8 items-center rounded focus:outline-none flex">
+            <button
+              onClick={sendMessage}
+              className="bg-teal-500 text-white py-2  px-8 items-center rounded focus:outline-none flex"
+            >
               <span>전송</span>
             </button>
           </div>

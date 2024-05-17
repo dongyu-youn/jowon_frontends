@@ -5,7 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 export default function PictureCard({ video }) {
-  const [liked, setLiked] = useState(false); // 좋아요 상태를 관리할 상태 변수
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     // 페이지 로드 시 이미 좋아요한 동영상인지 확인

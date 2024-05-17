@@ -33,6 +33,25 @@ export default function Profile({}) {
     withCredentials: true,
   });
 
+  const StarRating = ({ totalStars, yellowStars }) => {
+    const greyStars = totalStars - yellowStars;
+
+    return (
+      <div className="flex">
+        {[...Array(yellowStars)].map((_, index) => (
+          <span key={index} className="text-yellow-500">
+            ★
+          </span>
+        ))}
+        {[...Array(greyStars)].map((_, index) => (
+          <span key={index} className="text-gray-400">
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   const {
     isLoading,
     error,
@@ -63,18 +82,25 @@ export default function Profile({}) {
 
             <div className="w-full basis-5/12 flex flex-col p-4">
               <h2 className="text-4xl font-bold py-2 mb-12 font-dongle_semibolde">
-                {userData.이름}
+                {userData.username}
               </h2>
+              <p className="py-4 text-2xl   mb-12 font-dongle_light">
+                분야 : {userData.개발경력}
+              </p>
+              <p className="flex items-center justify-center py-4 text-2xl mb-12 font-dongle_light">
+                신뢰도 :
+                <StarRating
+                  totalStars={userData.average_rating}
+                  yellowStars={userData.average_rating}
+                />
+              </p>
               <p className="text-2xl font-bold py-2  mb-4 font-dongle"></p>
               <p className="text-2xl font-bold py-2 mb-8 font-dongle">
-                총 획득 상금 : 2000000 / 올해 예상 상금 : 3000000
+                총 획득 상금 : 200만원
               </p>
 
-              <p className="py-4 text-2xl  border-b border-gray-400 mb-12 font-dongle_light">
-                분야 : 프론트엔드 개발자
-              </p>
-              <p className=" flex items-center justify-center py-4 text-2xl  border-b border-gray-400 mb-12 font-dongle_light">
-                신뢰도 : <StarRating totalStars={5} />
+              <p className="text-2xl font-bold py-2 mb-8 font-dongle">
+                올해 예상 상금 : 300만원
               </p>
 
               <Button className="mt-20" text="제의하기"></Button>

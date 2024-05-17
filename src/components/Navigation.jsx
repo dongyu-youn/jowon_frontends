@@ -101,12 +101,18 @@ export default function Navigation() {
             Contests
           </Link>
         </li>
-        <Link
-          to="/pictures/favs"
-          className="inline-block align-top relative p-4 font-customFont hover:underline"
+        <li
+          className={`inline-block align-top relative p-4 font-customFont ${
+            getCurrentPath() === "/pictures/favs" ? "text-pink-800" : ""
+          }`}
         >
-          <a className="header__menu__item hover:text-pink-800 pr-8">Favs</a>
-        </Link>
+          <Link
+            to="/pictures/favs"
+            className="inline-block align-top relative p-4 font-customFont hover:underline"
+          >
+            <a className="header__menu__item hover:text-pink-800 pr-8">Favs</a>
+          </Link>
+        </li>
         <li className="inline-block align-top relative p-4 font-customFont hover:underline">
           {/* 로그인/로그아웃 버튼 */}
           <p

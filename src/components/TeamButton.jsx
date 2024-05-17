@@ -15,17 +15,14 @@ const TeamButton = ({ data, teamName }) => {
 
   return (
     <Link
-      to="/pictures/conversations"
+      to={`/pictures/conversations/${data.id}`}
       className={`flex flex-col mr-8 mt-32 mb-32 rounded-lg shadow-md cursor-pointer transform hover:scale-105 transition ease-in-out w-96 h-auto ${
         expanded ? "max-h-screen" : "h-52"
       } text-black bg-white `}
     >
       {/* 아바타와 팀 이름 */}
       <div className="flex items-center">
-        <img
-          src={participants[0].avatar}
-          className="w-16 h-16 rounded-full p-1 mr-4 mt-12 ml-4"
-        />
+        <img className="w-16 h-16 rounded-full p-1 mr-4 mt-12 ml-4" />
         <div className="flex flex-col">
           <p className="font-diphylleia-bold text-xl mt-12 ml-4">{teamName}</p>
         </div>
@@ -37,12 +34,7 @@ const TeamButton = ({ data, teamName }) => {
         <div className="border-t border-gray-200 mt-4  flex flex-col bg-gray-500 p-8">
           {participants.map((participant, index) => (
             <div key={index} className="flex items-center">
-              <img
-                src={participant.avatar}
-                className="w-12 h-12 rounded-full p-1 mr-2"
-                alt={`Participant ${index}`}
-              />
-              <p>{participant.first_name}</p>
+              <p>{participant.username}</p>
             </div>
           ))}
         </div>
