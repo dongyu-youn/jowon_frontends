@@ -26,7 +26,7 @@ const router = createBrowserRouter([
       { path: "pictures/:keyword", element: <PictureDetail /> },
       { path: "pictures/:id", element: <PictureDetail /> },
       { path: "pictures/messages", element: <Message /> },
-      { path: "pictures/conversations", element: <Conversation /> },
+      { path: "pictures/conversations/:id", element: <Conversation /> },
       { path: "pictures/profile", element: <Profile /> },
       { path: "pictures/search", element: <Search /> },
       { path: "pictures/favs", element: <Favs /> },
