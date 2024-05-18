@@ -19,6 +19,8 @@ import { FaSearch } from "react-icons/fa";
 
 import axios from "axios"; // axios를 import합니다.
 
+import Cookies from "js-cookie";
+
 import { useForm } from "react-hook-form";
 
 export default function List_Pictures() {
@@ -45,6 +47,8 @@ export default function List_Pictures() {
 
   const location = useLocation();
   const { state } = location;
+
+  const [latestVideos, setLatestVideos] = useState([]); // 최신순으로 정렬된 데이터 상태
 
   const [departmentChecked, setDepartmentChecked] = React.useState(false);
   const [latestChecked, setLatestChecked] = React.useState(false);
@@ -99,10 +103,30 @@ export default function List_Pictures() {
       console.error("Error handling sorting by department: ", error);
     }
   };
+  const userToken = Cookies.get("csrftoken") || "";
+  const axiosInstance = axios.create({
+    withCredentials: true,
+    headers: {
+      "X-CSRFToken": userToken,
+    },
+  });
 
   const handleSortByLatest = () => {
     setLatestChecked(!latestChecked);
     // 최신순으로 정렬하는 함수
+
+    // 최신순으로 정렬할 때 latest=true 매개변수를 추가하여 요청을 보냄
+    axiosInstance
+      .get("http://127.0.0.1:8000/contests/filtered-contests/?latest=true")
+      .then((response) => {
+        // 요청 성공 시 데이터 처리
+        // 여기서 서버에서 응답한 데이터를 사용하여 UI를 업데이트할 수 있습니다.
+        setLatestVideos(response.data); // 최신순으로 정렬된 데이터를 설정합니다.
+      })
+      .catch((error) => {
+        // 요청 실패 시 에러 처리
+        console.error("Error sorting by latest:", error);
+      });
   };
 
   const handleSortByPeriod = () => {
@@ -190,7 +214,7 @@ export default function List_Pictures() {
       <div>
         {isLoading && <p>Loading...</p>}
         {error && <p>Something is wrong...</p>}
-        {videos && (
+        {!latestChecked && videos && (
           <div className="grid grid-cols-1 md:grid-cols-3 lg-grid-cols-4 gap-4 p-4 ">
             {videos.map((video) => (
               <PictureCard key={video.id} video={video}></PictureCard>
@@ -202,6 +226,19 @@ export default function List_Pictures() {
             </div>
           </div>
         )}
+
+        {latestChecked &&
+          latestVideos && ( // latestChecked가 true이고 latestVideos 상태가 있을 때
+            <div className="grid grid-cols-1 md:grid-cols-3 lg-grid-cols-4 gap-4 p-4 ">
+              {latestVideos.map((video) => (
+                <PictureCard key={video.id} video={video}></PictureCard>
+              ))}
+              <div className="flex items-center justify-center blinking-text ">
+                <h1 className="text-3xl mb-2 font-diphylleia ">More</h1>
+                <IoIosArrowRoundBack className="text-3xl ml-1 font-diphylleia " />
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );
