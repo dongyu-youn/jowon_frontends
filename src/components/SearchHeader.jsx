@@ -30,15 +30,18 @@ export default function SearchHeader() {
   // 페이지 경로를 확인하여 해당 페이지인지 여부를 결정하는 변수들을 업데이트합니다.
   const isPictureDetailPage = location.pathname.includes("pictures/");
   const isMessagePage = location.pathname.includes("pictures/messages/");
+  const isConversation = location.pathname.includes("pictures/conversations/");
 
   let headerClass = `z-50 w-full flex p-4 text-2xl mb-4 justify-between items-center group hover:border-b hover:border-zinc-600 transition-colors duration-300 ease-in-out hover:bg-white hover:text-black`;
 
   // isPictureDetailPage가 거짓이거나 isMessagePage가 거짓인 경우에만 fixed 스타일을 적용합니다.
-  if (!isPictureDetailPage && !isMessagePage) {
+  if (!isPictureDetailPage && !isMessagePage && !isConversation) {
     headerClass += " fixed";
   }
 
   const [user, setUser] = useState(null);
+
+  const { id } = useParams(); // URL에서 id 파라미터 추출
   return (
     <>
       <header
@@ -52,6 +55,11 @@ export default function SearchHeader() {
               }
             : {}),
           ...(window.location.pathname === "/pictures/conversations"
+            ? {
+                position: "fixed",
+              }
+            : {}),
+          ...(window.location.pathname === `/pictures/conversations/${id}`
             ? {
                 position: "fixed",
               }

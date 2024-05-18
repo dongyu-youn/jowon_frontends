@@ -13,6 +13,7 @@ import Conversation from "./components/Conversation";
 import Profile from "./pages/Profile";
 import Search from "./pages/Search";
 import Favs from "./pages/Favs";
+import Apply from "./pages/Apply";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
       { path: "pictures/profile", element: <Profile /> },
       { path: "pictures/search", element: <Search /> },
       { path: "pictures/favs", element: <Favs /> },
+      { path: "pictures/apply/:id", element: <Apply /> },
     ],
   },
 ]);

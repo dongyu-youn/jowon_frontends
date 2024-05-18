@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-function ModalComponent({ closeModal }) {
+function ModalComponent({ closeModal, video }) {
   const handleOutsideClick = (e) => {
     if (e.target.classList.contains("modal-overlay")) {
       closeModal();
@@ -15,19 +16,25 @@ function ModalComponent({ closeModal }) {
           <div className="modal-container bg-white   rounded shadow-lg z-50 overflow-y-auto">
             <div className="modal-content py-4 text-left px-6">
               <div className="button-container flex justify-center ">
-                <div className="image-container relative">
-                  <button className="bg-transparent p-2 m-0 border-none ">
+                <Link
+                  to={`/pictures/apply/${video.id}`}
+                  className="image-container relative"
+                >
+                  <Link
+                    to={`/pictures/apply/${video.id}`}
+                    className="bg-transparent p-2 m-0 border-none "
+                  >
                     <img
                       src="/imgs/depart.jpg"
                       style={{ width: "200px", height: "200px" }}
                       alt="Button 1"
                       className="rounded-full"
                     />
-                  </button>
+                  </Link>
                   <p className="absolute text-white text-center w-full top-1/2 transform -translate-y-1/2 font-bold text-3xl">
                     학과별
                   </p>
-                </div>
+                </Link>
                 <div className="image-container relative">
                   <button className="bg-transparent p-2 m-0 border-none">
                     <img

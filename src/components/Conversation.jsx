@@ -13,6 +13,22 @@ const Conversation = () => {
   const [isThirdExpanded, setIsThirdExpanded] = useState(true); // 세 번째 섹션의 확장 상태를 관리합니다.
   const [messages, setMessages] = useState(""); // 입력된 메시지 상태
 
+  // useEffect(() => {
+  //   const fetchMessages = async () => {
+  //     try {
+  //       const conversationId = window.location.pathname.split("/").pop();
+  //       const response = await axios.get(
+  //         `http://127.0.0.1:8000/conversations/messages/${conversationId}/`
+  //       );
+  //       setMessages(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching messages:", error);
+  //     }
+  //   };
+
+  //   fetchMessages();
+  // }, []); // 두 번째 인자로 빈 배열을 전달하여 최초 렌더링 시에만 useEffect가 실행되도록 함
+
   const toggleSection = () => {
     // 섹션의 확장 상태를 변경합니다.
     setIsExpanded(!isExpanded);
@@ -65,7 +81,7 @@ const Conversation = () => {
           `http://127.0.0.1:8000/conversations/${id}`
         ); // id 값을 이용하여 서버로 요청
         setVideo(response.data);
-        console.log(response.data.participants[0].username);
+        console.log(response.data.participants.username);
       } catch (error) {
         console.error("Error fetching video:", error);
       }
@@ -100,6 +116,8 @@ const Conversation = () => {
 
       // 메시지 전송 후 입력 창 비우기
       setMessages("");
+      // 전송 후 새로고침
+      window.location.reload();
 
       // 전송 완료 후 필요한 추가 작업 수행 가능
     } catch (error) {
@@ -141,7 +159,11 @@ const Conversation = () => {
           <div className="flex justify-between mt-10 items-center">
             {video.participants.map((participant) => (
               <div key={participant.id} className="profile-card">
-                <img alt={participant.username} className="profile-picture" />
+                <img
+                  alt={participant.username}
+                  src={participant.avatar}
+                  className="profile-picture w-16 h-16 rounded-full"
+                />
                 <p className="profile-username">{participant.username}</p>
               </div>
             ))}
@@ -165,7 +187,7 @@ const Conversation = () => {
                     : "bg-gray-300"
                 }`}
               >
-                {video.participants[0].username}
+                {video.participants.username}
               </div>
               <div
                 className={`p-5 rounded ${

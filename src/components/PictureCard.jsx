@@ -8,27 +8,24 @@ export default function PictureCard({ video }) {
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    // 페이지 로드 시 이미 좋아요한 동영상인지 확인
-    checkLikedStatus();
-  }, []);
+    checkLikedStatus(); // 컴포넌트가 처음으로 렌더링될 때 한 번만 호출
+  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때만 호출
 
   const checkLikedStatus = async () => {
-    const userToken = Cookies.get("csrftoken") || "";
-
-    const axiosInstance = axios.create({
-      withCredentials: true,
-      headers: {
-        "X-CSRFToken": userToken,
-      },
-    });
     try {
-      // 좋아요 상태를 확인하는 요청을 보냄
-      const response = await axiosInstance(
+      const userToken = Cookies.get("csrftoken") || "";
+      const axiosInstance = axios.create({
+        withCredentials: true,
+        headers: {
+          "X-CSRFToken": userToken,
+        },
+      });
+
+      const response = await axiosInstance.get(
         "http://127.0.0.1:8000/users/me/favs/"
       );
-      // 동영상 ID가 있는지 확인
+
       const isLiked = response.data.some((fav) => fav.id === video.id);
-      // 좋아요 상태를 업데이트
       setLiked(isLiked);
     } catch (error) {
       console.error("Error checking liked status:", error);
@@ -36,19 +33,15 @@ export default function PictureCard({ video }) {
   };
 
   const toggleLike = async (e) => {
-    e.stopPropagation(); // 클릭 이벤트가 부모로 전파되지 않도록 함
+    e.stopPropagation();
     e.preventDefault();
 
     try {
-      // 클라이언트에서 좋아요 상태를 토글하면서 백엔드로 전송할 대회의 ID
       const contestId = video.id;
-
-      // 좋아요 상태를 토글합니다.
       const newLiked = !liked;
-      setLiked(newLiked); // 새로운 좋아요 상태를 설정
+      setLiked(newLiked); // 좋아요 상태를 먼저 업데이트
 
       const userToken = Cookies.get("csrftoken") || "";
-
       const axiosInstance = axios.create({
         withCredentials: true,
         headers: {
@@ -60,9 +53,6 @@ export default function PictureCard({ video }) {
       await axiosInstance.put("http://127.0.0.1:8000/users/me/favs/", {
         id: contestId,
       });
-
-      // 좋아요 상태를 확인하여 다시 설정합니다.
-      checkLikedStatus();
     } catch (error) {
       console.error("Error toggling like:", error);
       // 에러 처리 로직 추가

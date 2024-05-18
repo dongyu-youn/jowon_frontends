@@ -168,7 +168,7 @@ function PictureDetail() {
       </section>
 
       {/* 모달 */}
-      {isModalOpen && <ModalComponent closeModal={closeModal} />}
+      {isModalOpen && <ModalComponent video={video} closeModal={closeModal} />}
 
       <Footer />
     </>
