@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+
 import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
+import { IoChevronUpOutline, IoChevronDownOutline } from "react-icons/io5"; // 아이콘 추가
+
 import {
   Avatar,
   Box,
@@ -22,6 +25,12 @@ import LoginModal from "./LoginModal";
 import Profile from "../pages/Profile";
 
 export default function Navigation() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
   const location = useLocation();
 
   // 현재 페이지의 URL을 가져오는 함수
@@ -59,10 +68,10 @@ export default function Navigation() {
 
   // 로그인 상태에 따라 프로필 링크 표시 여부 결정
   const profileLink = isLoggedIn ? (
-    <li className="inline-block align-top relative p-4 font-customFont hover:underline">
+    <li className="p-4 hover:bg-gray-100 ">
       <Link
         to={{ pathname: "pictures/profile", state: { user: user } }}
-        className="header__menu__item hover:text-pink-800 pr-8"
+        className="header__menu__item hover:text-pink-800"
       >
         Profile
       </Link>
@@ -122,16 +131,35 @@ export default function Navigation() {
             {loginButtonText}
           </p>
         </li>
-        {profileLink}
-        <li className="inline-block align-top relative p-4 font-customFont hover:underline">
-          <Link
-            to="/pictures/messages"
-            className="flex align-top relative p-4 font-customFont hover:underline bg-black text-white items-center hover:bg-white hover:text-black"
+
+        <div className="relative inline-block">
+          <button
+            className="inline-flex items-center justify-between p-4 font-customFont bg-black text-white hover:bg-white hover:text-black focus:outline-none"
+            onClick={toggleDropdown}
           >
-            Team Matching <IoChevronForwardOutline />
-          </Link>
-        </li>
+            Notification
+            {isOpen ? <IoChevronUpOutline /> : <IoChevronDownOutline />}
+          </button>
+          {isOpen && (
+            <ul className="absolute left-0 mt-2 w-48 bg-white shadow-md z-10 flex flex-col">
+              <Link
+                to="/pictures/messages"
+                className="p-4 hover:bg-gray-100 hover:text-pink-800"
+              >
+                Team Matching
+              </Link>
+              {profileLink}
+              <Link
+                to="/notifications"
+                className="p-4 hover:bg-gray-100 hover:text-pink-800"
+              >
+                Notification
+              </Link>
+            </ul>
+          )}
+        </div>
       </ul>
+
       {/* 로그인 모달 */}
       <LoginModal
         onLoginSuccess={handleLoginSuccess}

@@ -14,8 +14,9 @@ import Profile from "./Profile";
 import ProfileCard from "../components/ProfileCard";
 import Avartar from "../components/Avatar";
 import Footer from "../components/Footer";
+import NotiCard from "../components/NotiCard";
 
-export default function Apply() {
+export default function Notifications() {
   const location = useLocation();
   const pathname = location.pathname;
   const id = pathname.substring(pathname.lastIndexOf("/") + 1);
@@ -33,7 +34,7 @@ export default function Apply() {
   } = useQuery(["userData"], async () => {
     try {
       const response = await axiosInstance.get(
-        `http://127.0.0.1:8000/contests/${id}/applicants/`
+        "http://127.0.0.1:8000/notifications/"
       );
       return response.data;
     } catch (error) {
@@ -54,15 +55,13 @@ export default function Apply() {
         {isLoading && <p>Loading...</p>}
         {error && <p>Something is wrong...</p>}
         {userData && (
-          <div className="flex ">
+          <div className="grid grid-cols-3 gap-8 mt-24">
             {userData.map((video) => (
-              <div key={video.id} className="p-12">
-                <ProfileCard
-                  onClick={() => handleClick(video.id)} // 여기에서 함수 참조 전달
-                  image={video.avatar}
+              <div key={video.id}>
+                <NotiCard
+                  onClick={() => handleClick(video.user)}
                   video={video}
-                  isNew={true}
-                ></ProfileCard>
+                />
               </div>
             ))}
           </div>

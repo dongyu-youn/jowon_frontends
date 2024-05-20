@@ -103,6 +103,7 @@ export default function List_Pictures() {
       console.error("Error handling sorting by department: ", error);
     }
   };
+
   const userToken = Cookies.get("csrftoken") || "";
   const axiosInstance = axios.create({
     withCredentials: true,
@@ -131,7 +132,19 @@ export default function List_Pictures() {
 
   const handleSortByPeriod = () => {
     setPeriodChecked(!periodChecked);
-    // 기간순으로 정렬하는 함수
+    // 상금순으로 정렬하는 함수
+
+    axiosInstance
+      .get("http://127.0.0.1:8000/contests/filtered-contests/?latest=true")
+      .then((response) => {
+        // 요청 성공 시 데이터 처리
+        // 여기서 서버에서 응답한 데이터를 사용하여 UI를 업데이트할 수 있습니다.
+        setLatestVideos(response.data); // 최신순으로 정렬된 데이터를 설정합니다.
+      })
+      .catch((error) => {
+        // 요청 실패 시 에러 처리
+        console.error("Error sorting by latest:", error);
+      });
   };
 
   const handleToggleOnlineOffline = () => {

@@ -45,7 +45,7 @@ const Filtering = ({
         ) : (
           <RiCheckboxBlankCircleFill size={24} />
         )}
-        기간순
+        상금순
       </button>
       <button
         onClick={handleToggleOnlineOffline}

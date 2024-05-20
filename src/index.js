@@ -14,6 +14,8 @@ import Profile from "./pages/Profile";
 import Search from "./pages/Search";
 import Favs from "./pages/Favs";
 import Apply from "./pages/Apply";
+import UserDetail from "./components/UserDetail";
+import Notifications from "./pages/Notifications";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +34,8 @@ const router = createBrowserRouter([
       { path: "pictures/search", element: <Search /> },
       { path: "pictures/favs", element: <Favs /> },
       { path: "pictures/apply/:id", element: <Apply /> },
+      { path: "users/:id", element: <UserDetail /> },
+      { path: "notifications", element: <Notifications /> },
     ],
   },
 ]);
