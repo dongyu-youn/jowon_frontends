@@ -6,11 +6,18 @@ import Button from "../components/Button";
 import Footer from "../components/Footer";
 import ModalComponent from "../components/Modal";
 import Cookies from "js-cookie";
+import SurveyModal from "../components/SurveyModal";
 
 function PictureDetail() {
   const [video, setVideo] = useState(null);
   const [apply, setApply] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태를 저장하는 state
+
+  const [isModalOpenC, setIsModalOpenC] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalOpenC(!isModalOpenC);
+  };
 
   const location = useLocation();
   const pathname = location.pathname;
@@ -64,7 +71,7 @@ function PictureDetail() {
   const toggleLike = async (e) => {
     e.stopPropagation(); // 클릭 이벤트가 부모로 전파되지 않도록 함
     e.preventDefault();
-
+    console.log("toggleLike 함수가 실행되었습니다"); // 함수가 실행될 때 로그 출력
     try {
       // 클라이언트에서 좋아요 상태를 토글하면서 백엔드로 전송할 대회의 ID
       const contestId = video.id;
@@ -162,13 +169,18 @@ function PictureDetail() {
           {apply ? (
             <Button className="" text="완료" onClick={toggleLike}></Button>
           ) : (
-            <Button className="" text="신청하기" onClick={toggleLike}></Button>
+            <Button className="" text="신청하기" onClick={toggleModal}></Button>
+            // 나중에 toggleLike
           )}
         </div>
       </section>
 
       {/* 모달 */}
       {isModalOpen && <ModalComponent video={video} closeModal={closeModal} />}
+
+      {isModalOpenC && (
+        <SurveyModal toggleLike={toggleLike} onClose={toggleModal} />
+      )}
 
       <Footer />
     </>
