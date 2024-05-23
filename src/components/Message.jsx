@@ -75,7 +75,7 @@ const Message = () => {
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="grid-container justify-center">
         {isLoading && <p>Loading...</p>}
         {error && <p>Something is wrong...</p>}
         {userData &&
@@ -83,6 +83,15 @@ const Message = () => {
             <TeamButton key={video.id} data={video} teamName={video.teamName} />
           ))}
       </div>
+
+      <style jsx>{`
+        .grid-container {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr); /* 3열 그리드 */
+          gap: 8px; /* 그리드 아이템 간의 간격 */
+          justify-items: center; /* 그리드 아이템을 중앙에 정렬 */
+        }
+      `}</style>
     </section>
   );
 };

@@ -16,7 +16,7 @@ const TeamButton = ({ data, teamName }) => {
   return (
     <Link
       to={`/pictures/conversations/${data.id}`}
-      className={`flex flex-col mr-8 mt-32 mb-32 rounded-lg shadow-md cursor-pointer transform hover:scale-105 transition ease-in-out w-96 h-auto ${
+      className={`flex flex-col mr-8 mt-16 mb-16 rounded-lg shadow-md cursor-pointer transform hover:scale-105 transition ease-in-out w-96 h-auto ${
         expanded ? "max-h-screen" : "h-52"
       } text-black bg-white `}
     >

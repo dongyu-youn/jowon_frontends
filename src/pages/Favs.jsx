@@ -34,22 +34,19 @@ export default function Favs() {
   });
   console.log(userData);
   return (
-    <div className="bg-white text-black p-12">
-      <div>
-        {isLoading && <p>Loading...</p>}
-        {error && <p>Something is wrong...</p>}
-        {userData && (
-          <div className="grid grid-cols-1 md:grid-cols-3 lg-grid-cols-4 gap-4 p-4 ">
-            {userData.map((video) => (
-              <PictureCard key={video.id} video={video}></PictureCard>
-            ))}
-
-            <div className="flex items-center justify-center blinking-text ">
-              <h1 className="text-3xl mb-2 font-diphylleia ">more</h1>
-              <IoIosArrowRoundBack className="text-3xl ml-1 font-diphylleia " />{" "}
-            </div>
-          </div>
-        )}
+    <div className="bg-white text-black p-12 flex flex-col justify-center items-center">
+      {isLoading && <p>Loading...</p>}
+      {error && <p>Something is wrong...</p>}
+      {userData && (
+        <div className="grid grid-cols-1 md:grid-cols-3 lg-grid-cols-4 gap-4 p-4 ">
+          {userData.map((video) => (
+            <PictureCard key={video.id} video={video}></PictureCard>
+          ))}
+        </div>
+      )}
+      <div className="flex items-center justify-center blinking-text mt-4">
+        <h1 className="text-3xl mb-2 font-diphylleia">More</h1>
+        <IoIosArrowRoundBack className="text-3xl ml-1 font-diphylleia" />
       </div>
     </div>
   );

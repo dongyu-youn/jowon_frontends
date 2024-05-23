@@ -96,6 +96,17 @@ function PictureDetail() {
 
       // 좋아요 상태를 확인하여 다시 설정합니다.
       checkApplyStatus();
+
+      // 새로운 Conversation을 생성하기 위한 POST 요청
+      const conversationData = {
+        teamName: video.제목, // 필요한 데이터 설정
+      };
+
+      await axiosInstance.post(
+        "http://127.0.0.1:8000/conversations/",
+        conversationData
+      );
+      console.log("New conversation created");
     } catch (error) {
       console.error("Error toggling like:", error);
       // 에러 처리 로직 추가

@@ -59,19 +59,44 @@ export default function List_Pictures() {
     React.useState(false);
 
   const { keyword } = useParams();
+  const [page, setPage] = useState(1);
   const {
     data: videos,
     isLoading,
     error,
-  } = useQuery(["videos"], {
+  } = useQuery(["videos", page], {
     queryFn: async () => {
-      const res = await fetch("http://127.0.0.1:8000/contests/");
+      const res = await fetch(`http://127.0.0.1:8000/contests/?page=${page}`);
       if (!res.ok) {
         throw new Error("Network response was not ok");
       }
       return res.json();
     },
+    keepPreviousData: true, // 이전 데이터를 유지하여 페이지 이동 시 부드러운 사용자 경험 제공
   });
+
+  console.log("videos:", videos); // videos 변수를 콘솔에 출력
+  const handleNextPage = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  const handlePageChange = async (page) => {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/contests/?page=${page}`);
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await res.json();
+      // 데이터 처리 로직 추가
+    } catch (error) {
+      console.error("Error fetching paginated contests:", error);
+    }
+  };
+
   const [filteredVideos, setFilteredVideos] = useState([]); // 필터링된 데이터 상태 추가
 
   useEffect(() => {
@@ -229,14 +254,9 @@ export default function List_Pictures() {
         {error && <p>Something is wrong...</p>}
         {!latestChecked && videos && (
           <div className="grid grid-cols-1 md:grid-cols-3 lg-grid-cols-4 gap-4 p-4 ">
-            {videos.map((video) => (
+            {videos.results.map((video) => (
               <PictureCard key={video.id} video={video}></PictureCard>
             ))}
-
-            <div className="flex items-center justify-center blinking-text ">
-              <h1 className="text-3xl mb-2 font-diphylleia ">more</h1>
-              <IoIosArrowRoundBack className="text-3xl ml-1 font-diphylleia " />{" "}
-            </div>
           </div>
         )}
 
@@ -252,6 +272,26 @@ export default function List_Pictures() {
               </div>
             </div>
           )}
+      </div>
+      <div className="flex justify-center mt-4">
+        <button
+          className={`bg-pink-800 text-white font-bold py-2 px-4 rounded mr-2 ${
+            !videos || !videos.previous ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={() => handlePageChange(videos?.previous)}
+          disabled={!videos || !videos.previous}
+        >
+          Previous
+        </button>
+        <button
+          className={`bg-pink-800 text-white font-bold py-2 px-4 rounded ml-2 ${
+            !videos || !videos.next ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={() => handlePageChange(videos?.next)}
+          disabled={!videos || !videos.next}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

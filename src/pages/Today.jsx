@@ -65,7 +65,7 @@ export default function Today() {
       {videos && (
         <div>
           <Slider {...settings} className="p-12 flex items-center">
-            {videos.map((video) => (
+            {videos.results.map((video) => (
               <PictureCard key={video.id} video={video}></PictureCard>
             ))}
           </Slider>
