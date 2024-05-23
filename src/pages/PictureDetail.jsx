@@ -68,6 +68,27 @@ function PictureDetail() {
     }
   };
 
+  const userToken = Cookies.get("csrftoken") || "";
+  const axiosInstance = axios.create({
+    withCredentials: true,
+    headers: {
+      "X-CSRFToken": userToken,
+    },
+  });
+  const handleSubmit = async () => {
+    try {
+      // 메시지를 포함하여 axios로 POST 요청 보내기
+      await axiosInstance.post("http://127.0.0.1:8000/notifications/", {
+        receiver: 1, // 사용자 ID
+        message: video.제목,
+      });
+
+      // 쿼리 다시 불러오기 등의 작업
+    } catch (error) {
+      console.error("Error proposing:", error);
+    }
+  };
+
   const toggleLike = async (e) => {
     e.stopPropagation(); // 클릭 이벤트가 부모로 전파되지 않도록 함
     e.preventDefault();
@@ -107,6 +128,20 @@ function PictureDetail() {
         conversationData
       );
       console.log("New conversation created");
+      console.log(video.사진);
+
+      // 새로운 Conversation을 생성하기 위한 POST 요청
+      const NotiData = {
+        receiver: 1, // 사용자 ID
+        message: video.제목,
+        image: video.사진,
+      };
+      console.log(NotiData);
+      await axiosInstance.post(
+        "http://127.0.0.1:8000/notifications/",
+        NotiData
+      );
+      console.log("New noti created");
     } catch (error) {
       console.error("Error toggling like:", error);
       // 에러 처리 로직 추가

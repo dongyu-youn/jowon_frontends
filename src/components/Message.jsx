@@ -79,7 +79,7 @@ const Message = () => {
         {isLoading && <p>Loading...</p>}
         {error && <p>Something is wrong...</p>}
         {userData &&
-          userData.results.map((video) => (
+          userData.map((video) => (
             <TeamButton key={video.id} data={video} teamName={video.teamName} />
           ))}
       </div>

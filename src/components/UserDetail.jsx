@@ -105,20 +105,21 @@ export default function UserDetail({}) {
               className="w-1/6 px-20 basis-7/12"
             />
 
-            <div className="w-full basis-5/12 flex flex-col p-4 mt-24">
+            <div className="w-full basis-5/12 flex flex-col p-4 mt-24 text-left">
               <h2 className="text-4xl font-bold py-2 mb-12 font-dongle_semibolde">
                 {userData.username}
               </h2>
-              <p className="py-4 text-2xl   mb-12 font-dongle_light">
-                분야 : {userData.개발경력}
-              </p>
-              <p className="flex items-center justify-center py-4 text-2xl mb-12 font-dongle_light">
+              <p className="flex items-center  py-4 text-2xl mb-12 font-dongle_light">
                 신뢰도 :
                 <StarRating
                   totalStars={userData.average_rating}
                   yellowStars={userData.average_rating}
                 />
               </p>
+              <p className="py-4 text-2xl   mb-12 font-dongle_light">
+                분야 : {userData.개발경력}
+              </p>
+
               <p className="text-2xl font-bold py-2  mb-4 font-dongle"></p>
               <p className="text-2xl font-bold py-2 mb-8 font-dongle">
                 총 획득 상금 : 200만원

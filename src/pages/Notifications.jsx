@@ -36,6 +36,7 @@ export default function Notifications() {
       const response = await axiosInstance.get(
         "http://127.0.0.1:8000/notifications/"
       );
+
       return response.data;
     } catch (error) {
       throw new Error("Network response was not ok");
@@ -57,7 +58,7 @@ export default function Notifications() {
           {error && <p>Something is wrong...</p>}
           {userData && (
             <div className="grid grid-cols-3 gap-8 mt-24">
-              {userData.results.map((video) => (
+              {userData.map((video) => (
                 <div key={video.id}>
                   <NotiCard
                     onClick={() => handleClick(video.user)}

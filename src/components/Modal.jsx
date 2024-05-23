@@ -32,7 +32,7 @@ function ModalComponent({ closeModal, video }) {
                     />
                   </Link>
                   <p className="absolute text-white text-center w-full top-1/2 transform -translate-y-1/2 font-bold text-3xl">
-                    학과별
+                    프로그래머
                   </p>
                 </Link>
                 <div className="image-container relative">
@@ -45,7 +45,7 @@ function ModalComponent({ closeModal, video }) {
                     />
                   </button>
                   <p className="absolute text-white text-center w-full top-1/2 transform -translate-y-1/2 font-bold text-3xl">
-                    실력별
+                    디자이너
                   </p>
                 </div>
                 <div className="image-container relative">
@@ -58,7 +58,7 @@ function ModalComponent({ closeModal, video }) {
                     />
                   </button>
                   <p className="absolute text-white text-center w-full top-1/2 transform -translate-y-1/2 font-bold text-3xl">
-                    업무별
+                    기타
                   </p>
                 </div>
               </div>

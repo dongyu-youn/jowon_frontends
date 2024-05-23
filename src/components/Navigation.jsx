@@ -72,6 +72,7 @@ export default function Navigation() {
       <Link
         to={{ pathname: "pictures/profile", state: { user: user } }}
         className="header__menu__item hover:text-pink-800"
+        style={{ color: "black" }} // 여기에 color 속성 추가
       >
         Profile
       </Link>
@@ -119,7 +120,7 @@ export default function Navigation() {
             to="/pictures/favs"
             className="inline-block align-top relative p-4 font-customFont hover:underline"
           >
-            <a className="header__menu__item hover:text-pink-800 pr-8">Favs</a>
+            <a className="header__menu__item hover:text-pink-800 pr-8">Likes</a>
           </Link>
         </li>
         <li className="inline-block align-top relative p-4 font-customFont hover:underline">
@@ -145,16 +146,23 @@ export default function Navigation() {
               <Link
                 to="/pictures/messages"
                 className="p-4 hover:bg-gray-100 hover:text-pink-800"
+                style={{ color: "black" }} // 글씨색 검정으로 설정
               >
                 Team Matching
               </Link>
               {profileLink}
-              <Link
-                to="/notifications"
-                className="p-4 hover:bg-gray-100 hover:text-pink-800"
-              >
-                Notification
-              </Link>
+              <li className="relative">
+                <Link
+                  to="/notifications"
+                  className="p-4 hover:bg-gray-100 hover:text-pink-800 flex items-center relative justify-center"
+                  style={{ color: "black" }} // 글씨색 검정으로 설정
+                >
+                  <span className="mr-2">Notification</span>
+                  <span className="absolute top-0 right-0 bg-pink-800 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                    3 {/* 알림 숫자 */}
+                  </span>
+                </Link>
+              </li>
             </ul>
           )}
         </div>

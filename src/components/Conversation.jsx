@@ -7,6 +7,8 @@ import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
+import MiniProfileCard from "./MiniProfileCard";
+import Footer from "./Footer";
 
 const Conversation = () => {
   const [isExpanded, setIsExpanded] = useState(true); // 섹션의 확장 상태를 관리합니다.
@@ -126,9 +128,14 @@ const Conversation = () => {
     }
   };
 
+  const aiAnalysis = {
+    probability: 85, // 예시 확률
+    reason: "팀의 성과가 뛰어나며, 프로젝트의 혁신성이 높습니다.",
+  };
+
   return (
     <section id="home" className="">
-      <div className="relative w-full h-0" style={{ paddingBottom: "40%" }}>
+      <div className="relative w-full h-0 " style={{ paddingBottom: "40%" }}>
         <div className="absolute inset-0 flex items-center justify-center">
           <img
             src="/videos/jown.jpeg"
@@ -158,14 +165,7 @@ const Conversation = () => {
           </span>
           <div className="flex justify-between mt-10 items-center">
             {video.participants.map((participant) => (
-              <div key={participant.id} className="profile-card">
-                <img
-                  alt={participant.username}
-                  src={participant.avatar}
-                  className="profile-picture w-16 h-16 rounded-full"
-                />
-                <p className="profile-username">{participant.username}</p>
-              </div>
+              <MiniProfileCard key={participant.id} participant={participant} />
             ))}
           </div>
         </div>
@@ -251,6 +251,46 @@ const Conversation = () => {
               <FiChevronLeft size={64} />
             )}
           </button>
+        </div>
+      </div>
+      <div className={`border p-10 container mx-auto min-h-50 mt-24 mb-40`}>
+        <span className="text-center w-full block text-lg font-medium">
+          <h2>인공지능 분석 결과</h2>
+        </span>
+        <div className="grid grid-cols-2 gap-4 mt-10 items-start">
+          {video.participants.map((participant) => (
+            <div key={participant.id} className="flex items-start">
+              <div className="mr-4">
+                <MiniProfileCard participant={participant} />
+              </div>
+              <div>
+                <p className="text-sm">
+                  <strong>{participant.name}</strong> 님은 총{" "}
+                  <strong>40%</strong>의 확률로 성공할 것으로 분석되었습니다.
+                  이는 대회에서 중요한 학점과 끈기 부분에서 높은점수를 보였기
+                  때문입니다.
+                </p>
+                <div className="flex items-center mt-2">
+                  <div className="w-20 h-4 bg-gray-300 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-green-500"
+                      style={{ width: "40%" }}
+                    ></div>
+                  </div>
+                  <p className="ml-2 text-lg font-bold">40%</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* 전체 분석 인공지능 그래프와 전체 확률 */}
+        <div className="mt-10 flex justify-center flex-col">
+          <img
+            src="/imgs/graph.jpg"
+            alt="전체 분석 그래프"
+            className="mx-auto h-100"
+          />
+          <p className="text-3xl font-bold mt-4">전체 확률: 40%</p>
         </div>
       </div>
     </section>
