@@ -49,6 +49,7 @@ export default function List_Pictures() {
   const { state } = location;
 
   const [latestVideos, setLatestVideos] = useState([]); // 최신순으로 정렬된 데이터 상태
+  const [periodVideos, setPeriodVideos] = useState([]);
 
   const [departmentChecked, setDepartmentChecked] = React.useState(false);
   const [latestChecked, setLatestChecked] = React.useState(false);
@@ -160,11 +161,13 @@ export default function List_Pictures() {
     // 상금순으로 정렬하는 함수
 
     axiosInstance
-      .get("http://127.0.0.1:8000/contests/filtered-contests/?latest=true")
+      .get("http://127.0.0.1:8000/contests/filtered-contests/?prize=true")
+
       .then((response) => {
         // 요청 성공 시 데이터 처리
         // 여기서 서버에서 응답한 데이터를 사용하여 UI를 업데이트할 수 있습니다.
-        setLatestVideos(response.data); // 최신순으로 정렬된 데이터를 설정합니다.
+        console.log(response.data); // 응답 데이터를 콘솔에 출력하여 확인
+        setPeriodVideos(response.data); // 최신순으로 정렬된 데이터를 설정합니다.
       })
       .catch((error) => {
         // 요청 실패 시 에러 처리
@@ -252,7 +255,7 @@ export default function List_Pictures() {
       <div>
         {isLoading && <p>Loading...</p>}
         {error && <p>Something is wrong...</p>}
-        {!latestChecked && videos && (
+        {!periodChecked && !latestChecked && videos && (
           <div className="grid grid-cols-1 md:grid-cols-3 lg-grid-cols-4 gap-4 p-4 ">
             {videos.results.map((video) => (
               <PictureCard key={video.id} video={video}></PictureCard>
@@ -272,26 +275,42 @@ export default function List_Pictures() {
               </div>
             </div>
           )}
+
+        {periodChecked &&
+          periodVideos && ( // latestChecked가 true이고 latestVideos 상태가 있을 때
+            <div className="grid grid-cols-1 md:grid-cols-3 lg-grid-cols-4 gap-4 p-4 ">
+              {periodVideos.map((video) => (
+                <PictureCard key={video.id} video={video}></PictureCard>
+              ))}
+              <div className="flex items-center justify-center blinking-text ">
+                <h1 className="text-3xl mb-2 font-diphylleia ">More</h1>
+                <IoIosArrowRoundBack className="text-3xl ml-1 font-diphylleia " />
+              </div>
+            </div>
+          )}
       </div>
-      <div className="flex justify-center mt-4">
-        <button
-          className={`bg-pink-800 text-white font-bold py-2 px-4 rounded mr-2 ${
-            !videos || !videos.previous ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          onClick={() => handlePageChange(videos?.previous)}
-          disabled={!videos || !videos.previous}
-        >
-          Previous
-        </button>
-        <button
-          className={`bg-pink-800 text-white font-bold py-2 px-4 rounded ml-2 ${
-            !videos || !videos.next ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          onClick={() => handlePageChange(videos?.next)}
-          disabled={!videos || !videos.next}
-        >
-          Next
-        </button>
+      <div>
+        {/* 컨텐츠 렌더링 */}
+        <div className="flex justify-center mt-4">
+          <button
+            className={`bg-pink-800 text-white font-bold py-2 px-4 rounded mr-2 ${
+              !videos || !videos.previous ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handlePrevPage}
+            disabled={!videos || !videos.previous}
+          >
+            Previous
+          </button>
+          <button
+            className={`bg-pink-800 text-white font-bold py-2 px-4 rounded ml-2 ${
+              !videos || !videos.next ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleNextPage}
+            disabled={!videos || !videos.next}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -24,7 +24,11 @@ const TeamButton = ({ data, teamName }) => {
       <div className="flex items-center">
         <img className="w-16 h-16 rounded-full p-1 mr-4 mt-12 ml-4" />
         <div className="flex flex-col">
-          <p className="font-diphylleia-bold text-xl mt-12 ml-4">{teamName}</p>
+          <p className="font-diphylleia-bold text-xl mt-12 ml-4">
+            {teamName.length > 20
+              ? `${teamName.substring(0, 20)}...`
+              : teamName}
+          </p>
         </div>
       </div>
 

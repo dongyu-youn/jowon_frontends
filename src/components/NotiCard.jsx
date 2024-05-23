@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Avatar, Button } from "@chakra-ui/react";
+import Avartar from "./Avatar";
 
 export default function NotiCard({ video, onClick }) {
   return (
@@ -8,7 +9,7 @@ export default function NotiCard({ video, onClick }) {
       onClick={onClick}
       className="profile  rounded-lg shadow-md transition-transform transform hover:scale-105 hover:shadow-lg"
     >
-      <Avatar />
+      <Avartar></Avartar>
       <h1 className="text-2xl font-bold mt-4">{video.message}</h1>
       {/* <p className="text-lg text-gray-600">{video.연관학과}</p> */}
       <div className="space-x-2 mt-2">

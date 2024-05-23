@@ -50,22 +50,24 @@ export default function Notifications() {
   };
 
   return (
-    <div className="bg-white text-black p-12">
-      <div>
-        {isLoading && <p>Loading...</p>}
-        {error && <p>Something is wrong...</p>}
-        {userData && (
-          <div className="grid grid-cols-3 gap-8 mt-24">
-            {userData.map((video) => (
-              <div key={video.id}>
-                <NotiCard
-                  onClick={() => handleClick(video.user)}
-                  video={video}
-                />
-              </div>
-            ))}
-          </div>
-        )}
+    <div className="flex flex-col justify-center items-center ">
+      <div className="text-black p-12">
+        <div>
+          {isLoading && <p>Loading...</p>}
+          {error && <p>Something is wrong...</p>}
+          {userData && (
+            <div className="grid grid-cols-3 gap-8 mt-24">
+              {userData.results.map((video) => (
+                <div key={video.id}>
+                  <NotiCard
+                    onClick={() => handleClick(video.user)}
+                    video={video}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <Footer />
     </div>
