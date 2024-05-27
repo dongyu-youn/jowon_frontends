@@ -47,6 +47,15 @@ const Filtering = ({
         )}
         상금순
       </button>
+
+      <button onClick={handleCustomFiltering} className="btn flex items-center">
+        {customFilteringChecked ? (
+          <RiCheckboxCircleFill />
+        ) : (
+          <RiCheckboxBlankCircleFill size={24} />
+        )}
+        맞춤 필터링
+      </button>
       <button
         onClick={handleToggleOnlineOffline}
         className={`btn flex items-center ${
@@ -62,14 +71,6 @@ const Filtering = ({
         }`}
       >
         {personalTeamChecked ? "팀" : "개인"}
-      </button>
-      <button onClick={handleCustomFiltering} className="btn flex items-center">
-        {customFilteringChecked ? (
-          <RiCheckboxCircleFill />
-        ) : (
-          <RiCheckboxBlankCircleFill size={24} />
-        )}
-        맞춤 필터링
       </button>
     </div>
   );

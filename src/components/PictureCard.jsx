@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { format } from "date-fns";
 
 export default function PictureCard({ video }) {
   const [liked, setLiked] = useState(false);
+  const formattedDate = format(new Date(video.created), "yyyy-MM-dd");
 
   useEffect(() => {
     checkLikedStatus(); // 컴포넌트가 처음으로 렌더링될 때 한 번만 호출
@@ -78,11 +80,33 @@ export default function PictureCard({ video }) {
       <img
         src={video.사진}
         alt="Your Image Description"
-        className="w-full object-cover object-center p-4 h-[284px]"
+        className="w-full object-cover object-center p-4 h-[354px]"
       ></img>
-      <div className="flex justify-center p-4"> {video.제목}</div>
-      <div className="flex justify-center p-4">연관학과: {video.연관학과}</div>
-      <div className="flex justify-center p-4">상금: {video.상금}</div>
+      <div
+        className="flex justify-center p-2 text-xl "
+        style={{ fontFamily: "Danjo-bold-Regular" }}
+      >
+        {" "}
+        {video.제목}
+      </div>
+      <div
+        className="flex justify-center p-2 "
+        style={{ fontFamily: "BookkMyungjo-Bd" }}
+      >
+        분야: {video.분야}
+      </div>
+      <div
+        className="flex justify-center p-2"
+        style={{ fontFamily: "BookkMyungjo-Bd" }}
+      >
+        마감기한: {formattedDate}
+      </div>
+      <div
+        className="flex justify-center p-2"
+        style={{ fontFamily: "BookkMyungjo-Bd" }}
+      >
+        상금: {video.상금}
+      </div>
     </Link>
   );
 }

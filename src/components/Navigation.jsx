@@ -40,7 +40,34 @@ export default function Navigation() {
 
   const [isHovered, setIsHovered] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+  // 로컬 스토리지에서 초기값을 가져옴
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem("user");
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+      console.error("Error reading localStorage:", error);
+      return null;
+    }
+  });
+
+  // user 상태가 변경될 때마다 로컬 스토리지에 저장
+  // user 상태가 변경될 때마다 로컬 스토리지에 저장
+  useEffect(() => {
+    try {
+      localStorage.setItem("user", JSON.stringify(user));
+      console.log("User state saved to localStorage:", user);
+    } catch (error) {
+      console.error("Error writing to localStorage:", error);
+    }
+
+    // user 상태가 업데이트될 때 isLoggedIn 상태도 업데이트
+    if (user) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [user]);
 
   const [searchOpen, setSearchOpen] = useState(false);
   const toggleSearch = () => setSearchOpen((prev) => !prev);
@@ -71,7 +98,7 @@ export default function Navigation() {
     <li className="p-4 hover:bg-gray-100 ">
       <Link
         to={{ pathname: "pictures/profile", state: { user: user } }}
-        className="header__menu__item hover:text-pink-800"
+        className="header__menu__item hover:text-pink-800 font-customFont"
         style={{ color: "black" }} // 여기에 color 속성 추가
       >
         Profile
@@ -122,34 +149,24 @@ export default function Navigation() {
           >
             <a className="header__menu__item hover:text-pink-800 pr-8">Likes</a>
           </Link>
-        </li>
-        <li className="inline-block align-top relative p-4 font-customFont hover:underline">
-          {/* 로그인/로그아웃 버튼 */}
-          <p
-            className="inline-block align-top relative p-4 font-customFont hover:underline pr-8"
-            onClick={handleLoginButtonClick}
+          <Link
+            to="/pictures/messages"
+            className="inline-block align-top relative p-4 font-customFont hover:underline hover:text-pink-800"
           >
-            {loginButtonText}
-          </p>
+            Team Matching
+          </Link>
         </li>
 
         <div className="relative inline-block">
           <button
-            className="inline-flex items-center justify-between p-4 font-customFont bg-black text-white hover:bg-white hover:text-black focus:outline-none"
+            className="font-customFont inline-flex items-center justify-between p-4 font-customFont bg-black text-white hover:bg-white hover:text-black focus:outline-none"
             onClick={toggleDropdown}
           >
-            Notification
+            My Page
             {isOpen ? <IoChevronUpOutline /> : <IoChevronDownOutline />}
           </button>
           {isOpen && (
             <ul className="absolute left-0 mt-2 w-48 bg-white shadow-md z-10 flex flex-col">
-              <Link
-                to="/pictures/messages"
-                className="p-4 hover:bg-gray-100 hover:text-pink-800"
-                style={{ color: "black" }} // 글씨색 검정으로 설정
-              >
-                Team Matching
-              </Link>
               {profileLink}
               <li className="relative">
                 <Link
@@ -157,11 +174,21 @@ export default function Navigation() {
                   className="p-4 hover:bg-gray-100 hover:text-pink-800 flex items-center relative justify-center"
                   style={{ color: "black" }} // 글씨색 검정으로 설정
                 >
-                  <span className="mr-2">Notification</span>
+                  <span className="mr-2 font-customFont">Notification</span>
                   <span className="absolute top-0 right-0 bg-pink-800 text-white rounded-full w-6 h-6 flex items-center justify-center">
                     3 {/* 알림 숫자 */}
                   </span>
                 </Link>
+              </li>
+              <li className="p-4 hover:bg-gray-100 hover:text-pink-800 hover:cursor:pointer">
+                {/* 로그인/로그아웃 버튼 */}
+                <p
+                  className="inline-block align-top relative p-4 font-customFont  pr-8 hover:cursor-pointer"
+                  style={{ color: "black" }} // 글씨색 검정으로 설정
+                  onClick={handleLoginButtonClick}
+                >
+                  {loginButtonText}
+                </p>
               </li>
             </ul>
           )}

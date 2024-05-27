@@ -41,8 +41,14 @@ const SurveyModal = ({ onClose, toggleLike }) => {
 
       survey: 1, // 설문조사 ID로 교체 필요
     }));
+
+    // 배열에 선택된 값들만 저장
+    const selectedChoices = questions.map(
+      (question, index) => responses[`question${index + 1}`]
+    );
+
     // 먼저 toggleLike 함수 호출
-    toggleLike(e);
+    toggleLike(e, selectedChoices);
     try {
       for (let response of formattedResponses) {
         await axiosInstance.post(
@@ -51,6 +57,9 @@ const SurveyModal = ({ onClose, toggleLike }) => {
         );
       }
       console.log("Survey responses submitted:", formattedResponses);
+      // 설문조사가 성공적으로 제출된 후에 toggleLike를 호출합니다.
+
+      console.log("Selected choices:", selectedChoices);
       // 설문조사가 성공적으로 제출된 후에 toggleLike를 호출합니다.
 
       console.log("toggle 함수가 호출되었습니다"); // 로그 추가
@@ -75,7 +84,7 @@ const SurveyModal = ({ onClose, toggleLike }) => {
           }, []);
 
           setQuestions(allQuestions);
-
+          console.log(allQuestions);
           // 합쳐진 질문들을 출력
           allQuestions.forEach((question, index) => {
             console.log(`Question ${index + 1}: ${question.title}`);
@@ -115,8 +124,8 @@ const SurveyModal = ({ onClose, toggleLike }) => {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">
-      <div className="bg-white p-10 rounded-lg w-96">
+    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50  ">
+      <div className="bg-white p-10 rounded-lg w-full max-w-4xl max-h-screen overflow-y-scroll">
         <h2 className="text-3xl font-bold mb-8 text-black">
           인공지능 서비스를 위한 설문조사
         </h2>
@@ -126,31 +135,6 @@ const SurveyModal = ({ onClose, toggleLike }) => {
           <p>Error: {error}</p>
         ) : (
           <form onSubmit={handleSubmit}>
-            {/* {questions.map((question, index) => (
-              <div className="mb-8" key={index}>
-                <label
-                  htmlFor={`question${index + 1}`}
-                  className="block mb-2 text-black"
-                >{`질문 ${index + 1}:`}</label>
-                <select
-                  id={`question${index + 1}`}
-                  name={`question${index + 1}`}
-                  className="w-full border rounded p-3 text-black"
-                  onChange={handleChange}
-                >
-                  <option value="">선택해주세요</option>
-                  {question.responses.map((response, idx) => (
-                    <option
-                      key={idx}
-                      value={response.choice}
-                      className="text-black"
-                    >
-                      {response.text}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ))} */}
             <div>
               {questions.map((question, index) => (
                 <div className="mb-8" key={index}>

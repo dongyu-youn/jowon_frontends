@@ -14,6 +14,7 @@ const Conversation = () => {
   const [isExpanded, setIsExpanded] = useState(true); // 섹션의 확장 상태를 관리합니다.
   const [isThirdExpanded, setIsThirdExpanded] = useState(true); // 세 번째 섹션의 확장 상태를 관리합니다.
   const [messages, setMessages] = useState(""); // 입력된 메시지 상태
+  const [loading, setLoading] = useState(false); // 분석 요청 중인지 여부를 나타내는 상태
 
   // useEffect(() => {
   //   const fetchMessages = async () => {
@@ -128,9 +129,33 @@ const Conversation = () => {
     }
   };
 
-  const aiAnalysis = {
-    probability: 85, // 예시 확률
-    reason: "팀의 성과가 뛰어나며, 프로젝트의 혁신성이 높습니다.",
+  const analyzePotential = async () => {
+    setLoading(true); // 분석 요청 중인 상태로 설정합니다.
+    try {
+      const requestData = {
+        // 예측에 필요한 데이터를 여기에 추가합니다.
+        grade: 3.8,
+        depart: 101,
+        credit: 120,
+        in_school_award_cnt: 2,
+        out_school_award_cnt: 1,
+        national_competition_award_cnt: 0,
+        certificate: "1,2,3",
+        subject: "4,5,6",
+        major_field: "7,8,9",
+        codingTest_score: 90,
+      };
+
+      const response = await axios.post(
+        `http://127.0.0.1:8000/predictor/`, // 분석을 요청하는 API 엔드포인트를 입력합니다.
+        requestData // 예측에 필요한 데이터를 함께 보냅니다.
+      );
+      console.log(response.data); // 분석 결과를 콘솔에 출력합니다.
+      // 필요한 분석 결과를 상태로 저장하고 화면에 표시하는 로직을 추가할 수 있습니다.
+    } catch (error) {
+      console.error("Error analyzing potential:", error);
+    }
+    setLoading(false); // 분석 요청이 완료되었으므로 상태를 false로 설정합니다.
   };
 
   return (
@@ -236,7 +261,10 @@ const Conversation = () => {
           </button>
           <div className="flex justify-between mt-10 items-center"></div>
 
-          <button className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-white text-black items-center hover:bg-black hover:text-white cursor-pointer ">
+          <button
+            onClick={analyzePotential}
+            className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-white text-black items-center hover:bg-black hover:text-white cursor-pointer "
+          >
             <RiRobot2Line className="mr-4" size={24} /> <>수상가능성 분석</>
           </button>
 

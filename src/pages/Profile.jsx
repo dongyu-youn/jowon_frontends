@@ -77,32 +77,69 @@ export default function Profile({}) {
           <>
             <img
               src="https://firebasestorage.googleapis.com/v0/b/wpoint-1d1be.appspot.com/o/KakaoTalk_Photo_2024-04-01-14-36-50.jpeg?alt=media&token=5b2fac95-0dbd-40c1-a030-a58336997c24"
-              className="w-1/6 px-20 basis-7/12"
+              className="w-1/4 px-20 basis-7/12"
             />
 
             <div className="w-full basis-5/12 flex flex-col p-4 text-left">
-              <div className="flex items-center py-2 mb-12 font-dongle_light">
-                <h2 className="text-4xl font-bold mr-2 font-dongle_semibolde">
+              <div className="flex items-center py-2 mb-12">
+                <span className="text-2xl font-dongle_light w-1/3 mr-40">
+                  이름
+                </span>
+                <span className="text-2xl font-dongle_light  w-2/3 ">
                   {userData.username}
-                </h2>
-                <p className="flex items-center text-2xl font-dongle_light ml-4">
-                  신뢰도 :
+                </span>
+              </div>
+
+              <div className="flex items-center py-2 mb-12">
+                <span className="text-2xl font-dongle_light w-1/3 mr-40">
+                  신뢰도
+                </span>
+                <span className="text-2xl font-dongle_light  w-2/3 ">
                   <StarRating
                     totalStars={userData.average_rating}
                     yellowStars={userData.average_rating}
                   />
-                </p>
+                </span>
               </div>
-              <p className="text-2xl mb-12 font-dongle_light">
-                분야 : {userData.개발경력}
-              </p>
-              <p className="text-2xl font-bold py-2 mb-4 font-dongle"></p>
-              <p className="text-2xl font-bold py-2 mb-8 font-dongle">
-                총 획득 상금 : 200만원
-              </p>
-              <p className="text-2xl font-bold py-2 mb-8 font-dongle">
-                올해 예상 상금 : 300만원
-              </p>
+
+              <div className="flex items-center py-2 mb-12">
+                <span className="text-2xl font-dongle_light w-1/3 mr-40">
+                  분야
+                </span>
+                <span className="text-2xl font-dongle_light  w-2/3 ">
+                  {userData.개발경력}
+                </span>
+              </div>
+
+              <div className="flex items-center py-2 mb-12">
+                <span className="text-2xl font-dongle_light w-1/3 mr-40">
+                  총획득상금
+                </span>
+                <span className="text-2xl font-dongle_light  w-2/3 ">
+                  227만원
+                </span>
+              </div>
+
+              <div className="flex items-center py-2 mb-12">
+                <span className="text-2xl font-dongle_light w-1/3 mr-28">
+                  수상 4
+                </span>
+                <div className="flex flex-col">
+                  <div className="text-2xl font-dongle_light   ">
+                    2024 | 코딩공모전 금상
+                  </div>
+                  <div className="text-2xl font-dongle_light   ">
+                    2023 | 알고리즘대회 금상
+                  </div>
+                  <div className="text-2xl font-dongle_light   ">
+                    2022 | 전국ai대회 금상
+                  </div>
+                  <div className="text-2xl font-dongle_light   ">
+                    2022 | 전국 크리에어터대회 금상
+                  </div>
+                </div>
+              </div>
+
               <Button className="mt-20" text="받은제의"></Button>
               <Button className="mt-20" text="프로필수정"></Button>
             </div>

@@ -89,15 +89,13 @@ function PictureDetail() {
     }
   };
 
-  const toggleLike = async (e) => {
+  const toggleLike = async (e, selectedChoices) => {
     e.stopPropagation(); // 클릭 이벤트가 부모로 전파되지 않도록 함
     e.preventDefault();
     console.log("toggleLike 함수가 실행되었습니다"); // 함수가 실행될 때 로그 출력
-    try {
-      // 클라이언트에서 좋아요 상태를 토글하면서 백엔드로 전송할 대회의 ID
-      const contestId = video.id;
 
-      // 좋아요 상태를 토글합니다.
+    try {
+      const contestId = video.id;
       const newLiked = !apply;
       setApply(newLiked); // 새로운 좋아요 상태를 설정
 
@@ -110,17 +108,26 @@ function PictureDetail() {
         },
       });
 
-      // 서버로 좋아요 상태를 전송합니다.
+      // 서버로 좋아요 상태를 전송
       await axiosInstance.put("http://127.0.0.1:8000/users/me/apply/", {
         id: contestId,
       });
 
-      // 좋아요 상태를 확인하여 다시 설정합니다.
+      // 좋아요 상태를 확인하여 다시 설정
       checkApplyStatus();
 
-      // 새로운 Conversation을 생성하기 위한 POST 요청
+      // selected_choices 업데이트
+      await axiosInstance.put(
+        "http://127.0.0.1:8000/users/update-selected-choices/",
+        { selected_choices: selectedChoices, contest_id: contestId }
+      );
+      console.log("Selected choices updated");
+
+      // 새로운 Conversation 생성
       const conversationData = {
         teamName: video.제목, // 필요한 데이터 설정
+        selected_choices: selectedChoices, // 선택된 값을 포함
+        contest_id: contestId, // contest_id를 추가
       };
 
       await axiosInstance.post(
@@ -128,15 +135,13 @@ function PictureDetail() {
         conversationData
       );
       console.log("New conversation created");
-      console.log(video.사진);
 
-      // 새로운 Conversation을 생성하기 위한 POST 요청
+      // 새로운 알림 생성
       const NotiData = {
         receiver: 1, // 사용자 ID
         message: video.제목,
         image: video.사진,
       };
-      console.log(NotiData);
       await axiosInstance.post(
         "http://127.0.0.1:8000/notifications/",
         NotiData
@@ -144,7 +149,6 @@ function PictureDetail() {
       console.log("New noti created");
     } catch (error) {
       console.error("Error toggling like:", error);
-      // 에러 처리 로직 추가
     }
   };
 
@@ -183,28 +187,54 @@ function PictureDetail() {
         <img src={video.사진} className="w-1/6 px-20 basis-7/12" />
 
         <div className="w-full basis-5/12 flex flex-col p-4">
-          <h2 className="text-4xl font-bold py-2 mb-12 font-dongle_semibolde">
-            이름 : {video.제목}
-          </h2>
-          <p className="text-2xl font-bold py-2  mb-4 font-dongle">
-            연관학과 : {video.연관학과}
-          </p>
-          <p className="text-2xl font-bold py-2 mb-8 font-dongle">
-            상금: {video.상금}
-          </p>
-
-          <p className="py-4 text-2xl  border-b border-gray-400 mb-12 font-dongle_light">
-            학년: {video.학년}
-          </p>
-          <p className=" flex items-center justify-center py-4 text-2xl  border-b border-gray-400 mb-12 font-dongle_light">
-            분야: {video.분야}
-          </p>
-          <p className=" flex items-center justify-center py-4 text-2xl  border-b border-gray-400 mb-12 font-dongle_light">
-            위치: {video.위치}
-          </p>
-          <p className=" flex items-center justify-center py-4 text-2xl  border-b border-gray-400 mb-12 font-dongle_light">
-            참고링크: {video.참고링크}
-          </p>
+          <div className="flex items-center py-2 mb-12">
+            <span className="text-2xl font-dongle_light w-1/3 mr-40">이름</span>
+            <span className="text-2xl font-dongle_light  w-2/3 ">
+              {video.제목}
+            </span>
+          </div>
+          <div className="flex items-center py-2 mb-4">
+            <span className="text-2xl  font-dongle w-1/3 mr-40">연관학과</span>
+            <span className="text-2xl  font-dongle w-2/3 ">
+              {video.연관학과}
+            </span>
+          </div>
+          <div className="flex items-center py-2 mb-8">
+            <span className="text-2xl font-dongle w-1/3 mr-40">상금 </span>
+            <span className="text-2xl font-dongle w-2/3">{video.상금}</span>
+          </div>
+          <div className="flex items-center py-4  mb-12">
+            <span className="text-2xl font-dongle_light w-1/3 mr-40">
+              학년{" "}
+            </span>
+            <span className="text-2xl font-dongle_light w-2/3">
+              {video.학년}
+            </span>
+          </div>
+          <div className="flex items-center py-4 mb-12">
+            <span className="text-2xl font-dongle_light w-1/3 mr-40">
+              분야{" "}
+            </span>
+            <span className="text-2xl font-dongle_light w-2/3">
+              {video.분야}
+            </span>
+          </div>
+          <div className="flex items-center py-4  mb-12">
+            <span className="text-2xl font-dongle_light w-1/3 mr-40">
+              위치{" "}
+            </span>
+            <span className="text-2xl font-dongle_light w-2/3">
+              {video.위치}
+            </span>
+          </div>
+          <div className="flex items-center py-4 mb-12">
+            <span className="text-2xl font-dongle_light w-1/3 mr-40">
+              참고링크{" "}
+            </span>
+            <span className="text-2xl font-dongle_light w-2/3">
+              {video.참고링크}
+            </span>
+          </div>
 
           <Button
             className="mt-20"
@@ -216,7 +246,6 @@ function PictureDetail() {
             <Button className="" text="완료" onClick={toggleLike}></Button>
           ) : (
             <Button className="" text="신청하기" onClick={toggleModal}></Button>
-            // 나중에 toggleLike
           )}
         </div>
       </section>

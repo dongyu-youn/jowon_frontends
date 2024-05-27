@@ -1,11 +1,45 @@
 import { useState } from "react";
 import { FaUserNinja, FaLock, FaEnvelope, FaUserSecret } from "react-icons/fa";
+import axios from "axios";
+import Cookies from "js-cookie";
 
-export default function SignUpModal({ isOpen, onClose }) {
+export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleSignUp = async () => {
+    // async 키워드 추가
+    // axios를 사용하여 서버에 POST 요청을 보냅니다.
+
+    const userToken = Cookies.get("csrftoken") || "";
+
+    const axiosInstance = axios.create({
+      withCredentials: true,
+      headers: {
+        "X-CSRFToken": userToken,
+      },
+    });
+    try {
+      const response = await axiosInstance.post(
+        "http://127.0.0.1:8000/users/signup/",
+        {
+          username: username,
+          password: password,
+        }
+      );
+      // 성공적으로 응답을 받았을 때 실행됩니다.
+      console.log(response.data);
+      // 여기에 원하는 작업을 추가합니다. (예: 회원가입 성공 메시지 표시)
+      handleSubmit(username, password);
+      onClose();
+    } catch (error) {
+      // 요청이 실패했을 때 실행됩니다.
+      console.error(error);
+      // 여기에 오류 처리 로직을 추가합니다. (예: 오류 메시지 표시)
+    }
+  };
 
   return (
     <div
@@ -46,7 +80,7 @@ export default function SignUpModal({ isOpen, onClose }) {
                   Sign up
                 </h3>
                 <div className="mt-2">
-                  <div className="mt-1 relative rounded-md shadow-sm">
+                  {/* <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FaUserSecret className="h-5 w-5 text-gray-400" />
                     </div>
@@ -73,7 +107,7 @@ export default function SignUpModal({ isOpen, onClose }) {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
-                  </div>
+                  </div> */}
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FaUserNinja className="h-5 w-5 text-gray-400" />
@@ -108,9 +142,9 @@ export default function SignUpModal({ isOpen, onClose }) {
           </div>
           <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
-              onClick={onClose}
+              onClick={handleSignUp}
               type="button"
-              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-pink-800 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
             >
               Sign up
             </button>
