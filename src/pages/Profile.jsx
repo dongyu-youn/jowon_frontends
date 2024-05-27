@@ -140,6 +140,18 @@ export default function Profile({}) {
                 </div>
               </div>
 
+              <div className="flex items-center py-2 mb-12">
+                <span className="text-2xl font-dongle_light w-1/3 mr-24">
+                  자기소개
+                </span>
+                <span className="text-lg font-dongle_light ">
+                  저는 풀스택 개발자 윤동규입니다. ~ 대회, ~대회,...등 4번의
+                  대회를 나가 8번의 수상을 하였고, 개발 경력은 2년입니다. ~~~
+                  기술등을 할 줄 아며, 같이 대회 나가고 싶으신 분들은
+                  제의바랍니다.
+                </span>
+              </div>
+
               <Button className="mt-20" text="받은제의"></Button>
               <Button className="mt-20" text="프로필수정"></Button>
             </div>

@@ -30,6 +30,7 @@ function PictureDetail() {
           `http://127.0.0.1:8000/contests/${id}`
         ); // id 값을 이용하여 서버로 요청
         setVideo(response.data);
+        console.log(response.data.사진);
       } catch (error) {
         console.error("Error fetching video:", error);
       }
@@ -128,6 +129,7 @@ function PictureDetail() {
         teamName: video.제목, // 필요한 데이터 설정
         selected_choices: selectedChoices, // 선택된 값을 포함
         contest_id: contestId, // contest_id를 추가
+        image: video.사진,
       };
 
       await axiosInstance.post(

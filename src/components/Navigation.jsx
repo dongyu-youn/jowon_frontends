@@ -125,7 +125,7 @@ export default function Navigation() {
 
   return (
     <div className="">
-      <ul className="flex items-center">
+      <ul className="flex items-center mr-8">
         <li
           className={`inline-block align-top relative p-4 font-customFont ${
             getCurrentPath() === "/pictures" ? "text-pink-800" : ""
@@ -149,6 +149,13 @@ export default function Navigation() {
           >
             <a className="header__menu__item hover:text-pink-800 pr-8">Likes</a>
           </Link>
+        </li>
+
+        <li
+          className={`inline-block align-top relative p-4 font-customFont ${
+            getCurrentPath() === "/pictures/messages" ? "text-pink-800" : ""
+          }`}
+        >
           <Link
             to="/pictures/messages"
             className="inline-block align-top relative p-4 font-customFont hover:underline hover:text-pink-800"
@@ -166,7 +173,7 @@ export default function Navigation() {
             {isOpen ? <IoChevronUpOutline /> : <IoChevronDownOutline />}
           </button>
           {isOpen && (
-            <ul className="absolute left-0 mt-2 w-48 bg-white shadow-md z-10 flex flex-col">
+            <ul className="absolute left-0 mt-2 w-36 bg-white shadow-md z-10 flex flex-col">
               {profileLink}
               <li className="relative">
                 <Link

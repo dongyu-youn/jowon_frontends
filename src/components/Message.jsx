@@ -23,6 +23,7 @@ const Message = () => {
         "http://127.0.0.1:8000/conversations/"
       );
       return response.data;
+      console.log(response.data.image);
     } catch (error) {
       throw new Error("Network response was not ok");
     }
@@ -80,7 +81,12 @@ const Message = () => {
         {error && <p>Something is wrong...</p>}
         {userData &&
           userData.map((video) => (
-            <TeamButton key={video.id} data={video} teamName={video.teamName} />
+            <TeamButton
+              key={video.id}
+              data={video}
+              teamName={video.teamName}
+              image={video.image} // 수정된 부분
+            />
           ))}
       </div>
 

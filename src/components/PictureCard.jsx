@@ -80,7 +80,7 @@ export default function PictureCard({ video }) {
       <img
         src={video.사진}
         alt="Your Image Description"
-        className="w-full object-cover object-center p-4 h-[354px]"
+        className="w-full object-cover object-center p-4 h-[404px]"
       ></img>
       <div
         className="flex justify-center p-2 text-xl "
