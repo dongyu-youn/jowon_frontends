@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import ModalComponent from "../components/Modal";
 import Cookies from "js-cookie";
 import SurveyModal from "../components/SurveyModal";
+import { useNavigate } from "react-router-dom"; // useNavigate 훅을 가져옵니다
 
 function PictureDetail() {
   const [video, setVideo] = useState(null);
@@ -14,6 +15,11 @@ function PictureDetail() {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태를 저장하는 state
 
   const [isModalOpenC, setIsModalOpenC] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate(); // useNavigate 훅을 초기화합니다
 
   const toggleModal = () => {
     setIsModalOpenC(!isModalOpenC);
@@ -95,6 +101,9 @@ function PictureDetail() {
     e.preventDefault();
     console.log("toggleLike 함수가 실행되었습니다"); // 함수가 실행될 때 로그 출력
 
+    // 알림 페이지로 즉시 리디렉션
+    navigate("/notifications");
+
     try {
       const contestId = video.id;
       const newLiked = !apply;
@@ -123,6 +132,24 @@ function PictureDetail() {
         { selected_choices: selectedChoices, contest_id: contestId }
       );
       console.log("Selected choices updated");
+
+      // 인공지능 모델 실행
+      const aiResponse = await axiosInstance.post(
+        "http://127.0.0.1:8000/predictor/",
+        {
+          grade: 3,
+          depart: 3,
+          credit: 2,
+          in_school_award_cnt: 1,
+          out_school_award_cnt: 1,
+          national_competition_award_cnt: 2,
+          certificate: 50,
+          subject: 50,
+          major_field: 50,
+          codingTest_score: 2,
+        }
+      );
+      console.log("AI model executed", aiResponse.data);
 
       // 새로운 Conversation 생성
       const conversationData = {

@@ -84,7 +84,7 @@ const Conversation = () => {
           `http://127.0.0.1:8000/conversations/${id}`
         ); // id 값을 이용하여 서버로 요청
         setVideo(response.data);
-        console.log(response.data.participants.username);
+        console.log(response.data.participants.grade);
       } catch (error) {
         console.error("Error fetching video:", error);
       }
@@ -134,16 +134,16 @@ const Conversation = () => {
     try {
       const requestData = {
         // 예측에 필요한 데이터를 여기에 추가합니다.
-        grade: 3.8,
-        depart: 101,
-        credit: 120,
-        in_school_award_cnt: 2,
+        grade: 3,
+        depart: 3,
+        credit: 2,
+        in_school_award_cnt: 1,
         out_school_award_cnt: 1,
-        national_competition_award_cnt: 0,
-        certificate: "1,2,3",
-        subject: "4,5,6",
-        major_field: "7,8,9",
-        codingTest_score: 90,
+        national_competition_award_cnt: 2,
+        certificate: 50,
+        subject: 50,
+        major_field: 50,
+        codingTest_score: 2,
       };
 
       const response = await axios.post(
