@@ -10,13 +10,13 @@ import SurveyModal from "../components/SurveyModal";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅을 가져옵니다
 
 function PictureDetail() {
+  const [loading, setLoading] = useState(false);
   const [video, setVideo] = useState(null);
   const [apply, setApply] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태를 저장하는 state
 
   const [isModalOpenC, setIsModalOpenC] = useState(false);
 
-  const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // useNavigate 훅을 초기화합니다
@@ -101,10 +101,13 @@ function PictureDetail() {
     e.preventDefault();
     console.log("toggleLike 함수가 실행되었습니다"); // 함수가 실행될 때 로그 출력
 
-    // 알림 페이지로 즉시 리디렉션
-    navigate("/notifications");
-
     try {
+      // 로딩 상태를 true로 설정
+      setLoading(true);
+
+      // 알림 페이지로 즉시 리디렉션
+      navigate("/notifications", { state: { loading: true } });
+
       const contestId = video.id;
       const newLiked = !apply;
       setApply(newLiked); // 새로운 좋아요 상태를 설정
@@ -137,16 +140,56 @@ function PictureDetail() {
       const aiResponse = await axiosInstance.post(
         "http://127.0.0.1:8000/predictor/",
         {
-          grade: 3,
-          depart: 3,
-          credit: 2,
-          in_school_award_cnt: 1,
-          out_school_award_cnt: 1,
-          national_competition_award_cnt: 2,
-          certificate: 50,
-          subject: 50,
-          major_field: 50,
-          codingTest_score: 2,
+          students: [
+            {
+              grade: 3,
+              depart: 2,
+              credit: 2,
+              in_school_award_cnt: 1,
+              out_school_award_cnt: 1,
+              national_competition_award_cnt: 2,
+              aptitude_test_score: 50,
+              certificate: 10,
+              major_field: 10,
+              codingTest_score: 2,
+            },
+            {
+              grade: 4,
+              depart: 3,
+              credit: 4.5,
+              in_school_award_cnt: 5,
+              out_school_award_cnt: 5,
+              national_competition_award_cnt: 3,
+              aptitude_test_score: 62,
+              certificate: 12,
+              major_field: 13,
+              codingTest_score: 2,
+            },
+            {
+              grade: 1,
+              depart: 1,
+              credit: 1,
+              in_school_award_cnt: 0,
+              out_school_award_cnt: 2,
+              national_competition_award_cnt: 0,
+              aptitude_test_score: 64,
+              certificate: 0,
+              major_field: 6,
+              codingTest_score: 0,
+            },
+            {
+              grade: 4,
+              depart: 1,
+              credit: 2,
+              in_school_award_cnt: 1,
+              out_school_award_cnt: 3,
+              national_competition_award_cnt: 3,
+              aptitude_test_score: 24,
+              certificate: 12,
+              major_field: 13,
+              codingTest_score: 2,
+            },
+          ],
         }
       );
       console.log("AI model executed", aiResponse.data);
@@ -157,19 +200,23 @@ function PictureDetail() {
         selected_choices: selectedChoices, // 선택된 값을 포함
         contest_id: contestId, // contest_id를 추가
         image: video.사진,
+        ai_response: aiResponse.data, // AI 응답 데이터를 추가
       };
 
-      await axiosInstance.post(
+      const conversationResponse = await axiosInstance.post(
         "http://127.0.0.1:8000/conversations/",
         conversationData
       );
-      console.log("New conversation created");
+      const conversationId = conversationResponse.data.id; // 생성된 conversation의 ID를 가져옴
+      console.log("New conversation created", conversationId);
+      // 로딩 상태를 false로 설정
 
       // 새로운 알림 생성
       const NotiData = {
         receiver: 1, // 사용자 ID
         message: video.제목,
         image: video.사진,
+        conversation_id: conversationId, // 새로 생성된 conversation ID 추가
       };
       await axiosInstance.post(
         "http://127.0.0.1:8000/notifications/",
@@ -178,9 +225,10 @@ function PictureDetail() {
       console.log("New noti created");
     } catch (error) {
       console.error("Error toggling like:", error);
+      // 에러 발생 시 로딩 상태를 false로 설정
+      setLoading(false);
     }
   };
-
   // 모달 열기 함수
   const openModal = () => {
     setIsModalOpen(true);

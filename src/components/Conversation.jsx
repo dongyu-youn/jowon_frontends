@@ -16,6 +16,17 @@ const Conversation = () => {
   const [messages, setMessages] = useState(""); // 입력된 메시지 상태
   const [loading, setLoading] = useState(false); // 분석 요청 중인지 여부를 나타내는 상태
 
+  // 대회 목록
+  const contests = [
+    "인천건축학생공모전",
+    "GCGF 혁신 아이디어 공모",
+    "웹 개발 콘테스트",
+    "중대한 사회 안전 이니까",
+  ];
+
+  // 대회 랜덤 선택
+  const randomContest = contests[Math.floor(Math.random() * contests.length)];
+
   // useEffect(() => {
   //   const fetchMessages = async () => {
   //     try {
@@ -85,6 +96,9 @@ const Conversation = () => {
         ); // id 값을 이용하여 서버로 요청
         setVideo(response.data);
         console.log(response.data.participants.grade);
+        console.log(
+          response.data.ai_response.predictions[0]["중대한 사회 안전 이니까"]
+        );
       } catch (error) {
         console.error("Error fetching video:", error);
       }
@@ -188,7 +202,7 @@ const Conversation = () => {
           <span className="text-center w-full block text-lg font-medium">
             <h2>Conversation for </h2>
           </span>
-          <div className="flex justify-between mt-10 items-center">
+          <div className="grid grid-cols-2 justify-between mt-10 items-center">
             {video.participants.map((participant) => (
               <MiniProfileCard key={participant.id} participant={participant} />
             ))}
@@ -205,24 +219,25 @@ const Conversation = () => {
                 message.user.id !== 1 ? "flex-row-reverse" : ""
               }`}
             >
-              <div
-                className={`flex items-center justify-center w-20 h-20 rounded-full   ml-4 ${
+              {/* 각 메시지에 대한 프로필 이미지 */}
+              <img
+                alt={message.user.username} // 각 메시지의 사용자 이름을 대신 사용
+                src={message.user.avatar} // 각 메시지의 사용자 아바타를 대신 사용
+                className={`w-20 h-20 rounded-full ml-4 ${
                   message.user.id !== 1
-                    ? "bg-teal-500 text-white"
+                    ? "bg-teal-500 text-black"
                     : "bg-gray-300"
                 }`}
-              >
-                {video.participants.username}
-              </div>
+              />
               <div
                 className={`p-5 rounded ${
                   message.user.id !== 1
                     ? "bg-teal-500 text-white"
-                    : "bg-gray-300 text-black" // 첫 번째 요소일 때 텍스트 색상을 검은색으로 변경
+                    : "bg-gray-300 text-black"
                 }`}
                 style={{
                   marginLeft: message.user.id !== 1 ? "0" : "12px",
-                  color: message.user.id === 1 ? "black" : "", // 윤 프로필의 글자는 검은색으로 지정
+                  color: message.user.id === 1 ? "black" : "",
                 }}
               >
                 <div>{message.message}</div>
@@ -239,9 +254,10 @@ const Conversation = () => {
             />
             <button
               onClick={sendMessage}
-              className="bg-teal-500 text-white py-2  px-8 items-center rounded focus:outline-none flex"
+              className="bg-teal-500 text-white  px-10 items-center rounded focus:outline-none flex"
+              style={{ flexDirection: "row" }} // Flex 방향을 가로로 변경
             >
-              <span>전송</span>
+              <span className="w-8 py-3">전송</span>
             </button>
           </div>
         </div>
@@ -281,36 +297,45 @@ const Conversation = () => {
           </button>
         </div>
       </div>
-      <div className={`border p-10 container mx-auto min-h-50 mt-24 mb-40`}>
+      <div className={`border p-10 container mx-auto min-h-80 mt-24 mb-40`}>
         <span className="text-center w-full block text-lg font-medium">
           <h2>인공지능 분석 결과</h2>
         </span>
-        <div className="grid grid-cols-2 gap-4 mt-10 items-start">
-          {video.participants.map((participant) => (
-            <div key={participant.id} className="flex items-start">
-              <div className="mr-4">
-                <MiniProfileCard participant={participant} />
-              </div>
-              <div>
-                <p className="text-sm">
-                  <strong>{participant.name}</strong> 님은 총{" "}
-                  <strong>40%</strong>의 확률로 성공할 것으로 분석되었습니다.
-                  이는 대회에서 중요한 학점과 끈기 부분에서 높은점수를 보였기
-                  때문입니다.
-                </p>
-                <div className="flex items-center mt-2">
-                  <div className="w-20 h-4 bg-gray-300 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-green-500"
-                      style={{ width: "40%" }}
-                    ></div>
+        <div className="grid grid-cols-2 gap-3 mt-10 items-start">
+          {video.participants.map((participant, index) => {
+            const prediction =
+              video.ai_response.predictions[index][randomContest];
+            const formattedPrediction = prediction.toFixed(2); // 소수점 두 자리까지 형식화
+
+            return (
+              <div key={participant.id} className="flex items-start">
+                <div className="mr-4">
+                  <MiniProfileCard participant={participant} />
+                </div>
+                <div>
+                  <p className="text-sm">
+                    <strong>{participant.name}</strong> 님은 총{" "}
+                    <strong>{formattedPrediction}%</strong>의 확률로 성공할
+                    것으로 분석되었습니다. 이는 대회에서 중요한 학점과 끈기
+                    부분에서 높은 점수를 보였기 때문입니다.
+                  </p>
+                  <div className="flex items-center mt-2">
+                    <div className="w-20 h-4 bg-gray-300 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-green-500"
+                        style={{ width: `${formattedPrediction}%` }}
+                      ></div>
+                    </div>
+                    <p className="ml-2 text-lg font-bold">
+                      {formattedPrediction}%
+                    </p>
                   </div>
-                  <p className="ml-2 text-lg font-bold">40%</p>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
         {/* 전체 분석 인공지능 그래프와 전체 확률 */}
         <div className="mt-10 flex justify-center flex-col">
           <img

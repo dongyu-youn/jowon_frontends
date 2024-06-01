@@ -26,6 +26,7 @@ import Profile from "../pages/Profile";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -123,8 +124,26 @@ export default function Navigation() {
     // 입력된 데이터 초기화 코드 추가
   };
 
+  // 스크롤 이벤트 핸들러
+  const handleScroll = () => {
+    if (window.scrollY > 0) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
+    }
+  };
+
+  // 컴포넌트가 마운트될 때 스크롤 이벤트 리스너 등록
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    // 컴포넌트가 언마운트될 때 스크롤 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <div className="">
+    <div>
       <ul className="flex items-center mr-8">
         <li
           className={`inline-block align-top relative p-4 font-customFont ${

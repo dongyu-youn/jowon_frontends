@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import NotiCard from "../components/NotiCard";
 import Footer from "../components/Footer";
+import { useLocation } from "react-router-dom";
 
 export default function Notifications() {
   const userToken = Cookies.get("csrftoken") || "";
@@ -14,6 +15,9 @@ export default function Notifications() {
       "X-CSRFToken": userToken,
     },
   });
+
+  const location = useLocation();
+
   const {
     isLoading,
     error,
@@ -23,34 +27,25 @@ export default function Notifications() {
       const response = await axiosInstance.get(
         "http://127.0.0.1:8000/notifications/"
       );
+      console.log(response.data);
       return response.data;
     } catch (error) {
       throw new Error("Network response was not ok");
     }
   });
 
-  const queryClient = useQueryClient();
-  const mutation = useMutation(
-    async (newData) => {
-      await axiosInstance.post("http://127.0.0.1:8000/notifications/", newData);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("userData");
-      },
-    }
-  );
-
   const navigate = useNavigate();
 
-  const handleClick = (id) => {
-    navigate(`/users/${id}`);
+  const handleClick = (conversation) => {
+    navigate(`/pictures/conversations/${conversation}`);
   };
 
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="text-black p-12">
+        (
         <div>
+          <p>Notifications</p>
           {isLoading && <p>Loading...</p>}
           {error && <p>Something is wrong...</p>}
           {userData && (
@@ -58,15 +53,15 @@ export default function Notifications() {
               {userData.map((video) => (
                 <div key={video.id}>
                   <NotiCard
-                    onClick={() => handleClick(video.user)}
+                    onClick={() => handleClick(video.conversation)}
                     video={video}
-                    isLoading={mutation.isLoading}
                   />
                 </div>
               ))}
             </div>
           )}
         </div>
+        )
       </div>
       <Footer />
     </div>

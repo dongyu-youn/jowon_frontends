@@ -8,12 +8,22 @@ const MiniProfileCard = ({ participant }) => {
   };
 
   return (
-    <div key={participant.id} className="profile-card" onClick={handleClick}>
+    <div
+      key={participant.id}
+      className="profile-card mt-2"
+      onClick={handleClick}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        cursor: "pointer",
+      }}
+    >
       <img
         alt={participant.username}
         src={participant.avatar}
         className="profile-picture rounded-full"
-        style={{ width: "64px", height: "64px" }} // 원하는 크기로 조정
+        style={{ width: "50px", height: "50px", marginBottom: "8px" }} // 이미지 아래 여백 추가
       />
       <p className="profile-username">{participant.username}</p>
     </div>
