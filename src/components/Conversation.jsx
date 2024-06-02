@@ -95,10 +95,7 @@ const Conversation = () => {
           `http://127.0.0.1:8000/conversations/${id}`
         ); // id 값을 이용하여 서버로 요청
         setVideo(response.data);
-        console.log(response.data.participants.grade);
-        console.log(
-          response.data.ai_response.predictions[0]["중대한 사회 안전 이니까"]
-        );
+        console.log(response.data.ai_response);
       } catch (error) {
         console.error("Error fetching video:", error);
       }
@@ -303,8 +300,7 @@ const Conversation = () => {
         </span>
         <div className="grid grid-cols-2 gap-3 mt-10 items-start">
           {video.participants.map((participant, index) => {
-            const prediction =
-              video.ai_response.predictions[index][randomContest];
+            const prediction = video.ai_response[index][randomContest];
             const formattedPrediction = prediction.toFixed(2); // 소수점 두 자리까지 형식화
 
             return (

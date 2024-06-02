@@ -54,7 +54,7 @@ export default function Apply() {
         {isLoading && <p>Loading...</p>}
         {error && <p>Something is wrong...</p>}
         {userData && (
-          <div className="flex ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 ">
             {userData.map((video) => (
               <div key={video.id} className="p-12">
                 <ProfileCard

@@ -19,6 +19,7 @@ function PictureDetail() {
 
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [graphs, setGraphs] = useState([]);
   const navigate = useNavigate(); // useNavigate 훅을 초기화합니다
 
   const toggleModal = () => {
@@ -200,7 +201,8 @@ function PictureDetail() {
         selected_choices: selectedChoices, // 선택된 값을 포함
         contest_id: contestId, // contest_id를 추가
         image: video.사진,
-        ai_response: aiResponse.data, // AI 응답 데이터를 추가
+        ai_response: aiResponse.data.predictions, // AI 응답 데이터 추가
+        graph: aiResponse.data.graphs, // 그래프 데이터 추가
       };
 
       const conversationResponse = await axiosInstance.post(

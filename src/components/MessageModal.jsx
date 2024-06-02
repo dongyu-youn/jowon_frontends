@@ -21,6 +21,8 @@ export default function MessageModal({ isOpen, onClose, onSubmit }) {
       await axiosInstance.post("http://127.0.0.1:8000/notifications/", {
         receiver: 1, // 사용자 ID
         message: message,
+        image: null,
+        conversation_id: 2, // 새로 생성된 conversation ID 추가v
       });
 
       // 요청이 성공하면 onSubmit 콜백 함수 호출

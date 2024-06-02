@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+// StarRatingModal.js
+
+import React, { useState } from "react";
 import Modal from "react-modal";
 import { FaStar } from "react-icons/fa";
 import axios from "axios";
@@ -41,15 +43,9 @@ const customStyles = {
   },
 };
 
-const StarRatingModal = ({ isOpen, closeModal, onSave, id }) => {
+const StarRatingModal = ({ isOpen, closeModal, rateeId }) => {
   const [rating, setRating] = useState(0);
 
-  useEffect(() => {
-    // isOpen이 true로 변경될 때만 실행되도록 설정
-    if (isOpen) {
-      setRating(0); // 모달이 열릴 때마다 rating 초기화
-    }
-  }, [isOpen]);
   const userToken = Cookies.get("csrftoken") || "";
   const axiosInstance = axios.create({
     withCredentials: true,
@@ -57,19 +53,19 @@ const StarRatingModal = ({ isOpen, closeModal, onSave, id }) => {
       "X-CSRFToken": userToken,
     },
   });
+
   const handleSave = async () => {
     try {
-      // Axios를 사용하여 POST 요청을 보냄
       const response = await axiosInstance.post(
         "http://127.0.0.1:8000/ratings/",
         {
-          ratee: id,
+          ratee: 2,
           score: rating,
         }
       );
-      // 응답 처리 코드 생략
+      console.log("Rating saved successfully.");
     } catch (error) {
-      // 오류 처리 코드 생략
+      console.error("Error saving rating:", error);
     }
     closeModal();
   };

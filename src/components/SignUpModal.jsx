@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FaUserNinja, FaLock, FaEnvelope, FaUserSecret } from "react-icons/fa";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { FaSchool } from "react-icons/fa";
+import { FaPencilAlt } from "react-icons/fa";
 
 export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
   const [name, setName] = useState("");
@@ -117,7 +119,7 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
                       name="username"
                       id="username"
                       className="focus:ring-indigo-500 focus:border-indigo-500 block w-full h-12 pl-10 sm:text-sm border-gray-300 rounded-md"
-                      placeholder="Username"
+                      placeholder="아이디"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                     />
@@ -131,9 +133,29 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
                       name="password"
                       id="password"
                       className="focus:ring-indigo-500 h-12 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
-                      placeholder="Password"
+                      placeholder="비밀번호"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaSchool className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      className="focus:ring-indigo-500 focus:border-indigo-500 block w-full h-12 pl-10 sm:text-sm border-gray-300 rounded-md"
+                      placeholder="학교"
+                    />
+                  </div>
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaPencilAlt className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      className="focus:ring-indigo-500 focus:border-indigo-500 block w-full h-12 pl-10 sm:text-sm border-gray-300 rounded-md"
+                      placeholder="학과"
                     />
                   </div>
                 </div>

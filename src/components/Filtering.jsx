@@ -20,17 +20,6 @@ const Filtering = ({
 }) => {
   return (
     <div className="flex justify-end space-x-4">
-      <button
-        onClick={handleSortByDepartment}
-        className="btn flex items-center"
-      >
-        {departmentChecked ? (
-          <RiCheckboxCircleFill />
-        ) : (
-          <RiCheckboxBlankCircleFill size={24} />
-        )}
-        학과순
-      </button>
       <button onClick={handleSortByLatest} className="btn flex items-center">
         {latestChecked ? (
           <RiCheckboxCircleFill />
@@ -46,6 +35,17 @@ const Filtering = ({
           <RiCheckboxBlankCircleFill size={24} />
         )}
         상금순
+      </button>
+      <button
+        onClick={handleSortByDepartment}
+        className="btn flex items-center"
+      >
+        {departmentChecked ? (
+          <RiCheckboxCircleFill />
+        ) : (
+          <RiCheckboxBlankCircleFill size={24} />
+        )}
+        학과순
       </button>
 
       <button onClick={handleCustomFiltering} className="btn flex items-center">
