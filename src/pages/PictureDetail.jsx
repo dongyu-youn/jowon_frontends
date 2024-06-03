@@ -263,26 +263,26 @@ function PictureDetail() {
         className="flex flex-col md:flex-row p-4 items-center justify-center"
         onClick={handleOutsideClick}
       >
-        <img src={video.사진} className="w-1/6 px-20 basis-7/12" />
+        <img src={video.사진} className="w-1/6 px-20 basis-4/12 mr-12" />
 
         <div className="w-full basis-5/12 flex flex-col p-4">
-          <div className="flex items-center py-2 mb-12">
+          <div className="flex items-center py-2 ">
             <span className="text-2xl font-dongle_light w-1/3 mr-40">이름</span>
             <span className="text-2xl font-dongle_light  w-2/3 ">
               {video.제목}
             </span>
           </div>
-          <div className="flex items-center py-2 mb-4">
+          <div className="flex items-center py-2 ">
             <span className="text-2xl  font-dongle w-1/3 mr-40">연관학과</span>
             <span className="text-2xl  font-dongle w-2/3 ">
               {video.연관학과}
             </span>
           </div>
-          <div className="flex items-center py-2 mb-8">
+          <div className="flex items-center py-2 ">
             <span className="text-2xl font-dongle w-1/3 mr-40">상금 </span>
             <span className="text-2xl font-dongle w-2/3">{video.상금}</span>
           </div>
-          <div className="flex items-center py-4  mb-12">
+          <div className="flex items-center py-4">
             <span className="text-2xl font-dongle_light w-1/3 mr-40">
               학년{" "}
             </span>
@@ -290,7 +290,7 @@ function PictureDetail() {
               {video.학년}
             </span>
           </div>
-          <div className="flex items-center py-4 mb-12">
+          <div className="flex items-center py-4 ">
             <span className="text-2xl font-dongle_light w-1/3 mr-40">
               분야{" "}
             </span>
@@ -298,7 +298,7 @@ function PictureDetail() {
               {video.분야}
             </span>
           </div>
-          <div className="flex items-center py-4  mb-12">
+          <div className="flex items-center py-4">
             <span className="text-2xl font-dongle_light w-1/3 mr-40">
               위치{" "}
             </span>
@@ -306,14 +306,14 @@ function PictureDetail() {
               {video.위치}
             </span>
           </div>
-          <div className="flex items-center py-4 mb-12">
+          {/* <div className="flex items-center py-4 mb-12">
             <span className="text-2xl font-dongle_light w-1/3 mr-40">
               참고링크{" "}
             </span>
             <span className="text-2xl font-dongle_light w-2/3">
               {video.참고링크}
             </span>
-          </div>
+          </div> */}
 
           <Button
             className="mt-20"

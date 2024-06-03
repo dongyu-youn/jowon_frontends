@@ -9,12 +9,43 @@ import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import MiniProfileCard from "./MiniProfileCard";
 import Footer from "./Footer";
+import Slider from "react-slick";
+import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
+
+const NextArrow = (props) => (
+  <div {...props}>
+    <IoChevronForwardOutline size={56} className="align-middle" />
+  </div>
+);
+
+const PrevArrow = (props) => (
+  <div {...props}>
+    <IoChevronBackOutline size={56} className="align-middle" />
+  </div>
+);
 
 const Conversation = () => {
   const [isExpanded, setIsExpanded] = useState(true); // 섹션의 확장 상태를 관리합니다.
   const [isThirdExpanded, setIsThirdExpanded] = useState(true); // 세 번째 섹션의 확장 상태를 관리합니다.
   const [messages, setMessages] = useState(""); // 입력된 메시지 상태
   const [loading, setLoading] = useState(false); // 분석 요청 중인지 여부를 나타내는 상태
+
+  const customDotStyles = {
+    backgroundColor: "black",
+    width: "10px",
+    height: "10px",
+    borderRadius: "50%",
+  };
+
+  const settings = {
+    dots: 3,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    prevArrow: <PrevArrow />,
+    nextArrow: <NextArrow />,
+  };
 
   // 대회 목록
   const contests = [
@@ -124,7 +155,8 @@ const Conversation = () => {
         `http://127.0.0.1:8000/conversations/messages/`,
         {
           message: messages, // 메시지 내용
-          conversation: 2,
+          conversation_id: id,
+          conversation: id,
         }
       );
 
@@ -139,6 +171,7 @@ const Conversation = () => {
       // 오류 처리 로직 추가 가능
     }
   };
+  // const graphUrl = `data:image/png;base64,${video.graph[2]}`;
 
   const analyzePotential = async () => {
     setLoading(true); // 분석 요청 중인 상태로 설정합니다.
@@ -168,6 +201,13 @@ const Conversation = () => {
     }
     setLoading(false); // 분석 요청이 완료되었으므로 상태를 false로 설정합니다.
   };
+
+  const graphImages = [
+    "/imgs/png1.png",
+    "/imgs/png2.png",
+    "/imgs/png3.png",
+    "/imgs/png4.png",
+  ];
 
   return (
     <section id="home" className="">
@@ -332,14 +372,14 @@ const Conversation = () => {
           })}
         </div>
 
-        {/* 전체 분석 인공지능 그래프와 전체 확률 */}
-        <div className="mt-10 flex justify-center flex-col">
-          <img
-            src="/imgs/graph.jpg"
-            alt="전체 분석 그래프"
-            className="mx-auto h-100"
-          />
-          <p className="text-3xl font-bold mt-4">전체 확률: 40%</p>
+        <div className="mt-10 ">
+          <Slider {...settings}>
+            {graphImages.map((image, index) => (
+              <div key={index} className="flex justify-center">
+                <img src={image} alt={`분석 그래프 ${index + 1}`} />
+              </div>
+            ))}
+          </Slider>
         </div>
       </div>
     </section>

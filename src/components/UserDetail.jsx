@@ -80,7 +80,7 @@ export default function UserDetail() {
         {userData && (
           <>
             <div className="w-1/5 px-20 basis-7/12 mb-30 flex items-center justify-center">
-              <img src={userData.avatar} className="h-full object-cover " />
+              <img src={userData.avatar} className="h-full object-cover  " />
             </div>
             <div className="w-full basis-8/12 flex flex-col p-4 text-left mt-36">
               <div className="flex items-center py-1 mb-12">
