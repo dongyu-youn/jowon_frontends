@@ -263,15 +263,12 @@ function PictureDetail() {
         className="flex flex-col md:flex-row p-4 items-center justify-center"
         onClick={handleOutsideClick}
       >
-        <img src={video.사진} className="w-1/6 px-20 basis-4/12 mr-12" />
+        <div className="w-1/6  basis-5/12 mr-24">
+          <div className="text-2xl font-dongle_light mb-12  ">{video.제목}</div>
+          <img src={video.사진} className="w-full" />
+        </div>
 
         <div className="w-full basis-5/12 flex flex-col p-4">
-          <div className="flex items-center py-2 ">
-            <span className="text-2xl font-dongle_light w-1/3 mr-40">이름</span>
-            <span className="text-2xl font-dongle_light  w-2/3 ">
-              {video.제목}
-            </span>
-          </div>
           <div className="flex items-center py-2 ">
             <span className="text-2xl  font-dongle w-1/3 mr-40">연관학과</span>
             <span className="text-2xl  font-dongle w-2/3 ">
@@ -279,7 +276,7 @@ function PictureDetail() {
             </span>
           </div>
           <div className="flex items-center py-2 ">
-            <span className="text-2xl font-dongle w-1/3 mr-40">상금 </span>
+            <span className="text-2xl font-dongle w-1/3 mr-40">시상금 </span>
             <span className="text-2xl font-dongle w-2/3">{video.상금}</span>
           </div>
           <div className="flex items-center py-4">
@@ -306,6 +303,39 @@ function PictureDetail() {
               {video.위치}
             </span>
           </div>
+          <div className="flex items-center py-4">
+            <span className="text-2xl font-dongle_light w-1/3 mr-40">
+              응모분야{" "}
+            </span>
+            <span className="text-2xl font-dongle_light w-2/3">
+              {video.응모분야}
+            </span>
+          </div>
+          <div className="flex items-center py-4">
+            <span className="text-2xl font-dongle_light w-1/3 mr-40">
+              참가대상{" "}
+            </span>
+            <span className="text-2xl font-dongle_light w-2/3">
+              {video.참가대상}
+            </span>
+          </div>
+          <div className="flex items-center py-4">
+            <span className="text-2xl font-dongle_light w-1/3 mr-40">
+              접수기간{" "}
+            </span>
+            <span className="text-2xl font-dongle_light w-2/3">
+              {video.접수기간}
+            </span>
+          </div>
+          <div className="flex items-center py-4">
+            <span className="text-2xl font-dongle_light w-1/3 mr-40">
+              접수방법{" "}
+            </span>
+            <span className="text-2xl font-dongle_light w-2/3">
+              {video.접수방법}
+            </span>
+          </div>
+
           {/* <div className="flex items-center py-4 mb-12">
             <span className="text-2xl font-dongle_light w-1/3 mr-40">
               참고링크{" "}
@@ -314,18 +344,23 @@ function PictureDetail() {
               {video.참고링크}
             </span>
           </div> */}
+          <div className="flex justify-center ">
+            <Button
+              className="mt-32 mr-24"
+              text="팀원조회"
+              onClick={handleButtonClick}
+            ></Button>
 
-          <Button
-            className="mt-20"
-            text="팀원조회"
-            onClick={handleButtonClick}
-          ></Button>
-
-          {apply ? (
-            <Button className="" text="완료" onClick={toggleLike}></Button>
-          ) : (
-            <Button className="" text="신청하기" onClick={toggleModal}></Button>
-          )}
+            {apply ? (
+              <Button className="" text="완료" onClick={toggleLike}></Button>
+            ) : (
+              <Button
+                className=""
+                text="신청하기"
+                onClick={toggleModal}
+              ></Button>
+            )}
+          </div>
         </div>
       </section>
 

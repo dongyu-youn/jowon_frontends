@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { FaCrown } from "react-icons/fa";
 
-const MiniProfileCard = ({ participant }) => {
+const MiniProfileCard = ({ participant, isFirst }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -17,8 +18,15 @@ const MiniProfileCard = ({ participant }) => {
         flexDirection: "column",
         alignItems: "center",
         cursor: "pointer",
+        position: "relative", // 부모 요소에 relative 적용
       }}
     >
+      {isFirst && (
+        <FaCrown
+          className="text-yellow-500"
+          style={{ position: "absolute", top: "-10px" }}
+        />
+      )}
       <img
         alt={participant.username}
         src={participant.avatar}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FaBomb } from "react-icons/fa";
 import { RiRobot2Line } from "react-icons/ri";
 import { FaFile } from "react-icons/fa6";
 import { FaImage } from "react-icons/fa";
@@ -240,8 +241,12 @@ const Conversation = () => {
             <h2>Conversation for </h2>
           </span>
           <div className="grid grid-cols-2 justify-between mt-10 items-center">
-            {video.participants.map((participant) => (
-              <MiniProfileCard key={participant.id} participant={participant} />
+            {video.participants.map((participant, index) => (
+              <MiniProfileCard
+                key={participant.id}
+                participant={participant}
+                isFirst={index === 0}
+              />
             ))}
           </div>
         </div>
@@ -318,7 +323,7 @@ const Conversation = () => {
             onClick={analyzePotential}
             className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-white text-black items-center hover:bg-black hover:text-white cursor-pointer "
           >
-            <RiRobot2Line className="mr-4" size={24} /> <>수상가능성 분석</>
+            <FaBomb className="mr-4" size={24} /> <>팀파기</>
           </button>
 
           <div className="flex justify-between mt-10 items-center"></div>
