@@ -16,6 +16,7 @@ import Favs from "./pages/Favs";
 import Apply from "./pages/Apply";
 import UserDetail from "./components/UserDetail";
 import Notifications from "./pages/Notifications";
+import NotiMe from "./components/NotiMe";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       { path: "pictures/apply/:id", element: <Apply /> },
       { path: "users/:id", element: <UserDetail /> },
       { path: "notifications", element: <Notifications /> },
+      { path: "notifications/me", element: <NotiMe /> },
     ],
   },
 ]);

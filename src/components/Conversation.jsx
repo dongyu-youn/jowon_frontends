@@ -42,7 +42,7 @@ const Conversation = () => {
     dots: 3,
     infinite: true,
     speed: 500,
-    slidesToShow: 1,
+    slidesToShow: 2,
     slidesToScroll: 1,
     prevArrow: <PrevArrow />,
     nextArrow: <NextArrow />,
@@ -128,6 +128,10 @@ const Conversation = () => {
         ); // id 값을 이용하여 서버로 요청
         setVideo(response.data);
         console.log(response.data.ai_response);
+        const importanceValues = response.data.ai_response.map(
+          (obj) => obj["중대한 사회 안전 이니까"]
+        );
+        console.log(importanceValues);
       } catch (error) {
         console.error("Error fetching video:", error);
       }
@@ -174,34 +178,19 @@ const Conversation = () => {
   };
   // const graphUrl = `data:image/png;base64,${video.graph[2]}`;
 
-  const analyzePotential = async () => {
-    setLoading(true); // 분석 요청 중인 상태로 설정합니다.
-    try {
-      const requestData = {
-        // 예측에 필요한 데이터를 여기에 추가합니다.
-        grade: 3,
-        depart: 3,
-        credit: 2,
-        in_school_award_cnt: 1,
-        out_school_award_cnt: 1,
-        national_competition_award_cnt: 2,
-        certificate: 50,
-        subject: 50,
-        major_field: 50,
-        codingTest_score: 2,
-      };
-
-      const response = await axios.post(
-        `http://127.0.0.1:8000/predictor/`, // 분석을 요청하는 API 엔드포인트를 입력합니다.
-        requestData // 예측에 필요한 데이터를 함께 보냅니다.
-      );
-      console.log(response.data); // 분석 결과를 콘솔에 출력합니다.
-      // 필요한 분석 결과를 상태로 저장하고 화면에 표시하는 로직을 추가할 수 있습니다.
-    } catch (error) {
-      console.error("Error analyzing potential:", error);
-    }
-    setLoading(false); // 분석 요청이 완료되었으므로 상태를 false로 설정합니다.
-  };
+  // const analyzePotential = async () => {
+  //   const conversationId = id; // 해당 conversation ID를 적절히 설정
+  //   try {
+  //     const response = await axios.delete(
+  //       `http://127.0.0.1:8000/conversations/${id}`
+  //     );
+  //     console.log("Conversation deleted successfully:", response.data);
+  //     // 삭제 후 추가적인 로직을 여기에 추가 (예: 페이지 리디렉션)
+  //     alert("삭제되었습니다");
+  //   } catch (error) {
+  //     console.error("Failed to delete conversation:", error);
+  //   }
+  // };
 
   const graphImages = [
     "/imgs/png1.png",
@@ -209,6 +198,15 @@ const Conversation = () => {
     "/imgs/png3.png",
     "/imgs/png4.png",
   ];
+
+  const predictions = video.participants.map((participant, index) => {
+    const prediction = video.ai_response[index][randomContest];
+    return prediction;
+  });
+
+  const averagePrediction = (
+    predictions.reduce((acc, val) => acc + val, 0) / predictions.length
+  ).toFixed(2);
 
   return (
     <section id="home" className="">
@@ -320,7 +318,7 @@ const Conversation = () => {
           <div className="flex justify-between mt-10 items-center"></div>
 
           <button
-            onClick={analyzePotential}
+            // onClick={analyzePotential}
             className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-white text-black items-center hover:bg-black hover:text-white cursor-pointer "
           >
             <FaBomb className="mr-4" size={24} /> <>팀파기</>
@@ -385,6 +383,9 @@ const Conversation = () => {
               </div>
             ))}
           </Slider>
+          <p className="text-3xl font-bold mt-4">
+            전체 확률: {averagePrediction}
+          </p>
         </div>
       </div>
     </section>

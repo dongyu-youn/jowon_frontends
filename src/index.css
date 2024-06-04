@@ -134,7 +134,7 @@ code {
 }
 
 .slick-slide {
-  display: none;
+  display: flex;
   float: left;
 
   height: 100%;

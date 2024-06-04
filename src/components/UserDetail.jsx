@@ -94,10 +94,7 @@ export default function UserDetail() {
               className="w-1/4 px-20 basis-6/12 mt-96 mb-20 h-auto  "
               style={{ marginTop: "170px" }}
             >
-              <img
-                src="https://firebasestorage.googleapis.com/v0/b/wpoint-1d1be.appspot.com/o/KakaoTalk_Photo_2024-04-01-14-36-50.jpeg?alt=media&token=5b2fac95-0dbd-40c1-a030-a58336997c24"
-                className=""
-              />
+              <img src={userData.avatar} className="" />
             </div>
 
             <div className="w-full basis-5/12 flex flex-col p-4 text-left  mb-8 ">

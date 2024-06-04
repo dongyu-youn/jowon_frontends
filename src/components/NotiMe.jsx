@@ -7,7 +7,7 @@ import NotiCard from "../components/NotiCard";
 import Footer from "../components/Footer";
 import { useLocation } from "react-router-dom";
 
-export default function Notifications() {
+export default function NotiMe() {
   const userToken = Cookies.get("csrftoken") || "";
   const axiosInstance = axios.create({
     withCredentials: true,
@@ -25,7 +25,7 @@ export default function Notifications() {
   } = useQuery(["userData"], async () => {
     try {
       const response = await axiosInstance.get(
-        "http://127.0.0.1:8000/notifications/"
+        "http://127.0.0.1:8000/notifications/short-messages/"
       );
       console.log(response.data);
       return response.data;

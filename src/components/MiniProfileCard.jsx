@@ -23,15 +23,15 @@ const MiniProfileCard = ({ participant, isFirst }) => {
     >
       {isFirst && (
         <FaCrown
-          className="text-yellow-500"
-          style={{ position: "absolute", top: "-10px" }}
+          className="text-yellow-500 text-3xl"
+          style={{ position: "absolute", top: "-14px" }}
         />
       )}
       <img
         alt={participant.username}
         src={participant.avatar}
         className="profile-picture rounded-full"
-        style={{ width: "50px", height: "50px", marginBottom: "8px" }} // 이미지 아래 여백 추가
+        style={{ height: "50px", marginBottom: "8px" }} // 이미지 아래 여백 추가
       />
       <p className="profile-username">{participant.username}</p>
     </div>
