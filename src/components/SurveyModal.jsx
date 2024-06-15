@@ -23,6 +23,19 @@ const SurveyModal = ({ onClose, toggleLike }) => {
     });
   };
 
+  // Create an array of response objects
+  const formattedResponses = questions.map((question, index) => ({
+    question: question.id,
+    choice: responses[`question${index + 1}`],
+
+    survey: 1, // 설문조사 ID로 교체 필요
+  }));
+
+  // 배열에 선택된 값들만 저장
+  const selectedChoices = questions.map(
+    (question, index) => responses[`question${index + 1}`]
+  );
+
   const userToken = Cookies.get("csrftoken") || "";
   const axiosInstance = axios.create({
     withCredentials: true,

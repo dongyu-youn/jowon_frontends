@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import PictureDetail from "./PictureDetail";
@@ -16,6 +16,8 @@ import Avartar from "../components/Avatar";
 import Footer from "../components/Footer";
 
 export default function Apply() {
+  const [predictions, setPredictions] = useState(null);
+
   const location = useLocation();
   const pathname = location.pathname;
   const id = pathname.substring(pathname.lastIndexOf("/") + 1);
@@ -26,6 +28,7 @@ export default function Apply() {
       "X-CSRFToken": userToken,
     },
   });
+
   const {
     isLoading,
     error,
@@ -41,6 +44,46 @@ export default function Apply() {
     }
   });
   console.log(userData);
+
+  useEffect(() => {
+    if (userData && userData.length > 0) {
+      const fetchPredictions = async () => {
+        const newPredictions = [];
+        for (const user of userData) {
+          const studentData = {
+            grade: user.score.grade,
+            depart: user.score.depart,
+            credit: user.score.credit,
+            in_school_award_cnt: user.score.in_school_award_cnt,
+            out_school_award_cnt: user.score.out_school_award_cnt,
+            national_competition_award_cnt:
+              user.score.national_competition_award_cnt,
+            aptitude_test_score: user.score.aptitude_test_score,
+            certificate: user.score.certificate,
+            major_field: user.score.major_field,
+            codingTest_score: user.score.codingTest_score,
+          };
+
+          try {
+            const response = await axios.post(
+              "http://127.0.0.1:8000/users/students/predict/",
+              studentData
+            );
+            newPredictions.push({
+              user_id: user.id,
+              user_name: user.이름,
+              predictions: response.data,
+            });
+          } catch (error) {
+            console.error("예측 요청 중 오류 발생:", error);
+          }
+        }
+        setPredictions(newPredictions);
+      };
+
+      fetchPredictions();
+    }
+  }, [userData]);
 
   const navigate = useNavigate();
 
