@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const SurveyModal = ({ onClose, toggleLike }) => {
+const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
   const [responses, setResponses] = useState({
     question1: "",
     question2: "",
@@ -15,6 +15,8 @@ const SurveyModal = ({ onClose, toggleLike }) => {
   const [error, setError] = useState(null);
 
   const [response, setResponse] = useState([]);
+
+  const modalRef = useRef(null);
 
   const handleChange = (e) => {
     setResponses({
@@ -136,9 +138,24 @@ const SurveyModal = ({ onClose, toggleLike }) => {
     fetchResponses();
   }, []);
 
+  const handleClickOutside = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      onClose();
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50  ">
-      <div className="bg-white p-10 rounded-lg w-full max-w-4xl max-h-screen overflow-y-scroll">
+      <div
+        className="bg-white p-10 rounded-lg w-full max-w-4xl max-h-screen overflow-y-scroll"
+        ref={modalRef}
+      >
         <h2 className="text-3xl font-bold mb-8 text-black">
           인공지능 서비스를 위한 설문조사
         </h2>
@@ -176,19 +193,27 @@ const SurveyModal = ({ onClose, toggleLike }) => {
               ))}
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-center">
               <button
-                type="button"
-                className="bg-gray-300 text-black px-4 py-2 mr-4 rounded"
-                onClick={onClose}
+                type="submit"
+                className="bg-pink-800 text-white px-4 py-2 mr-4 rounded"
+                value="top_two"
               >
-                취소
+                최강 매칭
               </button>
               <button
                 type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded"
+                className="bg-green-500 text-white px-4 py-2 rounded"
               >
-                제출
+                균등한 매칭
+              </button>
+
+              <button
+                type="submit"
+                className="bg-yellow-500 text-white px-4 py-2 rounded ml-4"
+                value="random"
+              >
+                무작위 매칭
               </button>
             </div>
           </form>

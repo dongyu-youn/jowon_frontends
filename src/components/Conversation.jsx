@@ -4,6 +4,7 @@ import { FaBomb } from "react-icons/fa";
 import { RiRobot2Line } from "react-icons/ri";
 import { FaFile } from "react-icons/fa6";
 import { FaImage } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
 import axios from "axios";
 import { useLocation } from "react-router-dom";
@@ -12,6 +13,7 @@ import MiniProfileCard from "./MiniProfileCard";
 import Footer from "./Footer";
 import Slider from "react-slick";
 import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
+import TeamEvaluation from "./TeamEvaluation";
 
 const NextArrow = (props) => (
   <div {...props}>
@@ -30,6 +32,7 @@ const Conversation = () => {
   const [isThirdExpanded, setIsThirdExpanded] = useState(true); // 세 번째 섹션의 확장 상태를 관리합니다.
   const [messages, setMessages] = useState(""); // 입력된 메시지 상태
   const [loading, setLoading] = useState(false); // 분석 요청 중인지 여부를 나타내는 상태
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
 
   const customDotStyles = {
     backgroundColor: "black",
@@ -48,33 +51,6 @@ const Conversation = () => {
     nextArrow: <NextArrow />,
   };
 
-  // 대회 목록
-  const contests = [
-    "인천건축학생공모전",
-    "GCGF 혁신 아이디어 공모",
-    "웹 개발 콘테스트",
-    "중대한 사회 안전 이니까",
-  ];
-
-  // 대회 랜덤 선택
-  const randomContest = contests[Math.floor(Math.random() * contests.length)];
-
-  // useEffect(() => {
-  //   const fetchMessages = async () => {
-  //     try {
-  //       const conversationId = window.location.pathname.split("/").pop();
-  //       const response = await axios.get(
-  //         `http://127.0.0.1:8000/conversations/messages/${conversationId}/`
-  //       );
-  //       setMessages(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching messages:", error);
-  //     }
-  //   };
-
-  //   fetchMessages();
-  // }, []); // 두 번째 인자로 빈 배열을 전달하여 최초 렌더링 시에만 useEffect가 실행되도록 함
-
   const toggleSection = () => {
     // 섹션의 확장 상태를 변경합니다.
     setIsExpanded(!isExpanded);
@@ -82,37 +58,6 @@ const Conversation = () => {
 
   const toggleThirdSection = () => {
     setIsThirdExpanded(!isThirdExpanded);
-  };
-  // 가상의 데이터 생성
-  const conversation = {
-    participants: [
-      {
-        id: 1,
-        first_name: "윤동규",
-        avatar: "https://via.placeholder.com/150",
-      },
-      {
-        id: 2,
-        first_name: "이한세",
-        avatar: "https://via.placeholder.com/150",
-      },
-      {
-        id: 3,
-        first_name: "김민혁",
-        avatar: "https://via.placeholder.com/150",
-      },
-      // 추가 팀원들을 추가할 수 있습니다.
-    ],
-    messages: [
-      {
-        id: 1,
-        user: { id: 1, first_name: "윤동규" },
-        message: "안녕하세요!",
-      },
-      { id: 2, user: { id: 2, first_name: "이한세" }, message: "Hi!" },
-      { id: 3, user: { id: 3, first_name: "김민혁" }, message: "안녕ㄴㅇ!" },
-      // 추가 메시지들을 추가할 수 있습니다.
-    ],
   };
 
   const location = useLocation();
@@ -127,11 +72,11 @@ const Conversation = () => {
           `http://127.0.0.1:8000/conversations/${id}`
         ); // id 값을 이용하여 서버로 요청
         setVideo(response.data);
+        console.log(response.data.teamName);
         console.log(response.data.ai_response);
-        const importanceValues = response.data.ai_response.map(
-          (obj) => obj["중대한 사회 안전 이니까"]
-        );
-        console.log(importanceValues);
+        // const importanceValues = response.data.ai_response.map(
+        //   (obj) => obj["중대한 사회 안전 이니까"]
+        // );
       } catch (error) {
         console.error("Error fetching video:", error);
       }
@@ -199,14 +144,14 @@ const Conversation = () => {
     "/imgs/png4.png",
   ];
 
-  const predictions = video.participants.map((participant, index) => {
-    const prediction = video.ai_response[index][randomContest];
-    return prediction;
-  });
+  // const predictions = video.participants.map((participant, index) => {
+  //   const prediction = video.ai_response[index][randomContest];
+  //   return prediction;
+  // });
 
-  const averagePrediction = (
-    predictions.reduce((acc, val) => acc + val, 0) / predictions.length
-  ).toFixed(2);
+  // const averagePrediction = (
+  //   predictions.reduce((acc, val) => acc + val, 0) / predictions.length
+  // ).toFixed(2);
 
   return (
     <section id="home" className="">
@@ -325,6 +270,14 @@ const Conversation = () => {
           </button>
 
           <div className="flex justify-between mt-10 items-center"></div>
+
+          <button
+            // onClick={analyzePotential}
+            onClick={() => setIsModalOpen(true)}
+            className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-red-400 text-black items-center hover:bg-black hover:text-white cursor-pointer "
+          >
+            <FiX className="mr-4" size={24} /> <>활동종료</>
+          </button>
         </div>
         {/* 두 번째 버튼 - 세 번째 섹션 토글 */}
         <div className="flex justify-center">
@@ -342,32 +295,29 @@ const Conversation = () => {
           <h2>인공지능 분석 결과</h2>
         </span>
         <div className="grid grid-cols-2 gap-3 mt-10 items-start">
-          {video.participants.map((participant, index) => {
-            const prediction = video.ai_response[index][randomContest];
-            const formattedPrediction = prediction.toFixed(2); // 소수점 두 자리까지 형식화
-
+          {video.ai_response.map((prediction, index) => {
+            const predictionValue =
+              prediction.predictions["웹 개발 콘테스트"].toFixed(2); // 예측 값을 가져옵니다.
             return (
-              <div key={participant.id} className="flex items-start">
+              <div key={prediction.user_id} className="flex items-start">
                 <div className="mr-4">
-                  <MiniProfileCard participant={participant} />
+                  <MiniProfileCard participant={prediction} />
                 </div>
                 <div>
                   <p className="text-sm">
-                    <strong>{participant.name}</strong> 님은 총{" "}
-                    <strong>{formattedPrediction}%</strong>의 확률로 성공할
-                    것으로 분석되었습니다. 이는 대회에서 중요한 학점과 끈기
-                    부분에서 높은 점수를 보였기 때문입니다.
+                    <strong>{prediction.user_name}</strong> 님은 총{" "}
+                    <strong>{predictionValue}%</strong>의 확률로 성공할 것으로
+                    분석되었습니다. 이는 대회에서 중요한 학점과 끈기 부분에서
+                    높은 점수를 보였기 때문입니다.
                   </p>
                   <div className="flex items-center mt-2">
                     <div className="w-20 h-4 bg-gray-300 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-green-500"
-                        style={{ width: `${formattedPrediction}%` }}
+                        style={{ width: `${predictionValue}%` }}
                       ></div>
                     </div>
-                    <p className="ml-2 text-lg font-bold">
-                      {formattedPrediction}%
-                    </p>
+                    <p className="ml-2 text-lg font-bold">{predictionValue}%</p>
                   </div>
                 </div>
               </div>
@@ -384,10 +334,15 @@ const Conversation = () => {
             ))}
           </Slider>
           <p className="text-3xl font-bold mt-4">
-            전체 확률: {averagePrediction}
+            {/* 전체 확률: {averagePrediction} */}
           </p>
         </div>
       </div>
+      <TeamEvaluation
+        participants={video.participants}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };

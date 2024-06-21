@@ -50,8 +50,6 @@ export default function LoginModal({
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-
     const userToken = Cookies.get("csrftoken") || "";
 
     const axiosInstance = axios.create({

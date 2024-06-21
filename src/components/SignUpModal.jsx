@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { FaUserNinja, FaLock, FaEnvelope, FaUserSecret } from "react-icons/fa";
+import {
+  FaUserNinja,
+  FaLock,
+  FaEnvelope,
+  FaUserSecret,
+  FaVoicemail,
+} from "react-icons/fa";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { FaSchool } from "react-icons/fa";
@@ -10,6 +16,7 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [school, setSchool] = useState("");
 
   const handleSignUp = async () => {
     // async 키워드 추가
@@ -29,6 +36,8 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
         {
           username: username,
           password: password,
+          email: email,
+          학교: school, // 학교 정보 추가
         }
       );
       // 성공적으로 응답을 받았을 때 실행됩니다.
@@ -140,15 +149,30 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
                   </div>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaVoicemail className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      className="focus:ring-indigo-500 focus:border-indigo-500 block w-full h-12 pl-10 sm:text-sm border-gray-300 rounded-md"
+                      placeholder="이메일"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FaSchool className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
                       type="text"
                       className="focus:ring-indigo-500 focus:border-indigo-500 block w-full h-12 pl-10 sm:text-sm border-gray-300 rounded-md"
                       placeholder="학교"
+                      value={school}
+                      onChange={(e) => setSchool(e.target.value)}
                     />
                   </div>
-                  <div className="mt-1 relative rounded-md shadow-sm">
+                  {/* <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FaPencilAlt className="h-5 w-5 text-gray-400" />
                     </div>
@@ -157,7 +181,7 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
                       className="focus:ring-indigo-500 focus:border-indigo-500 block w-full h-12 pl-10 sm:text-sm border-gray-300 rounded-md"
                       placeholder="학과"
                     />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

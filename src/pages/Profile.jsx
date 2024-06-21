@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
 import { FaStar } from "react-icons/fa";
 import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
+import Cookies from "js-cookie";
 
 import axios from "axios";
 import NotiMe from "../components/NotiMe";
 import { useNavigate } from "react-router-dom";
+
+import { Radar } from "react-chartjs-2";
 
 const StarRating = ({ totalStars = 5, yellowStars = 0 }) => {
   // Ensure totalStars and yellowStars are valid numbers
@@ -33,6 +36,183 @@ const StarRating = ({ totalStars = 5, yellowStars = 0 }) => {
 };
 
 export default function Profile() {
+  const [performanceAverages, setPerformanceAverages] = useState({});
+  const [experienceAverages, setExperienceAverages] = useState({});
+  const [percentages, setPercentages] = useState({});
+
+  const queryClient = useQueryClient(); // 변경된 부분
+  const userToken = Cookies.get("csrftoken") || "";
+
+  const {
+    isLoading,
+    error,
+    data: userData,
+  } = useQuery(["userData"], async () => {
+    try {
+      const response = await axiosInstance.get(
+        "http://127.0.0.1:8000/users/me/"
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Network response was not ok");
+    }
+  });
+  console.log(userData);
+
+  const handleLinkClick = () => {
+    navigate("/profile/form");
+  };
+
+  const axiosInstance = axios.create({
+    withCredentials: true,
+    headers: {
+      "X-CSRFToken": userToken,
+    },
+  });
+  useEffect(() => {
+    axiosInstance
+      .get("http://127.0.0.1:8000/users/averages_performance/")
+      .then((response) => {
+        setPerformanceAverages(response.data);
+        calculatePercentages(response.data, "performance");
+      })
+      .catch((error) => console.error(error));
+
+    axiosInstance
+      .get("http://127.0.0.1:8000/users/averages_experience/")
+      .then((response) => {
+        setExperienceAverages(response.data);
+        calculatePercentages(response.data, "experience");
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  const calculatePercentages = (avgData, type) => {
+    const userData = {
+      grade: 4, // 예시 사용자 데이터, 실제로는 상태에서 가져옵니다.
+      github_commit_count: 1,
+      baekjoon_score: 10,
+      programmers_score: 0,
+      certificate_count: 3,
+      depart: 1,
+      courses_taken: 1,
+      major_field: 1,
+      bootcamp_experience: 1,
+    };
+
+    const calcPercentage = (userValue, avgValue) =>
+      (userValue / avgValue) * 100;
+
+    if (type === "performance") {
+      setPercentages((prev) => ({
+        ...prev,
+        grade: calcPercentage(userData.grade, avgData.avg_grade),
+        github_commit_count: calcPercentage(
+          userData.github_commit_count,
+          avgData.avg_github_commit_count
+        ),
+        baekjoon_score: calcPercentage(
+          userData.baekjoon_score,
+          avgData.avg_baekjoon_score
+        ),
+        programmers_score: calcPercentage(
+          userData.programmers_score,
+          avgData.avg_programmers_score
+        ),
+        certificate_count: calcPercentage(
+          userData.certificate_count,
+          avgData.avg_certificate_count
+        ),
+      }));
+    } else if (type === "experience") {
+      setPercentages((prev) => ({
+        ...prev,
+        depart: calcPercentage(userData.depart, avgData.avg_depart),
+        courses_taken: calcPercentage(
+          userData.courses_taken,
+          avgData.avg_courses_taken
+        ),
+        major_field: calcPercentage(
+          userData.major_field,
+          avgData.avg_major_field
+        ),
+        bootcamp_experience: calcPercentage(
+          userData.bootcamp_experience,
+          avgData.avg_bootcamp_experience
+        ),
+      }));
+    }
+  };
+
+  const data = {
+    labels: ["성실도", "경험", "성과", "신뢰도"],
+    datasets: [
+      {
+        label: "내 데이터",
+        data: [
+          percentages.grade,
+          percentages.github_commit_count,
+          percentages.baekjoon_score,
+          percentages.programmers_score,
+          percentages.certificate_count,
+          percentages.depart,
+          percentages.courses_taken,
+          percentages.major_field,
+          percentages.bootcamp_experience,
+          userData ? userData.average_rating * 20 : 0, // 신뢰도 데이터 추가
+        ],
+
+        fill: true,
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        pointBackgroundColor: "rgba(255, 99, 132, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(255, 99, 132, 1)",
+      },
+      {
+        label: "평균 데이터",
+        data: [50, 50, 50, 50, 50, 50, 120, 50, 120, 60], // 평균 데이터는 항상 100%로 설정합니다.
+        fill: true,
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        pointBackgroundColor: "rgba(54, 162, 235, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(54, 162, 235, 1)",
+      },
+    ],
+  };
+  console.log(percentages);
+
+  const options = {
+    scales: {
+      r: {
+        angleLines: {
+          display: true,
+        },
+        pointLabels: {
+          display: true,
+          fontSize: 24,
+        },
+        ticks: {
+          beginAtZero: true,
+        },
+        pointLabels: {
+          display: true,
+          font: {
+            size: 20, // 라벨 글자 크기를 24px로 설정합니다.
+          },
+        },
+      },
+    },
+    layout: {
+      padding: {
+        top: 100, // 상단 패딩을 50px로 설정하여 그래프를 아래로 내립니다.
+      },
+    },
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태를 저장하는 state
   const [isModalOpenB, setIsModalOpenB] = useState(false); // 모달 열림/닫힘 상태를 저장하는 state
 
@@ -80,28 +260,6 @@ export default function Profile() {
       closeModalB();
     }
   };
-
-  const queryClient = useQueryClient(); // 변경된 부분
-
-  const axiosInstance = axios.create({
-    withCredentials: true,
-  });
-
-  const {
-    isLoading,
-    error,
-    data: userData,
-  } = useQuery(["userData"], async () => {
-    try {
-      const response = await axiosInstance.get(
-        "http://127.0.0.1:8000/users/me/"
-      );
-      return response.data;
-    } catch (error) {
-      throw new Error("Network response was not ok");
-    }
-  });
-  console.log(userData);
 
   return (
     <>
@@ -186,6 +344,14 @@ export default function Profile() {
                   자기소개 보기
                 </button>
               </div>
+              <div className="mt-24">
+                {" "}
+                <span className="text-2xl font-dongle_light w-1/3 mr-24">
+                  분포도
+                </span>
+                {userData && <Radar data={data} options={options} />}
+              </div>
+
               <span className="flex justify-center ">
                 <button
                   onClick={navigateToNotiME}
@@ -195,7 +361,7 @@ export default function Profile() {
                 </button>
 
                 <button
-                  onClick={openModalB}
+                  onClick={handleLinkClick}
                   className="w-30 h-12 mr-8 bg-gray-500 font-diphylleia font-bold text-2xl text-white py-2 px-4 rounded-sm hover:brightness-110 mt-12 hover:bg-black"
                 >
                   프로필추가
@@ -238,132 +404,6 @@ export default function Profile() {
               )}
             </div>
           </>
-        )}
-
-        {isModalOpenB && (
-          <div
-            className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-slate-100  bg-opacity-75"
-            onClick={handleOutsideClick}
-          >
-            <div
-              className="bg-black p-8 rounded-lg w-1/3 text-white"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                className="absolute top-0 right-0 mr-4 mt-2 text-gray-500 hover:text-gray-700"
-                onClick={closeModal}
-              >
-                X
-              </button>
-
-              {/* 한글로 번역된 필드들과 입력 요소들 */}
-              <div className="flex flex-col">
-                <label className="text-white">학점</label>
-                <input
-                  type="text"
-                  name="grade"
-                  value={formData.grade}
-                  placeholder="학점을 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-white">학과</label>
-                <input
-                  type="text"
-                  name="depart"
-                  value={formData.depart}
-                  placeholder="학과를 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-white">학점</label>
-                <input
-                  type="text"
-                  name="credit"
-                  value={formData.credit}
-                  placeholder="학점을 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-white">교내 수상 횟수</label>
-                <input
-                  type="text"
-                  name="in_school_award_cnt"
-                  value={formData.in_school_award_cnt}
-                  placeholder="교내 수상 횟수를 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-white">교외 수상 횟수</label>
-                <input
-                  type="text"
-                  name="out_school_award_cnt"
-                  value={formData.out_school_award_cnt}
-                  placeholder="교외 수상 횟수를 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-white">국가대회 수상 횟수</label>
-                <input
-                  type="text"
-                  name="national_competition_award_cnt"
-                  value={formData.national_competition_award_cnt}
-                  placeholder="국가대회 수상 횟수를 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-white">자격증 보유 여부</label>
-                <input
-                  type="text"
-                  name="certificate"
-                  value={formData.certificate}
-                  placeholder="자격증 보유 여부를 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-white">과목</label>
-                <input
-                  type="text"
-                  name="subject"
-                  value={formData.subject}
-                  placeholder="과목을 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-white">전공 분야</label>
-                <input
-                  type="text"
-                  name="major_field"
-                  value={formData.major_field}
-                  placeholder="전공 분야를 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-white">코딩 테스트 점수</label>
-                <input
-                  type="text"
-                  name="codingTest_score"
-                  value={formData.codingTest_score}
-                  placeholder="코딩 테스트 점수를 입력하세요"
-                  className="bg-black border border-gray-500 text-white"
-                />
-              </div>
-
-              {/* 저장 버튼 */}
-              <button className="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded-sm mt-4">
-                저장
-              </button>
-            </div>
-          </div>
         )}
       </section>
 

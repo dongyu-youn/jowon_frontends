@@ -17,6 +17,9 @@ import Apply from "./pages/Apply";
 import UserDetail from "./components/UserDetail";
 import Notifications from "./pages/Notifications";
 import NotiMe from "./components/NotiMe";
+import FormPage from "./pages/FormPage";
+import Chart from "./pages/Chart";
+import Activate from "./pages/Active";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +41,9 @@ const router = createBrowserRouter([
       { path: "users/:id", element: <UserDetail /> },
       { path: "notifications", element: <Notifications /> },
       { path: "notifications/me", element: <NotiMe /> },
+      { path: "profile/form", element: <FormPage /> },
+      { path: "chart", element: <Chart /> },
+      { path: "activate/:token", element: <Activate /> },
     ],
   },
 ]);

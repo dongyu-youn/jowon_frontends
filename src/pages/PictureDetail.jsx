@@ -13,6 +13,7 @@ function PictureDetail() {
   const [loading, setLoading] = useState(false);
   const [video, setVideo] = useState(null);
   const [apply, setApply] = useState(false);
+  const [predictions, setPredictions] = useState([]); // 추가된 부분
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태를 저장하는 state
 
   const [isModalOpenC, setIsModalOpenC] = useState(false);
@@ -21,6 +22,8 @@ function PictureDetail() {
   const [error, setError] = useState(null);
   const [graphs, setGraphs] = useState([]);
   const navigate = useNavigate(); // useNavigate 훅을 초기화합니다
+
+  const [matchingType, setMatchingType] = useState("random"); // 초기값을 'random'으로 설정
 
   const toggleModal = () => {
     setIsModalOpenC(!isModalOpenC);
@@ -137,72 +140,87 @@ function PictureDetail() {
       );
       console.log("Selected choices updated");
 
-      // 인공지능 모델 실행
-      const aiResponse = await axiosInstance.post(
-        "http://127.0.0.1:8000/predictor/",
-        {
-          students: [
-            {
-              grade: 3,
-              depart: 2,
-              credit: 2,
-              in_school_award_cnt: 1,
-              out_school_award_cnt: 1,
-              national_competition_award_cnt: 2,
-              aptitude_test_score: 50,
-              certificate: 10,
-              major_field: 10,
-              codingTest_score: 2,
-            },
-            {
-              grade: 4,
-              depart: 3,
-              credit: 4.5,
-              in_school_award_cnt: 5,
-              out_school_award_cnt: 5,
-              national_competition_award_cnt: 3,
-              aptitude_test_score: 62,
-              certificate: 12,
-              major_field: 13,
-              codingTest_score: 2,
-            },
-            {
-              grade: 1,
-              depart: 1,
-              credit: 1,
-              in_school_award_cnt: 0,
-              out_school_award_cnt: 2,
-              national_competition_award_cnt: 0,
-              aptitude_test_score: 64,
-              certificate: 0,
-              major_field: 6,
-              codingTest_score: 0,
-            },
-            {
-              grade: 4,
-              depart: 1,
-              credit: 2,
-              in_school_award_cnt: 1,
-              out_school_award_cnt: 3,
-              national_competition_award_cnt: 3,
-              aptitude_test_score: 24,
-              certificate: 12,
-              major_field: 13,
-              codingTest_score: 2,
-            },
-          ],
-        }
-      );
-      console.log("AI model executed", aiResponse.data);
+      // selectedChoices 배열의 합계 계산 (문자열 숫자를 숫자로 변환하여 합계 계산)
+      const aptitudeTestScore = selectedChoices
+        .map(Number) // 문자열을 숫자로 변환
+        .reduce((acc, val) => acc + val, 0); // 합계 계산
 
-      // 새로운 Conversation 생성
+      // 사용자 데이터 가져오기
+      const applicantsResponse = await axiosInstance.get(
+        `http://127.0.0.1:8000/contests/${contestId}/applicants/`
+      );
+      const userData = applicantsResponse.data;
+
+      // 예측 데이터 가져오기
+      const fetchPredictions = async () => {
+        const newPredictions = [];
+        for (const user of userData) {
+          const studentData = {
+            grade: user.score.grade,
+            github_commit_count: user.score.github_commit_count,
+            baekjoon_score: user.score.baekjoon_score,
+            programmers_score: user.score.programmers_score,
+            certificate_count: user.score.certificate_count,
+            senior: user.score.senior,
+            depart: user.score.depart,
+            courses_taken: user.score.courses_taken,
+            major_field: user.score.major_field,
+            bootcamp_experience: user.score.bootcamp_experience,
+            in_school_award_cnt: user.score.in_school_award_cnt,
+            out_school_award_cnt: user.score.out_school_award_cnt,
+            coding_test_score: user.score.coding_test_score,
+            certificate_score: user.score.certificate_score,
+            aptitude_test_score: selectedChoices
+              .map(Number)
+              .reduce((acc, val) => acc + val, 0), // aptitudeTestScore 계산
+          };
+
+          // 인공지능 모델 실행 전 데이터 확인
+          const requestData = {
+            students: studentData,
+          };
+          console.log(
+            "Request Data for AI model:",
+            JSON.stringify(requestData, null, 2)
+          );
+
+          try {
+            const response = await axios.post(
+              "http://127.0.0.1:8000/users/students/predict/",
+              studentData
+            );
+            newPredictions.push({
+              user_id: user.id,
+              user_name: user.username,
+              avatar: user.avatar,
+              department: user.department,
+              predictions: response.data,
+            });
+          } catch (error) {
+            console.error("예측 요청 중 오류 발생:", error);
+          }
+        }
+
+        // "GCGF 혁신 아이디어 공모" 예측값 기준으로 정렬
+        newPredictions.sort(
+          (a, b) =>
+            b.predictions["GCGF 혁신 아이디어 공모"] -
+            a.predictions["GCGF 혁신 아이디어 공모"]
+        );
+        console.log(newPredictions);
+        setPredictions(newPredictions);
+        return newPredictions;
+      };
+
+      const newPredictions = await fetchPredictions();
+
       const conversationData = {
-        teamName: video.제목, // 필요한 데이터 설정
-        selected_choices: selectedChoices, // 선택된 값을 포함
-        contest_id: contestId, // contest_id를 추가
+        teamName: video.제목,
+        selected_choices: selectedChoices,
+        contest_id: contestId,
         image: video.사진,
-        ai_response: aiResponse.data.predictions, // AI 응답 데이터 추가
-        graph: aiResponse.data.graphs, // 그래프 데이터 추가
+        ai_response: newPredictions, // AI 응답 데이터 추가
+        matching_type: matchingType,
       };
 
       const conversationResponse = await axiosInstance.post(
@@ -212,6 +230,9 @@ function PictureDetail() {
       const conversationId = conversationResponse.data.id; // 생성된 conversation의 ID를 가져옴
       console.log("New conversation created", conversationId);
       // 로딩 상태를 false로 설정
+
+      // video 객체에 ai_response를 추가하여 업데이트
+      video.ai_response = newPredictions;
 
       // 새로운 알림 생성
       const NotiData = {
@@ -368,7 +389,11 @@ function PictureDetail() {
       {isModalOpen && <ModalComponent video={video} closeModal={closeModal} />}
 
       {isModalOpenC && (
-        <SurveyModal toggleLike={toggleLike} onClose={toggleModal} />
+        <SurveyModal
+          matchingType={matchingType}
+          toggleLike={toggleLike}
+          onClose={toggleModal}
+        />
       )}
 
       <Footer />
