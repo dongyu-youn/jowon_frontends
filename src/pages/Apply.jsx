@@ -91,7 +91,17 @@ export default function Apply() {
             a.predictions["GCGF 혁신 아이디어 공모"]
         );
         console.log(newPredictions);
-        setPredictions(newPredictions);
+
+        // 백엔드로 정렬된 데이터 전송
+        try {
+          const response = await axiosInstance.post(
+            `http://127.0.0.1:8000/contests/${contestId}/applicants/`,
+            newPredictions
+          );
+          setPredictions(response.data);
+        } catch (error) {
+          console.error("백엔드로 데이터 전송 중 오류 발생:", error);
+        }
       };
 
       fetchPredictions();

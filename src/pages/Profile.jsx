@@ -145,7 +145,7 @@ export default function Profile() {
   };
 
   const data = {
-    labels: ["성실도", "경험", "성과", "신뢰도"],
+    labels: ["성실도", "경험", "성과", "신뢰도", "창의성"],
     datasets: [
       {
         label: "내 데이터",

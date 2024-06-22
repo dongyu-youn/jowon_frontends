@@ -23,7 +23,7 @@ function PictureDetail() {
   const [graphs, setGraphs] = useState([]);
   const navigate = useNavigate(); // useNavigate 훅을 초기화합니다
 
-  const [matchingType, setMatchingType] = useState("random"); // 초기값을 'random'으로 설정
+  const [matchingType, setMatchingType] = useState(""); // 초기값을 'random'으로 설정
 
   const toggleModal = () => {
     setIsModalOpenC(!isModalOpenC);
@@ -54,6 +54,7 @@ function PictureDetail() {
       checkApplyStatus();
     }
   }, [video]);
+  console.log(video);
 
   const checkApplyStatus = async () => {
     const userToken = Cookies.get("csrftoken") || "";
@@ -220,7 +221,7 @@ function PictureDetail() {
         contest_id: contestId,
         image: video.사진,
         ai_response: newPredictions, // AI 응답 데이터 추가
-        matching_type: matchingType,
+        matching_type: matchingType, // 매칭 타입 추가
       };
 
       const conversationResponse = await axiosInstance.post(
@@ -390,7 +391,7 @@ function PictureDetail() {
 
       {isModalOpenC && (
         <SurveyModal
-          matchingType={matchingType}
+          matchingType={setMatchingType}
           toggleLike={toggleLike}
           onClose={toggleModal}
         />

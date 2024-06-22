@@ -49,21 +49,16 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create an array of response objects
     const formattedResponses = questions.map((question, index) => ({
       question: question.id,
       choice: responses[`question${index + 1}`],
-
       survey: 1, // 설문조사 ID로 교체 필요
     }));
 
-    // 배열에 선택된 값들만 저장
     const selectedChoices = questions.map(
       (question, index) => responses[`question${index + 1}`]
     );
 
-    // 먼저 toggleLike 함수 호출
-    toggleLike(e, selectedChoices);
     try {
       for (let response of formattedResponses) {
         await axiosInstance.post(
@@ -72,11 +67,10 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
         );
       }
       console.log("Survey responses submitted:", formattedResponses);
-      // 설문조사가 성공적으로 제출된 후에 toggleLike를 호출합니다.
-
       console.log("Selected choices:", selectedChoices);
-      // 설문조사가 성공적으로 제출된 후에 toggleLike를 호출합니다.
 
+      // 설문조사가 성공적으로 제출된 후에 toggleLike를 호출합니다.
+      toggleLike(e, selectedChoices, matchingType);
       console.log("toggle 함수가 호출되었습니다"); // 로그 추가
       onClose();
     } catch (error) {
@@ -164,7 +158,7 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
         ) : error ? (
           <p>Error: {error}</p>
         ) : (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => handleSubmit(e, matchingType)}>
             <div>
               {questions.map((question, index) => (
                 <div className="mb-8" key={index}>
@@ -198,12 +192,15 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
                 type="submit"
                 className="bg-pink-800 text-white px-4 py-2 mr-4 rounded"
                 value="top_two"
+                onClick={() => matchingType("top_two")} // 최강 매칭 타입 설정
               >
                 최강 매칭
               </button>
               <button
                 type="submit"
                 className="bg-green-500 text-white px-4 py-2 rounded"
+                onClick={() => matchingType("same")} // 최강 매칭 타입 설정
+                value="same"
               >
                 균등한 매칭
               </button>
