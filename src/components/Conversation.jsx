@@ -294,7 +294,7 @@ const Conversation = () => {
         <span className="text-center w-full block text-lg font-medium">
           <h2>인공지능 분석 결과</h2>
         </span>
-        {/* <div className="grid grid-cols-2 gap-3 mt-10 items-start">
+        <div className="grid grid-cols-2 gap-3 mt-10 items-start">
           {video.ai_response.map((prediction, index) => {
             const predictionValue =
               prediction.predictions["GCGF 혁신 아이디어 공모"].toFixed(2); // 예측 값을 가져옵니다.
@@ -323,7 +323,7 @@ const Conversation = () => {
               </div>
             );
           })}
-        </div> */}
+        </div>
 
         <div className="mt-10 ">
           <Slider {...settings}>

@@ -17,10 +17,17 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [school, setSchool] = useState("");
+  const [error, setError] = useState(""); // 오류 메시지 상태 추가
+
+  const schools = ["원광대학교", "군산대학교", "한밭대학교"]; // 드롭다운 옵션
 
   const handleSignUp = async () => {
-    // async 키워드 추가
-    // axios를 사용하여 서버에 POST 요청을 보냅니다.
+    // 이메일 유효성 검사
+    if (!email.endsWith("wku.ac.kr")) {
+      setError("이메일 주소는 wku.ac.kr로 끝나야 합니다.");
+      return;
+    }
+    setError(""); // 오류 메시지 초기화
 
     const userToken = Cookies.get("csrftoken") || "";
 
@@ -40,15 +47,11 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
           학교: school, // 학교 정보 추가
         }
       );
-      // 성공적으로 응답을 받았을 때 실행됩니다.
       console.log(response.data);
-      // 여기에 원하는 작업을 추가합니다. (예: 회원가입 성공 메시지 표시)
       handleSubmit(username, password);
       onClose();
     } catch (error) {
-      // 요청이 실패했을 때 실행됩니다.
       console.error(error);
-      // 여기에 오류 처리 로직을 추가합니다. (예: 오류 메시지 표시)
     }
   };
 
@@ -66,14 +69,12 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
         >
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
-
         <span
           className="hidden sm:inline-block sm:align-middle sm:h-screen"
           aria-hidden="true"
         >
           &#8203;
         </span>
-
         <div
           className={`${
             isOpen
@@ -91,34 +92,6 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
                   Sign up
                 </h3>
                 <div className="mt-2">
-                  {/* <div className="mt-1 relative rounded-md shadow-sm">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaUserSecret className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        className="focus:ring-indigo-500 h-12 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                    </div>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaEnvelope className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        className="focus:ring-indigo-500 h-12 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div> */}
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FaUserNinja className="h-5 w-5 text-gray-400" />
@@ -159,30 +132,27 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FaSchool className="h-5 w-5 text-gray-400" />
                     </div>
-                    <input
-                      type="text"
+                    <select
                       className="focus:ring-indigo-500 focus:border-indigo-500 block w-full h-12 pl-10 sm:text-sm border-gray-300 rounded-md"
-                      placeholder="학교"
                       value={school}
                       onChange={(e) => setSchool(e.target.value)}
-                    />
+                    >
+                      <option value="">학교 선택</option>
+                      {schools.map((schoolOption) => (
+                        <option key={schoolOption} value={schoolOption}>
+                          {schoolOption}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  {/* <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FaPencilAlt className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="text"
-                      className="focus:ring-indigo-500 focus:border-indigo-500 block w-full h-12 pl-10 sm:text-sm border-gray-300 rounded-md"
-                      placeholder="학과"
-                    />
-                  </div> */}
                 </div>
+                {error && (
+                  <div className="text-red-500 text-sm mt-2">{error}</div>
+                )}
               </div>
             </div>
           </div>

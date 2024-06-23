@@ -223,6 +223,7 @@ function PictureDetail() {
         ai_response: newPredictions, // AI 응답 데이터 추가
         matching_type: matchingType, // 매칭 타입 추가
       };
+      console.log(conversationData);
 
       const conversationResponse = await axiosInstance.post(
         "http://127.0.0.1:8000/conversations/",

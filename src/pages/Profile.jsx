@@ -4,15 +4,12 @@ import Footer from "../components/Footer";
 import { FaStar } from "react-icons/fa";
 import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
 import Cookies from "js-cookie";
-
 import axios from "axios";
 import NotiMe from "../components/NotiMe";
 import { useNavigate } from "react-router-dom";
-
 import { Radar } from "react-chartjs-2";
 
 const StarRating = ({ totalStars = 5, yellowStars = 0 }) => {
-  // Ensure totalStars and yellowStars are valid numbers
   totalStars = Number.isInteger(totalStars) && totalStars > 0 ? totalStars : 5;
   yellowStars =
     Number.isInteger(yellowStars) && yellowStars >= 0 ? yellowStars : 0;
@@ -36,12 +33,17 @@ const StarRating = ({ totalStars = 5, yellowStars = 0 }) => {
 };
 
 export default function Profile() {
-  const [performanceAverages, setPerformanceAverages] = useState({});
-  const [experienceAverages, setExperienceAverages] = useState({});
   const [percentages, setPercentages] = useState({});
-
+  const [score, setScore] = useState({});
   const queryClient = useQueryClient(); // 변경된 부분
   const userToken = Cookies.get("csrftoken") || "";
+
+  const axiosInstance = axios.create({
+    withCredentials: true,
+    headers: {
+      "X-CSRFToken": userToken,
+    },
+  });
 
   const {
     isLoading,
@@ -52,116 +54,76 @@ export default function Profile() {
       const response = await axiosInstance.get(
         "http://127.0.0.1:8000/users/me/"
       );
+      setScore(response.data.score); // score 정보를 상태에 저장
       return response.data;
     } catch (error) {
       throw new Error("Network response was not ok");
     }
   });
+
   console.log(userData);
 
   const handleLinkClick = () => {
     navigate("/profile/form");
   };
 
-  const axiosInstance = axios.create({
-    withCredentials: true,
-    headers: {
-      "X-CSRFToken": userToken,
-    },
-  });
   useEffect(() => {
-    axiosInstance
-      .get("http://127.0.0.1:8000/users/averages_performance/")
-      .then((response) => {
-        setPerformanceAverages(response.data);
-        calculatePercentages(response.data, "performance");
-      })
-      .catch((error) => console.error(error));
-
-    axiosInstance
-      .get("http://127.0.0.1:8000/users/averages_experience/")
-      .then((response) => {
-        setExperienceAverages(response.data);
-        calculatePercentages(response.data, "experience");
-      })
-      .catch((error) => console.error(error));
-  }, []);
-
-  const calculatePercentages = (avgData, type) => {
-    const userData = {
-      grade: 4, // 예시 사용자 데이터, 실제로는 상태에서 가져옵니다.
-      github_commit_count: 1,
-      baekjoon_score: 10,
-      programmers_score: 0,
-      certificate_count: 3,
-      depart: 1,
-      courses_taken: 1,
-      major_field: 1,
-      bootcamp_experience: 1,
-    };
-
-    const calcPercentage = (userValue, avgValue) =>
-      (userValue / avgValue) * 100;
-
-    if (type === "performance") {
-      setPercentages((prev) => ({
-        ...prev,
-        grade: calcPercentage(userData.grade, avgData.avg_grade),
-        github_commit_count: calcPercentage(
-          userData.github_commit_count,
-          avgData.avg_github_commit_count
-        ),
-        baekjoon_score: calcPercentage(
-          userData.baekjoon_score,
-          avgData.avg_baekjoon_score
-        ),
-        programmers_score: calcPercentage(
-          userData.programmers_score,
-          avgData.avg_programmers_score
-        ),
-        certificate_count: calcPercentage(
-          userData.certificate_count,
-          avgData.avg_certificate_count
-        ),
-      }));
-    } else if (type === "experience") {
-      setPercentages((prev) => ({
-        ...prev,
-        depart: calcPercentage(userData.depart, avgData.avg_depart),
-        courses_taken: calcPercentage(
-          userData.courses_taken,
-          avgData.avg_courses_taken
-        ),
-        major_field: calcPercentage(
-          userData.major_field,
-          avgData.avg_major_field
-        ),
-        bootcamp_experience: calcPercentage(
-          userData.bootcamp_experience,
-          avgData.avg_bootcamp_experience
-        ),
-      }));
+    if (Object.keys(score).length > 0) {
+      calculateAverages();
     }
+  }, [score]);
+
+  const calculateAverages = () => {
+    const performanceAverage =
+      (
+        (score.grade +
+          score.github_commit_count +
+          score.baekjoon_score +
+          score.programmers_score +
+          score.certificate_count) /
+        5
+      ).toFixed(2) * 10;
+
+    const experienceAverage =
+      (
+        (score.depart +
+          score.courses_taken +
+          score.major_field +
+          score.bootcamp_experience) /
+        4
+      ).toFixed(2) * 100;
+
+    const resultAverage =
+      (
+        (score.in_school_award_cnt +
+          score.out_school_award_cnt +
+          score.coding_test_score +
+          score.certificate_score +
+          score.aptitude_test_score) /
+        5
+      ).toFixed(2) * 50;
+
+    setPercentages({
+      performance: performanceAverage,
+      experience: experienceAverage,
+      result: resultAverage,
+      trust: 150, // 신뢰도 값을 100으로 설정
+      creativity: 150, // 창의성 값을 100으로 설정
+    });
   };
 
   const data = {
-    labels: ["성실도", "경험", "성과", "신뢰도", "창의성"],
+    labels: ["성과", "성실도", "경험", "신뢰도", "창의성"],
     datasets: [
       {
         label: "내 데이터",
         data: [
-          percentages.grade,
-          percentages.github_commit_count,
-          percentages.baekjoon_score,
-          percentages.programmers_score,
-          percentages.certificate_count,
-          percentages.depart,
-          percentages.courses_taken,
-          percentages.major_field,
-          percentages.bootcamp_experience,
-          userData ? userData.average_rating * 20 : 0, // 신뢰도 데이터 추가
+          percentages.result,
+          percentages.performance,
+          percentages.experience,
+          percentages.trust,
+          percentages.creativity,
         ],
-
         fill: true,
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         borderColor: "rgba(255, 99, 132, 1)",
@@ -172,7 +134,7 @@ export default function Profile() {
       },
       {
         label: "평균 데이터",
-        data: [50, 50, 50, 50, 50, 50, 120, 50, 120, 60], // 평균 데이터는 항상 100%로 설정합니다.
+        data: [180, 200, 100, 120, 120], // 평균 데이터는 항상 100%로 설정합니다.
         fill: true,
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderColor: "rgba(54, 162, 235, 1)",
@@ -183,6 +145,8 @@ export default function Profile() {
       },
     ],
   };
+
+  console.log(score);
   console.log(percentages);
 
   const options = {
@@ -190,6 +154,9 @@ export default function Profile() {
       r: {
         angleLines: {
           display: true,
+        },
+        grid: {
+          color: "#fff", // 레이더 그리드의 색상을 흰색으로 설정
         },
         pointLabels: {
           display: true,

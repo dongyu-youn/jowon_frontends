@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
 import { FaStar } from "react-icons/fa";
@@ -8,6 +8,7 @@ import axios from "axios";
 import StarRatingModal from "./StarRatingModal";
 import Cookies from "js-cookie";
 import MessageModal from "./MessageModal";
+import { Radar } from "react-chartjs-2";
 
 const StarRating = ({ totalStars = 5, yellowStars = 0 }) => {
   // Ensure totalStars and yellowStars are valid integers
@@ -36,6 +37,8 @@ export default function UserDetail() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [isModalOpenB, setIsModalOpenB] = useState(false);
+  const [percentages, setPercentages] = useState({});
+  const [score, setScore] = useState({});
 
   const queryClient = useQueryClient();
   const userToken = Cookies.get("csrftoken") || "";
@@ -73,6 +76,7 @@ export default function UserDetail() {
       const response = await axiosInstance.get(
         `http://127.0.0.1:8000/users/${id}`
       );
+      setScore(response.data.score); // score 정보를 상태에 저장
       return response.data;
     } catch (error) {
       throw new Error("Network response was not ok");
@@ -81,6 +85,122 @@ export default function UserDetail() {
 
   const handleSaveRating = (newRating) => {
     setRating(newRating);
+  };
+
+  useEffect(() => {
+    if (Object.keys(score).length > 0) {
+      calculateAverages();
+    }
+  }, [score]);
+
+  const calculateAverages = () => {
+    const performanceAverage =
+      (
+        (score.grade +
+          score.github_commit_count +
+          score.baekjoon_score +
+          score.programmers_score +
+          score.certificate_count) /
+        5
+      ).toFixed(2) * 10;
+
+    const experienceAverage =
+      (
+        (score.depart +
+          score.courses_taken +
+          score.major_field +
+          score.bootcamp_experience) /
+        4
+      ).toFixed(2) * 100;
+
+    const resultAverage =
+      (
+        (score.in_school_award_cnt +
+          score.out_school_award_cnt +
+          score.coding_test_score +
+          score.certificate_score +
+          score.aptitude_test_score) /
+        5
+      ).toFixed(2) * 10;
+
+    setPercentages({
+      performance: performanceAverage,
+      experience: experienceAverage,
+      result: resultAverage,
+      trust: 150, // 신뢰도 값을 100으로 설정
+      creativity: 150, // 창의성 값을 100으로 설정
+    });
+
+    // 평균 데이터를 콘솔에 출력
+    console.log("Performance Average:", performanceAverage);
+    console.log("Experience Average:", experienceAverage);
+    console.log("Result Average:", resultAverage);
+    console.log("Trust Average:", 100);
+    console.log("Creativity Average:", 100);
+  };
+
+  const data = {
+    labels: ["성과", "성실도", "경험", "신뢰도", "창의성"],
+    datasets: [
+      {
+        label: "내 데이터",
+        data: [
+          percentages.result,
+          percentages.performance,
+          percentages.experience,
+          percentages.trust,
+          percentages.creativity,
+        ],
+        fill: true,
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        pointBackgroundColor: "rgba(255, 99, 132, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(255, 99, 132, 1)",
+      },
+      {
+        label: "평균 데이터",
+        data: [180, 200, 100, 120, 120], // 평균 데이터는 항상 100%로 설정합니다.
+        fill: true,
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        pointBackgroundColor: "rgba(54, 162, 235, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(54, 162, 235, 1)",
+      },
+    ],
+  };
+
+  const options = {
+    scales: {
+      r: {
+        angleLines: {
+          display: true,
+          color: "#fff", // 각도 선의 색상을 흰색으로 설정
+        },
+        grid: {
+          color: "#fff", // 레이더 그리드의 색상을 흰색으로 설정
+        },
+        pointLabels: {
+          display: true,
+          font: {
+            size: 20, // 라벨 글자 크기를 20px로 설정합니다.
+            color: "#fff", // 라벨 글자 색상을 흰색으로 설정
+          },
+        },
+        ticks: {
+          beginAtZero: true,
+          color: "#fff", // 눈금의 색상을 흰색으로 설정
+        },
+      },
+    },
+    layout: {
+      padding: {
+        top: 100, // 상단 패딩을 100px로 설정하여 그래프를 아래로 내립니다.
+      },
+    },
   };
 
   return (
@@ -172,6 +292,14 @@ export default function UserDetail() {
                   자기소개 보기
                 </button>
               </div>
+              <div className="mt-24">
+                {" "}
+                <span className="text-2xl font-dongle_light w-1/3 mr-24">
+                  분포도
+                </span>
+                {userData && <Radar data={data} options={options} />}
+              </div>
+
               <span className="flex justify-center ">
                 <button
                   className="w-30 h-12 mr-8 bg-gray-500 font-diphylleia font-bold text-2xl text-white py-2 px-4 rounded-sm hover:brightness-110 mt-12 hover:bg-black"
