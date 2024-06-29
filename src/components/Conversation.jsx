@@ -7,13 +7,15 @@ import { FaImage } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
 import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import MiniProfileCard from "./MiniProfileCard";
 import Footer from "./Footer";
 import Slider from "react-slick";
+import { Radar } from "react-chartjs-2";
 import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
 import TeamEvaluation from "./TeamEvaluation";
+import { FaTrophy, FaMedal, FaStar, FaCheck, FaUpload } from "react-icons/fa";
 
 const NextArrow = (props) => (
   <div {...props}>
@@ -33,6 +35,14 @@ const Conversation = () => {
   const [messages, setMessages] = useState(""); // 입력된 메시지 상태
   const [loading, setLoading] = useState(false); // 분석 요청 중인지 여부를 나타내는 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
+  const [percentages, setPercentages] = useState({});
+  const [userData, setUserData] = useState({});
+  const [selectedFile, setSelectedFile] = useState(null);
+  const navigate = useNavigate();
+
+  const navigateToNoti = () => {
+    navigate("/pictures/messages");
+  };
 
   const customDotStyles = {
     backgroundColor: "black",
@@ -65,6 +75,24 @@ const Conversation = () => {
   const id = pathname.substring(pathname.lastIndexOf("/") + 1);
   const [video, setVideo] = useState(null);
 
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm("정말로 삭제하시겠습니까?");
+    if (confirmDelete) {
+      try {
+        const response = await axios.delete(
+          `http://127.0.0.1:8000/conversations/${id}`
+        );
+        if (response.status === 204) {
+          alert("팀이 성공적으로 삭제되었습니다.");
+          navigateToNoti();
+        }
+      } catch (error) {
+        console.error("팀 삭제 중 오류 발생:", error);
+        alert("팀 삭제 중 오류가 발생했습니다.");
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchVideo = async () => {
       try {
@@ -74,6 +102,7 @@ const Conversation = () => {
         setVideo(response.data);
         console.log(response.data.teamName);
         console.log(response.data.ai_response);
+        calculateAverages(); // 무작위 값 생성
         // const importanceValues = response.data.ai_response.map(
         //   (obj) => obj["중대한 사회 안전 이니까"]
         // );
@@ -84,6 +113,123 @@ const Conversation = () => {
 
     fetchVideo();
   }, [id]);
+
+  const calculateAverages = () => {
+    const averages = [
+      {
+        performance: 150, // 무작위 값
+        experience: 140, // 무작위 값
+        result: 100, // 무작위 값
+        trust: 100, // 무작위 값
+        creativity: 140, // 무작위 값
+      },
+      {
+        performance: 100, // 무작위 값
+        experience: 100, // 무작위 값
+        result: 140, // 무작위 값
+        trust: 80, // 무작위 값
+        creativity: 100, // 무작위 값
+      },
+      {
+        performance: 100, // 무작위 값
+        experience: 80, // 무작위 값
+        result: 100, // 무작위 값
+        trust: 140, // 무작위 값
+        creativity: 100, // 무작위 값
+      },
+    ];
+
+    setPercentages(averages);
+  };
+
+  const data = {
+    labels: ["성과", "성실도", "경험", "신뢰도", "창의성"],
+    datasets: [
+      {
+        label: "팀원 1 데이터",
+        data: [
+          percentages[0]?.result,
+          percentages[0]?.performance,
+          percentages[0]?.experience,
+          percentages[0]?.trust,
+          percentages[0]?.creativity,
+        ],
+        fill: true,
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        pointBackgroundColor: "rgba(255, 99, 132, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(255, 99, 132, 1)",
+      },
+      {
+        label: "팀원 2 데이터",
+        data: [
+          percentages[1]?.result,
+          percentages[1]?.performance,
+          percentages[1]?.experience,
+          percentages[1]?.trust,
+          percentages[1]?.creativity,
+        ],
+        fill: true,
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        pointBackgroundColor: "rgba(54, 162, 235, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(54, 162, 235, 1)",
+      },
+      {
+        label: "팀원 3 데이터",
+        data: [
+          percentages[2]?.result,
+          percentages[2]?.performance,
+          percentages[2]?.experience,
+          percentages[2]?.trust,
+          percentages[2]?.creativity,
+        ],
+        fill: true,
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        pointBackgroundColor: "rgba(75, 192, 192, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(75, 192, 192, 1)",
+      },
+    ],
+  };
+
+  const options = {
+    scales: {
+      r: {
+        angleLines: {
+          display: true,
+        },
+        grid: {
+          color: "#fff", // 레이더 그리드의 색상을 흰색으로 설정
+        },
+        pointLabels: {
+          display: true,
+          font: {
+            size: 20, // 라벨 글자 크기를 24px로 설정합니다.
+          },
+        },
+        ticks: {
+          beginAtZero: true,
+        },
+      },
+    },
+    layout: {
+      padding: {
+        top: 100, // 상단 패딩을 50px로 설정하여 그래프를 아래로 내립니다.
+      },
+    },
+  };
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
   if (!video) {
     return <div>Loading...</div>;
   }
@@ -153,9 +299,16 @@ const Conversation = () => {
   //   predictions.reduce((acc, val) => acc + val, 0) / predictions.length
   // ).toFixed(2);
 
+  const participantIds = video.participants.map(
+    (participant) => participant.id
+  );
+
+  const isSameMatchingType = video.matching_type === "same";
+  const isTopMatchingType = video.matching_type === "top_two";
+
   return (
     <section id="home" className="">
-      <div className="relative w-full h-0 " style={{ paddingBottom: "40%" }}>
+      <div className="relative w-full h-0" style={{ paddingBottom: "40%" }}>
         <div className="absolute inset-0 flex items-center justify-center">
           <img
             src="/videos/jown.jpeg"
@@ -168,9 +321,7 @@ const Conversation = () => {
         </div>
       </div>
       <div className="container mx-auto my-10 mt-32 flex justify-between min-h-50vh">
-        {/* 토글 버튼 */}
         <div className="flex justify-center">
-          {/* 확장/축소 아이콘 */}
           <button onClick={toggleSection} className="focus:outline-none">
             {!isExpanded ? (
               <FiChevronLeft size={64} />
@@ -194,7 +345,7 @@ const Conversation = () => {
           </div>
         </div>
         <div className="border flex-grow ml-10 p-10 flex flex-col">
-          <div className="border mb-6 flex items-center justify-center rounded  p-2">
+          <div className="border mb-6 flex items-center justify-center rounded p-2">
             {video.teamName}
           </div>
           {video.messages.map((message, index) => (
@@ -204,10 +355,9 @@ const Conversation = () => {
                 message.user.id !== 1 ? "flex-row-reverse" : ""
               }`}
             >
-              {/* 각 메시지에 대한 프로필 이미지 */}
               <img
-                alt={message.user.username} // 각 메시지의 사용자 이름을 대신 사용
-                src={message.user.avatar} // 각 메시지의 사용자 아바타를 대신 사용
+                alt={message.user.username}
+                src={message.user.avatar}
                 className={`w-20 h-20 rounded-full ml-4 ${
                   message.user.id !== 1
                     ? "bg-teal-500 text-black"
@@ -232,21 +382,20 @@ const Conversation = () => {
           <div className="mt-6 flex items-center w-full justify-center text-black">
             <input
               type="text"
-              className="rounded w-10/12  border-gray-300 border p-2 mr-2 focus:outline-none focus:border-teal-500"
+              className="rounded w-10/12 border-gray-300 border p-2 mr-2 focus:outline-none focus:border-teal-500"
               placeholder="메시지를 입력하세요..."
               value={messages}
-              onChange={(e) => setMessages(e.target.value)} // 입력된 메시지 업데이트
+              onChange={(e) => setMessages(e.target.value)}
             />
             <button
               onClick={sendMessage}
-              className="bg-teal-500 text-white  px-10 items-center rounded focus:outline-none flex"
-              style={{ flexDirection: "row" }} // Flex 방향을 가로로 변경
+              className="bg-teal-500 text-white px-10 items-center rounded focus:outline-none flex"
+              style={{ flexDirection: "row" }}
             >
               <span className="w-8 py-3">전송</span>
             </button>
           </div>
         </div>
-
         <div
           className={`border w-1/4 p-10 ml-12 flex justify-center flex-col ${
             isThirdExpanded ? "" : "hidden"
@@ -256,15 +405,13 @@ const Conversation = () => {
             <FaImage className="mr-4" size={24} /> <>사진/동영상</>
           </button>
           <div className="flex justify-between mt-10 items-center"></div>
-
           <button className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-white text-black items-center hover:bg-black hover:text-white cursor-pointer ">
             <FaFile className="mr-4" size={24} /> <>파일</>
           </button>
           <div className="flex justify-between mt-10 items-center"></div>
-
           <button
-            // onClick={analyzePotential}
-            className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-white text-black items-center hover:bg-black hover:text-white cursor-pointer "
+            className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-white text-black items-center hover:bg-black hover:text-white cursor-pointer"
+            onClick={handleDelete}
           >
             <FaBomb className="mr-4" size={24} /> <>팀파기</>
           </button>
@@ -272,14 +419,21 @@ const Conversation = () => {
           <div className="flex justify-between mt-10 items-center"></div>
 
           <button
-            // onClick={analyzePotential}
+            className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-white text-black items-center hover:bg-black hover:text-white cursor-pointer "
+            onClick={() => document.getElementById("fileInput").click()}
+          >
+            <FaStar className="mr-4" size={24} /> <>성과올리기</>
+          </button>
+          <input type="file" id="fileInput" style={{ display: "none" }} />
+
+          <div className="flex justify-between mt-10 items-center"></div>
+          <button
             onClick={() => setIsModalOpen(true)}
             className="flex justify-center align-top relative p-4 font-customFont hover:underline bg-red-400 text-black items-center hover:bg-black hover:text-white cursor-pointer "
           >
             <FiX className="mr-4" size={24} /> <>활동종료</>
           </button>
         </div>
-        {/* 두 번째 버튼 - 세 번째 섹션 토글 */}
         <div className="flex justify-center">
           <button onClick={toggleThirdSection} className="focus:outline-none">
             {!isThirdExpanded ? (
@@ -290,54 +444,72 @@ const Conversation = () => {
           </button>
         </div>
       </div>
-      <div className={`border p-10 container mx-auto min-h-80 mt-24 mb-40`}>
-        <span className="text-center w-full block text-lg font-medium">
-          <h2>인공지능 분석 결과</h2>
-        </span>
-        <div className="grid grid-cols-2 gap-3 mt-10 items-start">
-          {video.ai_response.map((prediction, index) => {
-            const predictionValue =
-              prediction.predictions["GCGF 혁신 아이디어 공모"].toFixed(2); // 예측 값을 가져옵니다.
-            return (
-              <div key={prediction.user_id} className="flex items-start">
-                <div className="mr-4">
-                  <MiniProfileCard participant={prediction} />
-                </div>
-                <div>
-                  <p className="text-sm">
-                    <strong>{prediction.user_name}</strong> 님은 총{" "}
-                    <strong>{predictionValue}%</strong>의 확률로 성공할 것으로
-                    분석되었습니다. 이는 대회에서 중요한 학점과 끈기 부분에서
-                    높은 점수를 보였기 때문입니다.
-                  </p>
-                  <div className="flex items-center mt-2">
-                    <div className="w-20 h-4 bg-gray-300 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-green-500"
-                        style={{ width: `${predictionValue}%` }}
-                      ></div>
+      {video.matching_type !== "random" && (
+        <div className={`border p-10 container mx-auto min-h-80 mt-24 mb-40`}>
+          {isSameMatchingType ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <div style={{ width: "800px", height: "800px" }}>
+                <Radar data={data} options={options} />
+              </div>
+            </div>
+          ) : video.matching_type === "top_two" ? (
+            <div>
+              <div className="grid grid-cols-2 gap-3 mt-10 items-start">
+                {video.ai_response.slice(0, 4).map((prediction, index) => {
+                  const predictionValue =
+                    prediction.predictions["GCGF 혁신 아이디어 공모"].toFixed(
+                      2
+                    ); // 예측 값을 가져옵니다.
+                  return (
+                    <div key={prediction.user_id} className="flex items-start">
+                      <div className="mr-4">
+                        <MiniProfileCard participant={prediction} />
+                      </div>
+                      <div>
+                        <p className="text-sm">
+                          <strong>{prediction.user_name}</strong> 님은 총{" "}
+                          <strong>{predictionValue}%</strong>의 확률로 성공할
+                          것으로 분석되었습니다. 이는 대회에서 중요한 학점과
+                          끈기 부분에서 높은 점수를 보였기 때문입니다.
+                        </p>
+                        <div className="flex items-center mt-2">
+                          <div className="w-20 h-4 bg-gray-300 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-green-500"
+                              style={{ width: `${predictionValue}%` }}
+                            ></div>
+                          </div>
+                          <p className="ml-2 text-lg font-bold">
+                            {predictionValue}%
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <p className="ml-2 text-lg font-bold">{predictionValue}%</p>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
-            );
-          })}
+              <div className="mt-10">
+                <Slider {...settings}>
+                  {graphImages.map((image, index) => (
+                    <div key={index} className="flex justify-center">
+                      <img src={image} alt={`분석 그래프 ${index + 1}`} />
+                    </div>
+                  ))}
+                </Slider>
+                <p className="text-3xl font-bold mt-4">
+                  {/* 전체 확률: {averagePrediction} */}
+                </p>
+              </div>
+            </div>
+          ) : null}
         </div>
+      )}
 
-        <div className="mt-10 ">
-          <Slider {...settings}>
-            {graphImages.map((image, index) => (
-              <div key={index} className="flex justify-center">
-                <img src={image} alt={`분석 그래프 ${index + 1}`} />
-              </div>
-            ))}
-          </Slider>
-          <p className="text-3xl font-bold mt-4">
-            {/* 전체 확률: {averagePrediction} */}
-          </p>
-        </div>
-      </div>
       <TeamEvaluation
         participants={video.participants}
         isOpen={isModalOpen}

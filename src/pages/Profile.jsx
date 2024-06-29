@@ -55,13 +55,12 @@ export default function Profile() {
         "http://127.0.0.1:8000/users/me/"
       );
       setScore(response.data.score); // score 정보를 상태에 저장
+      console.log(response.data.average_rating);
       return response.data;
     } catch (error) {
       throw new Error("Network response was not ok");
     }
   });
-
-  console.log(userData);
 
   const handleLinkClick = () => {
     navigate("/profile/form");
@@ -107,7 +106,7 @@ export default function Profile() {
       performance: performanceAverage,
       experience: experienceAverage,
       result: resultAverage,
-      trust: 150, // 신뢰도 값을 100으로 설정
+      trust: userData.average_rating * 50, // 신뢰도 값을 100으로 설정
       creativity: 150, // 창의성 값을 100으로 설정
     });
   };

@@ -185,7 +185,7 @@ export default function Navigation() {
 
         <div className="relative inline-block">
           <button
-            className="font-customFont inline-flex items-center justify-between p-4 font-customFont bg-black text-white hover:bg-white hover:text-black focus:outline-none"
+            className="font-customFont inline-flex items-center justify-between p-4  bg-black text-white hover:bg-white hover:text-black focus:outline-none"
             onClick={toggleDropdown}
           >
             My Page
@@ -194,6 +194,28 @@ export default function Navigation() {
           {isOpen && (
             <ul className="absolute left-0 mt-2 w-36 bg-white shadow-md z-10 flex flex-col">
               {profileLink}
+              <Link to="/pointshop">
+                <li className="p-4 pr-4 hover:bg-gray-100 hover:text-pink-800 hover:cursor:pointer">
+                  {/* 로그인/로그아웃 버튼 */}
+                  <p
+                    className="inline-block align-top relative p-4 font-customFont   hover:cursor-pointer"
+                    style={{ color: "black" }} // 글씨색 검정으로 설정
+                  >
+                    PointShop
+                  </p>
+                </li>
+              </Link>
+              <Link to="/ranking">
+                <li className="p-4 pr-4 hover:bg-gray-100 hover:text-pink-800 hover:cursor:pointer">
+                  {/* 로그인/로그아웃 버튼 */}
+                  <p
+                    className="inline-block align-top relative p-4 font-customFont   hover:cursor-pointer"
+                    style={{ color: "black" }} // 글씨색 검정으로 설정
+                  >
+                    Ranking
+                  </p>
+                </li>
+              </Link>
               <li className="relative">
                 <Link
                   to="/notifications"
@@ -206,6 +228,7 @@ export default function Navigation() {
                   </span>
                 </Link>
               </li>
+
               <li className="p-4 hover:bg-gray-100 hover:text-pink-800 hover:cursor:pointer">
                 {/* 로그인/로그아웃 버튼 */}
                 <p

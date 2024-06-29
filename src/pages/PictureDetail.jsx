@@ -101,7 +101,7 @@ function PictureDetail() {
     }
   };
 
-  const toggleLike = async (e, selectedChoices) => {
+  const toggleLike = async (e, selectedChoices, matchingType) => {
     e.stopPropagation(); // 클릭 이벤트가 부모로 전파되지 않도록 함
     e.preventDefault();
     console.log("toggleLike 함수가 실행되었습니다"); // 함수가 실행될 때 로그 출력
@@ -214,6 +214,19 @@ function PictureDetail() {
       };
 
       const newPredictions = await fetchPredictions();
+      console.log(newPredictions);
+
+      // top_two일 경우 상위 3명을 선택
+      let selectedParticipants = [];
+
+      // top_two일 경우 상위 3명을 선택
+      if (matchingType === "top_two") {
+        selectedParticipants = newPredictions.slice(0, 4); // 상위 3명 선택
+      } else if (matchingType === "same") {
+        for (let i = 0; i < newPredictions.length; i += 3) {
+          selectedParticipants.push(newPredictions.slice(i, i + 3));
+        }
+      }
 
       const conversationData = {
         teamName: video.제목,
@@ -222,8 +235,11 @@ function PictureDetail() {
         image: video.사진,
         ai_response: newPredictions, // AI 응답 데이터 추가
         matching_type: matchingType, // 매칭 타입 추가
+        participants: selectedParticipants.map(
+          (participant) => participant.user_id
+        ), // 선택된 참가자들 추가
       };
-      console.log(conversationData);
+      console.log("Conversation data being sent:", conversationData);
 
       const conversationResponse = await axiosInstance.post(
         "http://127.0.0.1:8000/conversations/",

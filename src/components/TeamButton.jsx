@@ -1,10 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FiChevronDown } from "react-icons/fi";
 
-const TeamButton = ({ data, teamName, image }) => {
+const TeamButton = ({ data, teamName, image, rank }) => {
   const { participants } = data;
-  console.log(data);
 
   return (
     <Link
@@ -24,6 +22,12 @@ const TeamButton = ({ data, teamName, image }) => {
 
       {/* 컨텐츠 */}
       <div className="flex flex-col justify-between p-4 w-full">
+        {/* 순위 표시 */}
+        {rank && (
+          <div className="absolute top-0 left-0 bg-red-500 text-white p-2 rounded-tr-lg rounded-bl-lg">
+            {rank}위
+          </div>
+        )}
         {/* 이미지가 아닌 내용 */}
         <div>
           {/* 팀 이름 */}
@@ -44,7 +48,7 @@ const TeamButton = ({ data, teamName, image }) => {
             }}
           >
             {participants.map((participant, index) => (
-              <div key={index} className="flex items-center ">
+              <div key={index} className="flex items-center">
                 <p className="" style={{ fontFamily: "BookkMyungjo-Bd" }}>
                   {participant.username}
                 </p>

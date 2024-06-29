@@ -21,8 +21,9 @@ export default function MessageModal({ isOpen, onClose, onSubmit }) {
       await axiosInstance.post("http://127.0.0.1:8000/notifications/", {
         receiver: 1, // 사용자 ID
         message: message,
-        image: null,
-        conversation_id: 181, // 새로 생성된 conversation ID 추가v
+        image:
+          "https://firebasestorage.googleapis.com/v0/b/wpoint-1d1be.appspot.com/o/KakaoTalk_Photo_2024-06-24-10-55-03.jpeg?alt=media&token=0289018b-94ad-41c9-b5d8-30b7b944fe4c ",
+        conversation_id: 243, // 새로 생성된 conversation ID 추가v
       });
 
       // 요청이 성공하면 onSubmit 콜백 함수 호출

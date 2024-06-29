@@ -1,8 +1,6 @@
 import React from "react";
-
 import Conversation from "./Conversation";
 import TeamButton from "./TeamButton";
-import { CardFooter } from "@chakra-ui/react";
 import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
 import axios from "axios";
 
@@ -23,44 +21,32 @@ const Message = () => {
         "http://127.0.0.1:8000/conversations/"
       );
       return response.data;
-      console.log(response.data.image);
     } catch (error) {
       throw new Error("Network response was not ok");
     }
   });
-  console.log(userData);
 
-  // Conversation 컴포넌트에서 사용할 데이터 정의
-  const conversationData = {
-    participants: [
-      {
-        id: 1,
-        first_name: "윤동규",
-        avatar: "https://via.placeholder.com/150",
-      },
-      {
-        id: 2,
-        first_name: "이한세",
-        avatar: "https://via.placeholder.com/150",
-      },
-      {
-        id: 3,
-        first_name: "김민혁",
-        avatar: "https://via.placeholder.com/150",
-      },
-      // 추가 팀원들을 추가할 수 있습니다.
-    ],
-    messages: [
-      {
-        id: 1,
-        user: { id: 1, first_name: "윤동규" },
-        message: "안녕하세요!",
-      },
-      { id: 2, user: { id: 2, first_name: "이한세" }, message: "Hi!" },
-      { id: 3, user: { id: 3, first_name: "김민혁" }, message: "안녕ㄴㅇ!" },
-      // 추가 메시지들을 추가할 수 있습니다.
-    ],
-  };
+  let processedUserData = userData || [];
+
+  if (processedUserData.length > 0) {
+    // "c언어와 실습(실습조)" 팀만 별도로 추출하여 순위를 매김
+    const cLanguageTeams = processedUserData.filter(
+      (team) => team.teamName === "c언어와 실습(실습조)"
+    );
+    cLanguageTeams.sort((a, b) => b.score - a.score); // 점수(score)를 기준으로 내림차순 정렬
+
+    // 순위 부여
+    cLanguageTeams.forEach((team, index) => {
+      team.rank = index + 1; // 1위부터 시작
+    });
+
+    // 나머지 팀들과 병합
+    const otherTeams = processedUserData.filter(
+      (team) => team.teamName !== "c언어와 실습(실습조)"
+    );
+    processedUserData = [...cLanguageTeams, ...otherTeams];
+  }
+
   return (
     <section id="home" className="overflow-y-auto">
       <div className="relative w-full" style={{ paddingBottom: "40%" }}>
@@ -79,13 +65,14 @@ const Message = () => {
       <div className="grid-container justify-center">
         {isLoading && <p>Loading...</p>}
         {error && <p>Something is wrong...</p>}
-        {userData &&
-          userData.map((video) => (
+        {processedUserData &&
+          processedUserData.map((video) => (
             <TeamButton
               key={video.id}
               data={video}
               teamName={video.teamName}
-              image={video.image} // 수정된 부분
+              image={video.image}
+              rank={video.rank} // rank 전달
             />
           ))}
       </div>

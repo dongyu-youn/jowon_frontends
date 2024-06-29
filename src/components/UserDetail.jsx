@@ -88,55 +88,58 @@ export default function UserDetail() {
   };
 
   useEffect(() => {
-    if (Object.keys(score).length > 0) {
-      calculateAverages();
+    if (Object.keys(score).length > 0 && userData) {
+      calculateAverages(userData.average_rating);
     }
-  }, [score]);
+  }, [score, userData]);
 
-  const calculateAverages = () => {
+  const calculateAverages = (averageRating) => {
     const performanceAverage =
       (
-        (score.grade +
-          score.github_commit_count +
-          score.baekjoon_score +
-          score.programmers_score +
-          score.certificate_count) /
+        (score.grade * 0.2 +
+          score.github_commit_count * 0.2 +
+          score.baekjoon_score * 0.2 +
+          score.programmers_score * 0.2 +
+          score.certificate_count * 0.2) / // 성과
         5
       ).toFixed(2) * 10;
 
     const experienceAverage =
       (
-        (score.depart +
-          score.courses_taken +
-          score.major_field +
-          score.bootcamp_experience) /
+        (score.depart * 0.25 +
+          score.courses_taken * 0.25 +
+          score.major_field * 0.25 +
+          score.bootcamp_experience * 0.25) / // 경험
         4
       ).toFixed(2) * 100;
 
     const resultAverage =
       (
-        (score.in_school_award_cnt +
-          score.out_school_award_cnt +
-          score.coding_test_score +
-          score.certificate_score +
-          score.aptitude_test_score) /
+        (score.in_school_award_cnt * 0.5 +
+          score.out_school_award_cnt * 0.5 +
+          score.coding_test_score * 0.5 +
+          score.certificate_score * 0.5 +
+          score.aptitude_test_score * 0.5) / // 성과
         5
       ).toFixed(2) * 10;
+
+    const trustAverage = averageRating * 0.2; // 신뢰도
+    const creativityAverage = 20; // 창의성
 
     setPercentages({
       performance: performanceAverage,
       experience: experienceAverage,
       result: resultAverage,
-      trust: 150, // 신뢰도 값을 100으로 설정
-      creativity: 150, // 창의성 값을 100으로 설정
+      trust: trustAverage,
+      creativity: creativityAverage,
     });
 
     // 평균 데이터를 콘솔에 출력
     console.log("Performance Average:", performanceAverage);
     console.log("Experience Average:", experienceAverage);
     console.log("Result Average:", resultAverage);
-    console.log("Trust Average:", 100);
-    console.log("Creativity Average:", 100);
+    console.log("Trust Average:", trustAverage);
+    console.log("Creativity Average:", creativityAverage);
   };
 
   const data = {
@@ -161,7 +164,7 @@ export default function UserDetail() {
       },
       {
         label: "평균 데이터",
-        data: [180, 200, 100, 120, 120], // 평균 데이터는 항상 100%로 설정합니다.
+        data: [20, 20, 5, 20, 20], // 평균 데이터는 항상 100%로 설정합니다.
         fill: true,
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderColor: "rgba(54, 162, 235, 1)",

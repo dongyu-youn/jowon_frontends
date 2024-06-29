@@ -47,6 +47,8 @@ const StarRatingModal = ({ isOpen, closeModal, rateeId }) => {
   const [accuracyScore, setAccuracyScore] = useState(0);
   const [teamworkScore, setTeamworkScore] = useState(0);
   const [overallScore, setOverallScore] = useState(0);
+  const [isPointModalOpen, setIsPointModalOpen] = useState(false);
+  const [points, setPoints] = useState(0);
 
   const userToken = Cookies.get("csrftoken") || "";
   const axiosInstance = axios.create({
@@ -69,6 +71,8 @@ const StarRatingModal = ({ isOpen, closeModal, rateeId }) => {
         }
       );
       console.log("Rating saved successfully.");
+      setPoints(100); // 예시 포인트 값을 설정합니다.
+      setIsPointModalOpen(true);
     } catch (error) {
       console.error("Error saving rating:", error);
     }
@@ -90,49 +94,73 @@ const StarRatingModal = ({ isOpen, closeModal, rateeId }) => {
   );
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={closeModal}
-      style={customStyles}
-      contentLabel="평가하기"
-      isTopMost={true}
-    >
-      <h2 style={customStyles.text}>평가하기</h2>
+    <>
+      <Modal
+        isOpen={isOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="평가하기"
+        isTopMost={true}
+      >
+        <h2 style={customStyles.text}>평가하기</h2>
 
-      <div className="w-full">
-        <div className="flex justify-between items-center">
-          <span style={customStyles.text}>
-            팀원은 팀활동을 성실히 수행했습니까?
-          </span>
-          {renderStars(activityScore, setActivityScore)}
+        <div className="w-full">
+          <div className="flex justify-between items-center">
+            <span style={customStyles.text}>
+              팀원은 팀활동을 성실히 수행했습니까?
+            </span>
+            {renderStars(activityScore, setActivityScore)}
+          </div>
+          <div className="flex justify-between items-center">
+            <span style={customStyles.text}>
+              팀원은 자기가 맡은 업무를 정확히 마쳤습니까?
+            </span>
+            {renderStars(accuracyScore, setAccuracyScore)}
+          </div>
+          <div className="flex justify-between items-center">
+            <span style={customStyles.text}>
+              팀원은 팀원들과 화합이 잘되었습니까?
+            </span>
+            {renderStars(teamworkScore, setTeamworkScore)}
+          </div>
+          <div className="flex justify-between items-center">
+            <span style={customStyles.text}>팀원의 전체활동을 평가한다면?</span>
+            {renderStars(overallScore, setOverallScore)}
+          </div>
         </div>
-        <div className="flex justify-between items-center">
-          <span style={customStyles.text}>
-            팀원은 자기가 맡은 업무를 정확히 마쳤습니까?
-          </span>
-          {renderStars(accuracyScore, setAccuracyScore)}
-        </div>
-        <div className="flex justify-between items-center">
-          <span style={customStyles.text}>
-            팀원은 팀원들과 화합이 잘되었습니까?
-          </span>
-          {renderStars(teamworkScore, setTeamworkScore)}
-        </div>
-        <div className="flex justify-between items-center">
-          <span style={customStyles.text}>팀원의 전체활동을 평가한다면?</span>
-          {renderStars(overallScore, setOverallScore)}
-        </div>
-      </div>
 
-      <div className="flex gap-4 mt-4">
-        <button style={customStyles.button} onClick={handleSave}>
-          저장
-        </button>
-        <button style={customStyles.button} onClick={closeModal}>
+        <div className="flex gap-4 mt-4">
+          <button style={customStyles.button} onClick={handleSave}>
+            저장
+          </button>
+          <button style={customStyles.button} onClick={closeModal}>
+            닫기
+          </button>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={isPointModalOpen}
+        onRequestClose={() => setIsPointModalOpen(false)}
+        style={customStyles}
+        contentLabel="포인트 제공"
+      >
+        <h2 style={customStyles.text}>포인트 제공</h2>
+        <img
+          src="https://firebasestorage.googleapis.com/v0/b/wpoint-1d1be.appspot.com/o/coin-removebg-preview.png?alt=media&token=047fd75a-3866-4d5e-8e15-081e5e73d2e7" // 로컬 이미지 경로 사용
+          alt="Money Bag"
+          style={{ width: "100px", height: "100px" }}
+        />
+        <p style={customStyles.text}>포인트가 제공되었습니다!</p>
+        <p style={customStyles.text}>포인트: {points}점</p>
+        <button
+          style={customStyles.button}
+          onClick={() => setIsPointModalOpen(false)}
+        >
           닫기
         </button>
-      </div>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 

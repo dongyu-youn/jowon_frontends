@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useLocation } from "react-router-dom";
 
-const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
+const SurveyModal = ({ onClose, toggleLike }) => {
   const [responses, setResponses] = useState({
     question1: "",
     question2: "",
@@ -13,6 +14,9 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const location = useLocation();
+  const pathname = location.pathname;
+  const id = pathname.substring(pathname.lastIndexOf("/") + 1);
 
   const [response, setResponse] = useState([]);
 
@@ -29,7 +33,6 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
   const formattedResponses = questions.map((question, index) => ({
     question: question.id,
     choice: responses[`question${index + 1}`],
-
     survey: 1, // 설문조사 ID로 교체 필요
   }));
 
@@ -46,13 +49,12 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
     },
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, matchingType) => {
     e.preventDefault();
-
     const formattedResponses = questions.map((question, index) => ({
       question: question.id,
       choice: responses[`question${index + 1}`],
-      survey: 1, // 설문조사 ID로 교체 필요
+      survey: question.survey, // 설문조사 ID를 각 질문에 포함시켜야 합니다.
     }));
 
     const selectedChoices = questions.map(
@@ -81,22 +83,22 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/survey/");
+        const response = await axios.get(
+          `http://127.0.0.1:8000/contests/${id}/survey/`
+        );
 
         // 응답 데이터 확인
         console.log("Response Data:", response.data);
 
         // response.data가 배열인지 확인하고, 질문들을 합침
-        if (Array.isArray(response.data)) {
-          const allQuestions = response.data.reduce((acc, survey) => {
-            return acc.concat(survey.questions);
-          }, []);
-
+        if (response.data && response.data.questions) {
+          const allQuestions = response.data.questions;
           setQuestions(allQuestions);
           console.log(allQuestions);
+
           // 합쳐진 질문들을 출력
           allQuestions.forEach((question, index) => {
-            console.log(`Question ${index + 1}: ${question.title}`);
+            console.log(`Question ${index + 1}: ${question.text}`);
             console.log("Choices:", question.choices);
           });
         } else {
@@ -112,7 +114,7 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
     };
 
     fetchQuestions();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const fetchResponses = async () => {
@@ -137,6 +139,7 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
       onClose();
     }
   };
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -145,7 +148,7 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50  ">
+    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">
       <div
         className="bg-white p-10 rounded-lg w-full max-w-4xl max-h-screen overflow-y-scroll"
         ref={modalRef}
@@ -158,7 +161,7 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
         ) : error ? (
           <p>Error: {error}</p>
         ) : (
-          <form onSubmit={(e) => handleSubmit(e, matchingType)}>
+          <form>
             <div>
               {questions.map((question, index) => (
                 <div className="mb-8" key={index}>
@@ -189,28 +192,26 @@ const SurveyModal = ({ onClose, toggleLike, matchingType }) => {
 
             <div className="flex justify-center">
               <button
-                type="submit"
+                type="button"
                 className="bg-pink-800 text-white px-4 py-2 mr-4 rounded"
-                value="top_two"
-                onClick={() => matchingType("top_two")} // 최강 매칭 타입 설정
+                onClick={(e) => handleSubmit(e, "top_two")} // 최강 매칭 타입 설정
               >
-                최강 매칭
+                Ace팀
               </button>
               <button
-                type="submit"
+                type="button"
                 className="bg-green-500 text-white px-4 py-2 rounded"
-                onClick={() => matchingType("same")} // 최강 매칭 타입 설정
-                value="same"
+                onClick={(e) => handleSubmit(e, "same")} // 균등한 매칭 타입 설정
               >
-                균등한 매칭
+                Balance팀
               </button>
 
               <button
-                type="submit"
+                type="button"
                 className="bg-yellow-500 text-white px-4 py-2 rounded ml-4"
-                value="random"
+                onClick={(e) => handleSubmit(e, "random")} // 무작위 매칭 타입 설정
               >
-                무작위 매칭
+                Random팀
               </button>
             </div>
           </form>

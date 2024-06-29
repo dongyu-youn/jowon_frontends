@@ -3,9 +3,23 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const departments = [
-  { value: 1, label: "Department 1" },
-  { value: 2, label: "Department 2" },
-  // 다른 학과 추가...
+  { value: 1, label: "전자융합공학과" },
+  { value: 2, label: "전자공학과" },
+  { value: 3, label: "화학융합공학과" },
+  { value: 4, label: "시각정보디자인학과" },
+  { value: 5, label: "컴소공" },
+  { value: 6, label: "실내산업디자인학과" },
+  { value: 7, label: "건축공학과" },
+  { value: 8, label: "식품영양학과" },
+  { value: 9, label: "탄소융합공학과" },
+  { value: 10, label: "게임콘텐츠공학과" },
+  { value: 11, label: "반려동물산업학과" },
+  { value: 12, label: "산림조경학과" },
+  { value: 13, label: "전기공학과" },
+  { value: 14, label: "생명과학부" },
+  { value: 15, label: "금속주얼리디자인학과" },
+  { value: 16, label: "경제학과" },
+  { value: 17, label: "패션디자인산업학과" },
 ];
 
 const courses = [

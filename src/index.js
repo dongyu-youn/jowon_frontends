@@ -20,6 +20,8 @@ import NotiMe from "./components/NotiMe";
 import FormPage from "./pages/FormPage";
 import Chart from "./pages/Chart";
 import Activate from "./pages/Active";
+import PointShop from "./components/PointShop";
+import Ranking from "./components/Ranking";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +46,8 @@ const router = createBrowserRouter([
       { path: "profile/form", element: <FormPage /> },
       { path: "chart", element: <Chart /> },
       { path: "activate/:token", element: <Activate /> },
+      { path: "pointshop", element: <PointShop /> },
+      { path: "ranking", element: <Ranking /> },
     ],
   },
 ]);
