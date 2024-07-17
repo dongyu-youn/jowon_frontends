@@ -2,23 +2,6 @@ import { useEffect, useState } from "react";
 import { FaUserNinja, FaLock } from "react-icons/fa";
 import axios from "axios";
 import Cookies from "js-cookie";
-import {
-  Avatar,
-  Box,
-  Button,
-  HStack,
-  IconButton,
-  LightMode,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Stack,
-  useColorMode,
-  useColorModeValue,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react";
 import SignUpModal from "./SignUpModal";
 
 export default function LoginModal({
@@ -28,28 +11,24 @@ export default function LoginModal({
   setUser,
 }) {
   const [isSignUpIn, setIsSignUpIn] = useState(false);
-
-  // 회원가입 버튼 클릭 시
-  const handleSignUpClick = () => {
-    setIsSignUpIn(true); // 회원가입 모달을 열기 위해 isSignUpIn을 true로 설정
-  };
-
-  // 회원가입 모달에서 닫기 버튼 클릭 시
-  const handleSignUpModalClose = () => {
-    setIsSignUpIn(false); // 회원가입 모달 닫기
-  };
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState("");
-  // 로그인 성공 후 사용자 정보를 저장하는 함수
+
+  const handleSignUpClick = () => {
+    setIsSignUpIn(true);
+  };
+
+  const handleSignUpModalClose = () => {
+    setIsSignUpIn(false);
+  };
+
   const saveUserInfoToLocalStorage = (userInfo) => {
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
   };
 
   const handleSubmit = async (event) => {
+    event.preventDefault(); // 추가된 부분
     const userToken = Cookies.get("csrftoken") || "";
 
     const axiosInstance = axios.create({
@@ -75,22 +54,21 @@ export default function LoginModal({
       // 사용자 정보를 로컬 스토리지에 저장
       saveUserInfoToLocalStorage(response.data);
 
-      setShowModal(false); // 모달 닫기
-      setIsLoggedIn(true); // 로그인 상태 변경
       setUser(response.data); // 로그인 성공 시 사용자 정보 설정
     } catch (error) {
       console.error("로그인 요청 중 에러:", error);
       setError("An error occurred while logging in");
     }
   };
+
   // 애플리케이션 초기화 시에 로컬 스토리지에서 사용자 정보 가져오기
-  const getUserInfoFromLocalStorage = () => {
-    const userInfo = localStorage.getItem("userInfo");
-    return userInfo ? JSON.parse(userInfo) : null;
-  };
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(setUser));
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      setUser(JSON.parse(userInfo));
+    }
   }, [setUser]);
+
   return (
     <div
       className={`fixed inset-0 flex justify-center items-center ${
@@ -138,7 +116,7 @@ export default function LoginModal({
           onClick={handleSignUpClick}
           className="bg-pink-800 text-white py-2 px-4 rounded-lg w-full mt-4"
         >
-          Sing Up
+          Sign Up
         </button>
         <button
           onClick={onClose}
@@ -146,7 +124,6 @@ export default function LoginModal({
         >
           Close
         </button>
-        {/* SignUpModal */}
         <SignUpModal
           handleSubmit={handleSubmit}
           isOpen={isSignUpIn}

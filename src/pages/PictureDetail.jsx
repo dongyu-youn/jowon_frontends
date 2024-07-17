@@ -8,6 +8,12 @@ import ModalComponent from "../components/Modal";
 import Cookies from "js-cookie";
 import SurveyModal from "../components/SurveyModal";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅을 가져옵니다
+import { useQuery } from "react-query";
+import { normalizeUserScores } from "../Nomalize/NormalizeScores";
+
+import { clusterUsersIntoTeams } from "../Nomalize/ClusterUsers";
+import { kmeans } from "../utils/kmeas";
+import TeamDisplay from "../Nomalize/TeamDisplay";
 
 function PictureDetail() {
   const [loading, setLoading] = useState(false);
@@ -25,13 +31,90 @@ function PictureDetail() {
 
   const [matchingType, setMatchingType] = useState(""); // 초기값을 'random'으로 설정
 
-  const toggleModal = () => {
-    setIsModalOpenC(!isModalOpenC);
-  };
+  const [applys, setApplys] = useState(null);
 
+  const [teams, setTeams] = useState([]);
   const location = useLocation();
   const pathname = location.pathname;
   const id = pathname.substring(pathname.lastIndexOf("/") + 1);
+
+  const userToken = Cookies.get("csrftoken") || "";
+  const axiosInstance = axios.create({
+    withCredentials: true,
+    headers: {
+      "X-CSRFToken": userToken,
+    },
+  });
+
+  useEffect(() => {
+    const fetchVideo = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/contests/${id}/applicants/`
+        ); // id 값을 이용하여 서버로 요청
+        setApplys(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching video:", error);
+      }
+    };
+
+    fetchVideo();
+  }, [id]);
+
+  const handleMatching = async () => {
+    if (!applys) return;
+    const normalizedUsers = normalizeUserScores(applys);
+    const numTeams = 3;
+
+    try {
+      const teams = kmeans(
+        normalizedUsers.map((user) => [
+          user.normalizedScore.grade,
+          user.normalizedScore.github_commit_count,
+          user.normalizedScore.baekjoon_score,
+          user.normalizedScore.programmers_score,
+          user.normalizedScore.certificate_count,
+        ]),
+        numTeams
+      );
+      setTeams(teams);
+    } catch (error) {
+      console.error("Error clustering users into teams:", error);
+    }
+  };
+  const handleMatchingSame = (predictions) => {
+    if (!predictions || predictions.length === 0) {
+      console.log("No predictions available.");
+      return;
+    }
+    console.log("Predictions:", predictions);
+
+    // 예측 값을 기준으로 팀을 균등하게 구성
+    const numTeams = Math.ceil(predictions.length / 3);
+    let teams = Array.from({ length: numTeams }, () => []);
+
+    predictions.forEach((prediction, index) => {
+      teams[index % numTeams].push(prediction);
+    });
+
+    // 팀 매칭 결과 로그 출력
+    teams.forEach((team, index) => {
+      console.log(`Team ${index + 1}:`);
+      team.forEach((member) => {
+        console.log(
+          `- ${member.user_name}: ${JSON.stringify(member.predictions)}`
+        );
+      });
+    });
+
+    console.log("Selected Participants:", teams);
+    setTeams(teams);
+  };
+
+  const toggleModal = () => {
+    setIsModalOpenC(!isModalOpenC);
+  };
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -80,13 +163,6 @@ function PictureDetail() {
     }
   };
 
-  const userToken = Cookies.get("csrftoken") || "";
-  const axiosInstance = axios.create({
-    withCredentials: true,
-    headers: {
-      "X-CSRFToken": userToken,
-    },
-  });
   const handleSubmit = async () => {
     try {
       // 메시지를 포함하여 axios로 POST 요청 보내기
@@ -223,9 +299,8 @@ function PictureDetail() {
       if (matchingType === "top_two") {
         selectedParticipants = newPredictions.slice(0, 4); // 상위 3명 선택
       } else if (matchingType === "same") {
-        for (let i = 0; i < newPredictions.length; i += 3) {
-          selectedParticipants.push(newPredictions.slice(i, i + 3));
-        }
+        console.log("handleMatchingSame 함수 호출됨"); // 추가
+        handleMatchingSame(newPredictions); // 매개변수 전달;
       }
 
       const conversationData = {
@@ -415,6 +490,7 @@ function PictureDetail() {
       )}
 
       <Footer />
+      {teams.length > 0 && <TeamDisplay teams={teams} />}
     </>
   );
 }

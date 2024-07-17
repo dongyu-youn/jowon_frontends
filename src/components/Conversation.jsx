@@ -70,6 +70,15 @@ const Conversation = () => {
     setIsThirdExpanded(!isThirdExpanded);
   };
 
+  const userToken = Cookies.get("csrftoken") || "";
+
+  const axiosInstance = axios.create({
+    withCredentials: true,
+    headers: {
+      "X-CSRFToken": userToken,
+    },
+  });
+
   const location = useLocation();
   const pathname = location.pathname;
   const id = pathname.substring(pathname.lastIndexOf("/") + 1);
@@ -79,7 +88,7 @@ const Conversation = () => {
     const confirmDelete = window.confirm("정말로 삭제하시겠습니까?");
     if (confirmDelete) {
       try {
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
           `http://127.0.0.1:8000/conversations/${id}`
         );
         if (response.status === 204) {
@@ -96,16 +105,13 @@ const Conversation = () => {
   useEffect(() => {
     const fetchVideo = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `http://127.0.0.1:8000/conversations/${id}`
         ); // id 값을 이용하여 서버로 요청
         setVideo(response.data);
         console.log(response.data.teamName);
         console.log(response.data.ai_response);
-        calculateAverages(); // 무작위 값 생성
-        // const importanceValues = response.data.ai_response.map(
-        //   (obj) => obj["중대한 사회 안전 이니까"]
-        // );
+        calculateAverages(response.data.ai_response); // ai_response 데이터를 calculateAverages 함수에 전달
       } catch (error) {
         console.error("Error fetching video:", error);
       }
@@ -114,45 +120,31 @@ const Conversation = () => {
     fetchVideo();
   }, [id]);
 
-  const calculateAverages = () => {
-    const averages = [
-      {
-        performance: 150, // 무작위 값
-        experience: 140, // 무작위 값
-        result: 100, // 무작위 값
-        trust: 100, // 무작위 값
-        creativity: 140, // 무작위 값
-      },
-      {
-        performance: 100, // 무작위 값
-        experience: 100, // 무작위 값
-        result: 140, // 무작위 값
-        trust: 80, // 무작위 값
-        creativity: 100, // 무작위 값
-      },
-      {
-        performance: 100, // 무작위 값
-        experience: 80, // 무작위 값
-        result: 100, // 무작위 값
-        trust: 140, // 무작위 값
-        creativity: 100, // 무작위 값
-      },
-    ];
+  // ai_response 데이터를 바탕으로 각 유저의 score 값을 추출하는 함수
+  const calculateAverages = (aiResponse) => {
+    const averages = aiResponse.map((response) => ({
+      performance: response.scores.performance,
+      experience: response.scores.experience,
+      result: response.scores.result,
+      trust: response.scores.trust,
+      creativity: response.scores.creativity,
+    }));
 
     setPercentages(averages);
   };
 
+  // 레이더 차트 데이터를 percentages 상태에 기반하여 설정
   const data = {
     labels: ["성과", "성실도", "경험", "신뢰도", "창의성"],
     datasets: [
       {
         label: "팀원 1 데이터",
         data: [
-          percentages[0]?.result,
-          percentages[0]?.performance,
-          percentages[0]?.experience,
-          percentages[0]?.trust,
-          percentages[0]?.creativity,
+          percentages[0] ? percentages[0].result : 0,
+          percentages[0] ? percentages[0].performance : 0,
+          percentages[0] ? percentages[0].experience : 0,
+          percentages[0] ? percentages[0].trust : 0,
+          percentages[0] ? percentages[0].creativity : 0,
         ],
         fill: true,
         backgroundColor: "rgba(255, 99, 132, 0.2)",
@@ -165,11 +157,11 @@ const Conversation = () => {
       {
         label: "팀원 2 데이터",
         data: [
-          percentages[1]?.result,
-          percentages[1]?.performance,
-          percentages[1]?.experience,
-          percentages[1]?.trust,
-          percentages[1]?.creativity,
+          percentages[1] ? percentages[1].result : 0,
+          percentages[1] ? percentages[1].performance : 0,
+          percentages[1] ? percentages[1].experience : 0,
+          percentages[1] ? percentages[1].trust : 0,
+          percentages[1] ? percentages[1].creativity : 0,
         ],
         fill: true,
         backgroundColor: "rgba(54, 162, 235, 0.2)",
@@ -182,11 +174,11 @@ const Conversation = () => {
       {
         label: "팀원 3 데이터",
         data: [
-          percentages[2]?.result,
-          percentages[2]?.performance,
-          percentages[2]?.experience,
-          percentages[2]?.trust,
-          percentages[2]?.creativity,
+          percentages[2] ? percentages[2].result : 0,
+          percentages[2] ? percentages[2].performance : 0,
+          percentages[2] ? percentages[2].experience : 0,
+          percentages[2] ? percentages[2].trust : 0,
+          percentages[2] ? percentages[2].creativity : 0,
         ],
         fill: true,
         backgroundColor: "rgba(75, 192, 192, 0.2)",
@@ -233,14 +225,6 @@ const Conversation = () => {
   if (!video) {
     return <div>Loading...</div>;
   }
-  const userToken = Cookies.get("csrftoken") || "";
-
-  const axiosInstance = axios.create({
-    withCredentials: true,
-    headers: {
-      "X-CSRFToken": userToken,
-    },
-  });
 
   // 메시지 전송 함수
   const sendMessage = async () => {
