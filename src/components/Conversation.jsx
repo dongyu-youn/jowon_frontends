@@ -120,17 +120,82 @@ const Conversation = () => {
     fetchVideo();
   }, [id]);
 
-  // ai_response 데이터를 바탕으로 각 유저의 score 값을 추출하는 함수
   const calculateAverages = (aiResponse) => {
-    const averages = aiResponse.map((response) => ({
-      performance: response.scores.performance,
-      experience: response.scores.experience,
-      result: response.scores.result,
-      trust: response.scores.trust,
-      creativity: response.scores.creativity,
-    }));
+    const averages = aiResponse.map((response) => {
+      if (response.score) {
+        const performance = calculatePerformance(response.score);
+        const experience = calculateExperience(response.score);
+        const result = calculateResult(response.score);
+        const trust = response.score.trust || 0;
+        const creativity = response.score.creativity || 0;
+
+        console.log(`User: ${response.username}`);
+        console.log(`Performance: ${performance}`);
+        console.log(`Experience: ${experience}`);
+        console.log(`Result: ${result}`);
+        console.log(`Trust: ${trust}`);
+        console.log(`Creativity: ${creativity}`);
+
+        return {
+          performance,
+          experience,
+          result,
+          trust,
+          creativity,
+        };
+      } else {
+        console.log(`User: ${response.username}`);
+        console.log("No score available");
+
+        return {
+          performance: 0,
+          experience: 0,
+          result: 0,
+          trust: 0,
+          creativity: 0,
+        };
+      }
+    });
 
     setPercentages(averages);
+  };
+
+  const calculatePerformance = (score) => {
+    return (
+      (
+        (score.grade * 0.2 +
+          score.github_commit_count * 0.2 +
+          score.baekjoon_score * 0.2 +
+          score.programmers_score * 0.2 +
+          score.certificate_count * 0.2) /
+        5
+      ).toFixed(2) * 10
+    );
+  };
+
+  const calculateExperience = (score) => {
+    return (
+      (
+        (score.depart * 0.25 +
+          score.courses_taken * 0.25 +
+          score.major_field * 0.25 +
+          score.bootcamp_experience * 0.25) /
+        4
+      ).toFixed(2) * 100
+    );
+  };
+
+  const calculateResult = (score) => {
+    return (
+      (
+        (score.in_school_award_cnt * 0.5 +
+          score.out_school_award_cnt * 0.5 +
+          score.coding_test_score * 0.5 +
+          score.certificate_score * 0.5 +
+          score.aptitude_test_score * 0.5) /
+        5
+      ).toFixed(2) * 10
+    );
   };
 
   // 레이더 차트 데이터를 percentages 상태에 기반하여 설정

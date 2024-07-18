@@ -3,13 +3,11 @@ import Conversation from "./Conversation";
 import TeamButton from "./TeamButton";
 import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
 import axios from "axios";
+import Cookies from "js-cookie";
+import axiosInstance from "../utils/axiosInstance";
 
 const Message = () => {
   const queryClient = useQueryClient(); // 변경된 부분
-
-  const axiosInstance = axios.create({
-    withCredentials: true,
-  });
 
   const {
     isLoading,
@@ -18,7 +16,7 @@ const Message = () => {
   } = useQuery(["userData"], async () => {
     try {
       const response = await axiosInstance.get(
-        "http://127.0.0.1:8000/conversations/"
+        "http://127.0.0.1:8000/conversations/my"
       );
       return response.data;
     } catch (error) {

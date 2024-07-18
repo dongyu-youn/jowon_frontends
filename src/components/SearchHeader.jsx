@@ -87,7 +87,7 @@ export default function SearchHeader() {
             : {}),
         }}
       >
-        <Link to="/" className="flex items-center justify-start">
+        <Link to="/" className="flex items-center justify-start w-0 md:w-0">
           <h1 className="text-2xl font-bold inline-block relative w-64 font-customFont hover:text-pink-800">
             1jowon
           </h1>

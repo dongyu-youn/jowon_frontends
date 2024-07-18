@@ -1,11 +1,9 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import { FaArrowLeftLong } from "react-icons/fa6";
-import { IoIosArrowRoundBack } from "react-icons/io";
-import Slider from "react-slick";
 import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
+import Slider from "react-slick";
 import PictureCard from "../components/PictureCard";
-import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
+import { useQuery } from "react-query";
 import axios from "axios";
 
 const NextArrow = (props) => (
@@ -22,7 +20,6 @@ const PrevArrow = (props) => (
 
 export default function Today() {
   const { keyword } = useParams();
-  const queryClient = useQueryClient(); // 변경된 부분
 
   const {
     isLoading,
@@ -37,21 +34,23 @@ export default function Today() {
     }
   });
 
-  const customDotStyles = {
-    backgroundColor: "black",
-    width: "10px",
-    height: "10px",
-    borderRadius: "50%",
-  };
-
   const settings = {
-    dots: 3,
+    dots: true,
     infinite: true,
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
     prevArrow: <PrevArrow />,
     nextArrow: <NextArrow />,
+    responsive: [
+      {
+        breakpoint: 768, // 작은 화면에서는 하나씩 보여주기
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
 
   return (
@@ -64,9 +63,11 @@ export default function Today() {
       {error && <p>Something is wrong...</p>}
       {videos && (
         <div>
-          <Slider {...settings} className="p-12 flex items-center">
+          <Slider {...settings} className="p-12">
             {videos.results.map((video) => (
-              <PictureCard key={video.id} video={video}></PictureCard>
+              <div key={video.id} className="px-2">
+                <PictureCard video={video}></PictureCard>
+              </div>
             ))}
           </Slider>
 

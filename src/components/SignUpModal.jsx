@@ -23,11 +23,6 @@ export default function SignUpModal({ isOpen, onClose, handleSubmit }) {
 
   const handleSignUp = async () => {
     // 이메일 유효성 검사
-    if (!email.endsWith("wku.ac.kr")) {
-      setError("이메일 주소는 wku.ac.kr로 끝나야 합니다.");
-      return;
-    }
-    setError(""); // 오류 메시지 초기화
 
     const userToken = Cookies.get("csrftoken") || "";
 
