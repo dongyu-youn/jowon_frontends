@@ -101,3 +101,16 @@
     display: block;
   }
 }
+
+.transparent-bg {
+  background-color: transparent;
+}
+
+.white-bg {
+  background-color: white;
+  box-shadow: 0 4px 2px -2px gray;
+}
+
+.transition-bg {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}

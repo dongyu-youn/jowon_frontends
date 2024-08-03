@@ -74,7 +74,7 @@ export default function List_Pictures() {
       const userDepartment = userData.학과; // 사용자의 학과 정보를 가져옵니다.
 
       // 필터링된 대회 목록을 가져옵니다.
-      const filteredResponse = await axios.get(
+      const filteredResponse = await axiosInstance.get(
         `http://127.0.0.1:8000/contests/filtered/?연관학과=${userDepartment}`,
         {
           headers: {

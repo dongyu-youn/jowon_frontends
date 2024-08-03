@@ -28,7 +28,7 @@ export default function LoginModal({
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // 추가된 부분
+    event.preventDefault();
     const userToken = Cookies.get("csrftoken") || "";
 
     const axiosInstance = axios.create({

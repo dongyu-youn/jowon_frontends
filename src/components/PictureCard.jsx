@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import axiosInstance from "../utils/axiosInstance";
+import getAxiosInstance from "../utils/axiosInstance"; // 수정된 부분
 import { format } from "date-fns";
 
 export default function PictureCard({ video }) {
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const axiosInstance = getAxiosInstance(); // Axios 인스턴스 생성
 
   // video 객체가 undefined일 때 대체 값 사용
   const createdDate = video?.created ? new Date(video.created) : new Date();

@@ -10,6 +10,7 @@ import SurveyModal from "../components/SurveyModal";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅을 가져옵니다
 import { useQuery } from "react-query";
 import { normalizeUserScores } from "../Nomalize/NormalizeScores";
+import getAxiosInstance from "../utils/axiosInstance"; // 수정된 부분
 
 import { clusterUsersIntoTeams } from "../Nomalize/ClusterUsers";
 import { kmeans } from "../utils/kmeas";

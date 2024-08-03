@@ -18,31 +18,9 @@ const fetchCsrfToken = async () => {
   }
 };
 
-const getToken = async (username, password) => {
-  try {
-    const response = await axios.post(
-      "http://127.0.0.1:8000/users/api-token-auth/",
-      {
-        username,
-        password,
-      }
-    );
-    console.log("Auth Token:", response.data.token);
-    return response.data.token;
-  } catch (error) {
-    console.error("Error fetching auth token:", error);
-    return "";
-  }
-};
-
-const getAxiosInstance = async (username, password) => {
+const getAxiosInstance = async () => {
   const userToken = Cookies.get("csrftoken") || (await fetchCsrfToken());
-  let accessToken = localStorage.getItem("access_token");
-
-  if (!accessToken && username && password) {
-    accessToken = await getToken(username, password);
-    localStorage.setItem("access_token", accessToken);
-  }
+  const accessToken = localStorage.getItem("access_token") || "";
 
   console.log("CSRF Token:", userToken);
   console.log("Access Token:", accessToken);

@@ -8,6 +8,7 @@ import axios from "axios";
 import NotiMe from "../components/NotiMe";
 import { useNavigate } from "react-router-dom";
 import { Radar } from "react-chartjs-2";
+import getAxiosInstance from "../utils/axiosInstance"; // 수정된 부분
 
 const StarRating = ({ totalStars = 5, yellowStars = 0 }) => {
   totalStars = Number.isInteger(totalStars) && totalStars > 0 ? totalStars : 5;
@@ -38,12 +39,7 @@ export default function Profile() {
   const queryClient = useQueryClient(); // 변경된 부분
   const userToken = Cookies.get("csrftoken") || "";
 
-  const axiosInstance = axios.create({
-    withCredentials: true,
-    headers: {
-      "X-CSRFToken": userToken,
-    },
-  });
+  const axiosInstance = getAxiosInstance();
 
   const {
     isLoading,

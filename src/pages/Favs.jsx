@@ -1,38 +1,38 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PictureDetail from "../pages/PictureDetail";
 import { FaHeart, FaRegHeart } from "react-icons/fa"; // 좋아요와 비좋아요 아이콘을 가져옴
-import axios from "axios";
 import Cookies from "js-cookie";
 import { useLocation } from "react-router-dom";
-import { useQueryClient, useQuery } from "react-query"; // 변경된 부분
 import PictureCard from "../components/PictureCard";
 import { IoIosArrowRoundBack } from "react-icons/io";
+import getAxiosInstance from "../utils/axiosInstance"; // 수정된 부분
 
 export default function Favs() {
-  const userToken = Cookies.get("csrftoken") || "";
-  const axiosInstance = axios.create({
-    withCredentials: true,
-    headers: {
-      "X-CSRFToken": userToken,
-    },
-  });
-  const {
-    isLoading,
-    error,
-    data: userData,
-  } = useQuery(["userData"], async () => {
-    try {
-      const response = await axiosInstance.get(
-        "http://127.0.0.1:8000/users/me/favs/"
-      );
-      return response.data;
-    } catch (error) {
-      throw new Error("Network response was not ok");
-    }
-  });
+  const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const axiosInstance = await getAxiosInstance(); // Axios 인스턴스 생성
+        const response = await axiosInstance.get(
+          "http://127.0.0.1:8000/users/me/favs/"
+        );
+        setUserData(response.data);
+      } catch (error) {
+        setError("Network response was not ok");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   console.log(userData);
+
   return (
     <div className="bg-white text-black p-12 flex flex-col justify-center items-center">
       {isLoading && <p>Loading...</p>}
