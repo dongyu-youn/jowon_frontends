@@ -7,13 +7,13 @@ import { useQuery } from "react-query";
 import axios from "axios";
 
 const NextArrow = (props) => (
-  <div {...props}>
+  <div {...props} className="slick-arrow slick-next">
     <IoChevronForwardOutline size={56} className="align-middle" />
   </div>
 );
 
 const PrevArrow = (props) => (
-  <div {...props}>
+  <div {...props} className="slick-arrow slick-prev">
     <IoChevronBackOutline size={56} className="align-middle" />
   </div>
 );
@@ -35,7 +35,7 @@ export default function Today() {
   });
 
   const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     speed: 500,
     slidesToShow: 3,
@@ -44,7 +44,7 @@ export default function Today() {
     nextArrow: <NextArrow />,
     responsive: [
       {
-        breakpoint: 768, // 작은 화면에서는 하나씩 보여주기
+        breakpoint: 768,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
