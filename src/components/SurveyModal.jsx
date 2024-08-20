@@ -20,6 +20,9 @@ const SurveyModal = ({ onClose, toggleLike }) => {
 
   const [response, setResponse] = useState([]);
 
+  const [hasExistingScore, setHasExistingScore] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // 점수 수정 모드
+
   const modalRef = useRef(null);
 
   const handleChange = (e) => {
@@ -51,15 +54,24 @@ const SurveyModal = ({ onClose, toggleLike }) => {
 
   const handleSubmit = async (e, matchingType) => {
     e.preventDefault();
+
+    if (hasExistingScore && !isEditing) {
+      const confirmEdit = window.confirm(
+        "이미 점수가 있습니다. 점수를 수정하시겠습니까?"
+      );
+      if (!confirmEdit) {
+        setIsEditing(false); // 점수 수정 모드를 비활성화
+        onClose();
+        return;
+      }
+      setIsEditing(true); // 점수 수정 모드를 활성화
+    }
+
     const formattedResponses = questions.map((question, index) => ({
       question: question.id,
       choice: responses[`question${index + 1}`],
-      survey: question.survey, // 설문조사 ID를 각 질문에 포함시켜야 합니다.
+      survey: question.survey,
     }));
-
-    const selectedChoices = questions.map(
-      (question, index) => responses[`question${index + 1}`]
-    );
 
     try {
       for (let response of formattedResponses) {
@@ -69,15 +81,19 @@ const SurveyModal = ({ onClose, toggleLike }) => {
         );
       }
       console.log("Survey responses submitted:", formattedResponses);
-      console.log("Selected choices:", selectedChoices);
 
-      // 설문조사가 성공적으로 제출된 후에 toggleLike를 호출합니다.
       toggleLike(e, selectedChoices, matchingType);
-      console.log("toggle 함수가 호출되었습니다"); // 로그 추가
+      console.log("toggle 함수가 호출되었습니다");
+
       onClose();
     } catch (error) {
       console.error("Error submitting survey responses:", error);
     }
+  };
+
+  const handleKeepOriginal = () => {
+    setIsEditing(false); // 수정 모드를 비활성화
+    onClose(); // 모달을 닫습니다.
   };
 
   useEffect(() => {
@@ -191,7 +207,7 @@ const SurveyModal = ({ onClose, toggleLike }) => {
             </div>
 
             <div className="flex justify-center">
-              <button
+              {/* <button
                 type="button"
                 className="bg-pink-800 text-white px-4 py-2 mr-4 rounded"
                 onClick={(e) => handleSubmit(e, "top_two")} // 최강 매칭 타입 설정
@@ -204,15 +220,36 @@ const SurveyModal = ({ onClose, toggleLike }) => {
                 onClick={(e) => handleSubmit(e, "same")} // 균등한 매칭 타입 설정
               >
                 Balance팀
-              </button>
+              </button> */}
 
-              <button
-                type="button"
-                className="bg-yellow-500 text-white px-4 py-2 rounded ml-4"
-                onClick={(e) => handleSubmit(e, "random")} // 무작위 매칭 타입 설정
-              >
-                Random팀
-              </button>
+              <div className="flex justify-center">
+                {hasExistingScore && !isEditing ? (
+                  <>
+                    <button
+                      type="button"
+                      className="bg-blue-500 text-white px-4 py-2 mr-4 rounded"
+                      onClick={handleKeepOriginal}
+                    >
+                      기존 점수 유지
+                    </button>
+                    <button
+                      type="button"
+                      className="bg-green-500 text-white px-4 py-2 rounded"
+                      onClick={(e) => handleSubmit(e, "random")}
+                    >
+                      점수 수정
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className="bg-yellow-500 text-white px-4 py-2 rounded ml-4"
+                    onClick={(e) => handleSubmit(e, "random")}
+                  >
+                    설문조사 제출
+                  </button>
+                )}
+              </div>
             </div>
           </form>
         )}

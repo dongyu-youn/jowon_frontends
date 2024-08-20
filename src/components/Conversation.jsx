@@ -200,7 +200,7 @@ const Conversation = () => {
 
   // 레이더 차트 데이터를 percentages 상태에 기반하여 설정
   const data = {
-    labels: ["프론트", "백엔드", "디자인", "ppt", "배포 "],
+    labels: ["프론트", "백엔드", "디자인", "ppt", "배포"],
     datasets: [
       {
         label: "팀원 1 데이터",

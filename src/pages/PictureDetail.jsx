@@ -450,30 +450,23 @@ function PictureDetail() {
             </span>
           </div>
 
-          {/* <div className="flex items-center py-4 mb-12">
-            <span className="text-2xl font-dongle_light w-1/3 mr-40">
-              참고링크{" "}
-            </span>
-            <span className="text-2xl font-dongle_light w-2/3">
-              {video.참고링크}
-            </span>
-          </div> */}
-          <div className="flex justify-center ">
+          <div className="flex justify-center mt-8">
             <Button
               className="mt-32 mr-24"
               text="팀원조회"
               onClick={handleButtonClick}
-            ></Button>
-
+            />
             {apply ? (
-              <Button className="" text="완료" onClick={toggleLike}></Button>
+              <Button className="" text="완료" onClick={toggleLike} />
             ) : (
-              <Button
-                className=""
-                text="신청하기"
-                onClick={toggleModal}
-              ></Button>
+              <Button className="" text="신청하기" onClick={toggleModal} />
             )}
+            <Button
+              className="mt-32 mr-24 bg-cover text-white"
+              text="노션게시판"
+              onClick={() => navigate("/notion-view")}
+              style={{}}
+            />
           </div>
         </div>
       </section>
