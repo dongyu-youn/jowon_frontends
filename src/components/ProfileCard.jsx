@@ -10,7 +10,6 @@ export default function ProfileCard({ user, isNew, image, onClick }) {
     >
       <Avartar image={image} isNew={isNew} />
       <h1 className="text-2xl font-bold mt-4">{user.user_name}</h1>
-      <p className="text-lg text-gray-600">{user.department}</p>
     </div>
   );
 }

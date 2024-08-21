@@ -272,7 +272,52 @@ function PictureDetail() {
           NotiData
         );
         console.log("New notification created");
+      } else {
+        // 팀 모드가 아닌 경우, 서버에서 신청자 목록을 가져와 참가자 정보 설정
+        const applicantsResponse = await axiosInstance.get(
+          `http://127.0.0.1:8000/contests/${contestId}/applicants/`
+        );
+        const applicants = applicantsResponse.data;
+
+        selectedParticipants = applicants.map((applicant) => ({
+          user_id: applicant.user_id,
+          user_name: applicant.username,
+          avatar: applicant.avatar,
+          department: applicant.department,
+        }));
       }
+
+      const conversationData = {
+        teamName: video.제목,
+        selected_choices: selectedChoices,
+        contest_id: contestId,
+        image: video.사진,
+        matching_type: matchingType, // 매칭 타입 추가
+        participants: selectedParticipants.map(
+          (participant) => participant.user_id
+        ), // 선택된 참가자들 추가
+      };
+      console.log("Conversation data being sent:", conversationData);
+
+      const conversationResponse = await axiosInstance.post(
+        "http://127.0.0.1:8000/conversations/",
+        conversationData
+      );
+      const conversationId = conversationResponse.data.id; // 생성된 conversation의 ID를 가져옴
+      console.log("New conversation created", conversationId);
+
+      // 새로운 알림 생성
+      const NotiData = {
+        receiver: 1, // 사용자 ID
+        message: video.제목,
+        image: video.사진,
+        conversation_id: conversationId, // 새로 생성된 conversation ID 추가
+      };
+      await axiosInstance.post(
+        "http://127.0.0.1:8000/notifications/",
+        NotiData
+      );
+      console.log("New noti created");
     } catch (error) {
       console.error("Error toggling like:", error);
       setLoading(false);

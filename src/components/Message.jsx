@@ -26,6 +26,11 @@ const Message = () => {
 
   let processedUserData = userData || [];
 
+  // Participants가 있는 팀만 필터링
+  processedUserData = processedUserData.filter(
+    (team) => team.participants && team.participants.length > 0
+  );
+
   if (processedUserData.length > 0) {
     // "c언어와 실습(실습조)" 팀만 별도로 추출하여 순위를 매김
     const cLanguageTeams = processedUserData.filter(

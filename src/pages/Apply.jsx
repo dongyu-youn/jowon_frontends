@@ -7,7 +7,6 @@ import ProfileCard from "../components/ProfileCard";
 import Footer from "../components/Footer";
 
 export default function Apply() {
-  const [predictions, setPredictions] = useState([]);
   const location = useLocation();
   const pathname = location.pathname;
   const contestId = pathname.substring(pathname.lastIndexOf("/") + 1);
@@ -28,6 +27,7 @@ export default function Apply() {
       const response = await axiosInstance.get(
         `http://127.0.0.1:8000/contests/${contestId}/applicants/`
       );
+      console.log(response.data);
       return response.data;
     } catch (error) {
       throw new Error("Network response was not ok");
@@ -66,45 +66,8 @@ export default function Apply() {
             "Request Data for AI model:",
             JSON.stringify(requestData, null, 2)
           );
-
-          try {
-            const response = await axios.post(
-              "http://127.0.0.1:8000/users/students/predict/",
-              studentData
-            );
-            newPredictions.push({
-              user_id: user.id,
-              user_name: user.username, // Assuming `username` is available in user data
-              avatar: user.avatar, // 프로필 이미지도 함께 포함
-              department: user.department, // Assuming `department` is available in user data
-              predictions: response.data,
-            });
-          } catch (error) {
-            console.error("예측 요청 중 오류 발생:", error);
-          }
-        }
-
-        // "GCGF 혁신 아이디어 공모" 예측값 기준으로 정렬
-        newPredictions.sort(
-          (a, b) =>
-            b.predictions["GCGF 혁신 아이디어 공모"] -
-            a.predictions["GCGF 혁신 아이디어 공모"]
-        );
-        console.log(newPredictions);
-
-        // 백엔드로 정렬된 데이터 전송
-        try {
-          const response = await axiosInstance.post(
-            `http://127.0.0.1:8000/contests/${contestId}/applicants/`,
-            newPredictions
-          );
-          setPredictions(response.data);
-        } catch (error) {
-          console.error("백엔드로 데이터 전송 중 오류 발생:", error);
         }
       };
-
-      fetchPredictions();
     }
   }, [isLoading, userData]);
 
@@ -121,14 +84,13 @@ export default function Apply() {
         {error && <p>Error: {error.message}</p>}
         {userData && userData.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-            {predictions.map((prediction) => (
+            {userData.map((prediction) => (
               <div key={prediction.user_id} className="p-12">
                 <ProfileCard
                   onClick={() => handleClick(prediction.user_id)}
                   image={prediction.avatar} // 사용자 프로필 이미지 사용
                   user={{
-                    user_name: prediction.user_name,
-                    department: prediction.department,
+                    user_name: prediction.username,
                   }} // 사용자 이름과 학과 정보
                   isNew={true}
                 />

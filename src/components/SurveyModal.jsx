@@ -71,6 +71,9 @@ const SurveyModal = ({ onClose, toggleLike }) => {
       (question, index) => responses[`question${index + 1}`]
     );
 
+    // 개인 모드인지 팀 모드인지에 따라 matchingType 설정
+    const currentMatchingType = isTeam ? "same" : "random";
+
     if (isTeam) {
       // 팀 모드의 제출 처리
       const teamResponses = teamMembers.map((memberId, memberIndex) => {
@@ -95,7 +98,7 @@ const SurveyModal = ({ onClose, toggleLike }) => {
 
       // 팀 모드일 때는 팀원의 정보를 포함한 배열로 전달
       console.log(teamMembers);
-      toggleLike(e, selectedChoices, matchingType, teamMembers, isTeam);
+      toggleLike(e, selectedChoices, currentMatchingType, teamMembers, isTeam);
     } else {
       // 개인 모드의 제출 처리
       const formattedResponses = questions.map((question, index) => ({
@@ -114,7 +117,7 @@ const SurveyModal = ({ onClose, toggleLike }) => {
         console.log("Survey responses submitted:", formattedResponses);
 
         // 개인 모드일 때는 빈 배열로 전달
-        toggleLike(e, selectedChoices, matchingType, []);
+        toggleLike(e, selectedChoices, currentMatchingType, []);
 
         console.log("toggle 함수가 호출되었습니다");
         onClose();
@@ -217,6 +220,23 @@ const SurveyModal = ({ onClose, toggleLike }) => {
                     </select>
                   </div>
                 ))}
+                <div className="flex justify-center space-x-4 mt-4">
+                  <button
+                    type="button"
+                    className="bg-yellow-500 text-white px-4 py-2 rounded"
+                    onClick={(e) => handleSubmit(e, "random")} // 여기에 "random"을 전달
+                  >
+                    팀생성
+                  </button>
+
+                  <button
+                    type="button"
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                    onClick={onClose}
+                  >
+                    닫기
+                  </button>
+                </div>
               </div>
             )}
 
@@ -278,26 +298,25 @@ const SurveyModal = ({ onClose, toggleLike }) => {
                 >
                   팀원 추가
                 </button>
+                <div className="flex justify-center space-x-4 mt-4">
+                  <button
+                    type="button"
+                    className="bg-yellow-500 text-white px-4 py-2 rounded"
+                    onClick={(e) => handleSubmit(e, "random")}
+                  >
+                    팀생성
+                  </button>
+
+                  <button
+                    type="button"
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                    onClick={onClose}
+                  >
+                    닫기
+                  </button>
+                </div>
               </div>
             )}
-
-            <div className="flex justify-center space-x-4 mt-4">
-              <button
-                type="button"
-                className="bg-yellow-500 text-white px-4 py-2 rounded"
-                onClick={(e) => handleSubmit(e, "same")}
-              >
-                {isTeam ? "맞춤팀 생성" : "기존 설문조사 제출"}
-              </button>
-
-              <button
-                type="button"
-                className="bg-red-500 text-white px-4 py-2 rounded"
-                onClick={onClose}
-              >
-                닫기
-              </button>
-            </div>
           </form>
         )}
       </div>

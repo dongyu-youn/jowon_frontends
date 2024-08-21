@@ -19,6 +19,7 @@ import { FaTrophy, FaMedal, FaStar, FaCheck, FaUpload } from "react-icons/fa";
 import { useRef } from "react";
 import CustomModal from "./CustomModal";
 import RadarModal from "./RadarModal";
+import MessageModal from "./MessageModal";
 
 const NextArrow = (props) => (
   <div {...props}>
@@ -441,6 +442,7 @@ const Conversation = () => {
 
   const handleConfirm = () => {
     console.log("Team member will be added.");
+
     addBestCandidate(); // 팀원 추가 로직 호출
     closeModal(); // 모달 닫기
   };
@@ -766,6 +768,7 @@ const Conversation = () => {
             onRequestClose={closeModal}
             onConfirm={handleConfirm}
           />
+          <MessageModal />
         </div>
       }
 
