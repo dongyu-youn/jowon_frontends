@@ -44,6 +44,7 @@ const Conversation = () => {
   const [userData, setUserData] = useState({});
   const [selectedFile, setSelectedFile] = useState(null);
   const [participants, setParticipants] = useState([]); // 참가자 상태 관리
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
   const [isModalOpenRadar, setIsModalOpenRadar] = useState(false);
 
@@ -439,12 +440,24 @@ const Conversation = () => {
   const closeModal = () => {
     setIsModalOpens(false);
   };
+  const openMessageModal = () => {
+    setIsMessageModalOpen(true);
+  };
+
+  const closeMessageModal = () => {
+    setIsMessageModalOpen(false);
+  };
 
   const handleConfirm = () => {
     console.log("Team member will be added.");
+    openMessageModal(); // RadarModal 확인 시 MessageModal 열기
 
-    addBestCandidate(); // 팀원 추가 로직 호출
+    // addBestCandidate(); // 팀원 추가 로직 호출
     closeModal(); // 모달 닫기
+  };
+  const handleMessageSubmit = () => {
+    addBestCandidate(); // MessageModal에서 메시지 제출 시 addBestCandidate 호출
+    closeMessageModal();
   };
 
   const data = {
@@ -768,7 +781,11 @@ const Conversation = () => {
             onRequestClose={closeModal}
             onConfirm={handleConfirm}
           />
-          <MessageModal />
+          <MessageModal
+            isOpen={isMessageModalOpen}
+            onClose={closeMessageModal}
+            onSubmit={handleMessageSubmit}
+          />
         </div>
       }
 

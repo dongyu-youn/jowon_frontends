@@ -44,7 +44,7 @@ export default function NotiCard({ video, onClick, isLoading }) {
         </div>
         <h1 className="text-2xl font-bold mt-4">
           {video.message.length > 10
-            ? `${video.message.slice(0, 10)}... 팀이 생성되었습니다`
+            ? `${video.message.slice(0, 10)}... `
             : video.message}
         </h1>
         {/* 수락 상태가 false이고 메시지 길이가 10 이상일 때만 버튼 섹션을 렌더링 */}
