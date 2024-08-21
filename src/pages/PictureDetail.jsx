@@ -177,24 +177,27 @@ function PictureDetail() {
     }
   };
 
-  const toggleLike = async (e, selectedChoices, matchingType) => {
+  const toggleLike = async (
+    e,
+    selectedChoices,
+    matchingType,
+    teamMembers = [],
+    isTeam
+  ) => {
     e.stopPropagation(); // 클릭 이벤트가 부모로 전파되지 않도록 함
     e.preventDefault();
-    console.log("toggleLike 함수가 실행되었습니다"); // 함수가 실행될 때 로그 출력
+    console.log("toggleLike 함수가 실행되었습니다");
 
     try {
-      // 로딩 상태를 true로 설정
       setLoading(true);
 
-      // 알림 페이지로 즉시 리디렉션
       navigate("/notifications", { state: { loading: true } });
 
       const contestId = video.id;
       const newLiked = !apply;
-      setApply(newLiked); // 새로운 좋아요 상태를 설정
+      setApply(newLiked);
 
       const userToken = Cookies.get("csrftoken") || "";
-
       const axiosInstance = axios.create({
         withCredentials: true,
         headers: {
@@ -202,149 +205,80 @@ function PictureDetail() {
         },
       });
 
-      // 서버로 좋아요 상태를 전송
       await axiosInstance.put("http://127.0.0.1:8000/users/me/apply/", {
         id: contestId,
       });
 
-      // 좋아요 상태를 확인하여 다시 설정
       checkApplyStatus();
 
-      // selected_choices 업데이트
       await axiosInstance.put(
         "http://127.0.0.1:8000/users/update-selected-choices/",
         { selected_choices: selectedChoices, contest_id: contestId }
       );
       console.log("Selected choices updated");
 
-      // selectedChoices 배열의 합계 계산 (문자열 숫자를 숫자로 변환하여 합계 계산)
-      const aptitudeTestScore = selectedChoices
-        .map(Number) // 문자열을 숫자로 변환
-        .reduce((acc, val) => acc + val, 0); // 합계 계산
+      let selectedParticipants;
 
-      // 사용자 데이터 가져오기
-      const applicantsResponse = await axiosInstance.get(
-        `http://127.0.0.1:8000/contests/${contestId}/applicants/`
-      );
-      const userData = applicantsResponse.data;
-
-      // 예측 데이터 가져오기
-      const fetchPredictions = async () => {
-        const newPredictions = [];
-        for (const user of userData) {
-          const studentData = {
-            grade: user.score.grade,
-            github_commit_count: user.score.github_commit_count,
-            baekjoon_score: user.score.baekjoon_score,
-            programmers_score: user.score.programmers_score,
-            certificate_count: user.score.certificate_count,
-            senior: user.score.senior,
-            depart: user.score.depart,
-            courses_taken: user.score.courses_taken,
-            major_field: user.score.major_field,
-            bootcamp_experience: user.score.bootcamp_experience,
-            in_school_award_cnt: user.score.in_school_award_cnt,
-            out_school_award_cnt: user.score.out_school_award_cnt,
-            coding_test_score: user.score.coding_test_score,
-            certificate_score: user.score.certificate_score,
-            aptitude_test_score: selectedChoices
-              .map(Number)
-              .reduce((acc, val) => acc + val, 0), // aptitudeTestScore 계산
-          };
-
-          // 인공지능 모델 실행 전 데이터 확인
-          const requestData = {
-            students: studentData,
-          };
-          console.log(
-            "Request Data for AI model:",
-            JSON.stringify(requestData, null, 2)
-          );
-
-          try {
-            const response = await axios.post(
-              "http://127.0.0.1:8000/users/students/predict/",
-              studentData
-            );
-            newPredictions.push({
-              user_id: user.id,
-              user_name: user.username,
-              avatar: user.avatar,
-              department: user.department,
-              predictions: response.data,
-            });
-          } catch (error) {
-            console.error("예측 요청 중 오류 발생:", error);
-          }
-        }
-
-        // "GCGF 혁신 아이디어 공모" 예측값 기준으로 정렬
-        newPredictions.sort(
-          (a, b) =>
-            b.predictions["GCGF 혁신 아이디어 공모"] -
-            a.predictions["GCGF 혁신 아이디어 공모"]
+      if (matchingType == "same") {
+        const teamMemberResponses = await Promise.all(
+          teamMembers.map((memberId) =>
+            axiosInstance.get(`http://127.0.0.1:8000/users/${memberId}`)
+          )
         );
-        console.log(newPredictions);
-        setPredictions(newPredictions);
-        return newPredictions;
-      };
+        selectedParticipants = teamMemberResponses.map(
+          (response) => response.data
+        );
+        console.log(selectedParticipants);
 
-      const newPredictions = await fetchPredictions();
-      console.log(newPredictions);
+        // const teamMembers = teamMemberResponses.map((response) => {
+        //   console.log(response.data); // 여기서 response.data의 구조를 확인합니다.
+        // });
 
-      // top_two일 경우 상위 3명을 선택
-      let selectedParticipants = [];
+        let NselectedParticipants = selectedParticipants.map((member) => ({
+          user_id: member.id,
+          user_name: member.username,
+          avatar: member.avatar,
+          department: member.department,
+        }));
+        console.log("Selected Participants for team:", NselectedParticipants);
 
-      // top_two일 경우 상위 3명을 선택
-      if (matchingType === "top_two") {
-        selectedParticipants = newPredictions.slice(0, 4); // 상위 3명 선택
-      } else if (matchingType === "same") {
-        console.log("handleMatchingSame 함수 호출됨"); // 추가
-        handleMatchingSame(newPredictions); // 매개변수 전달;
+        const conversationData = {
+          teamName: video.제목,
+          selected_choices: selectedChoices,
+
+          contest_id: contestId,
+          image: video.사진,
+          matching_type: "same",
+          participants: NselectedParticipants.map(
+            (participant) => participant.user_id
+          ),
+        };
+        console.log("Conversation data being sent:", conversationData);
+
+        const conversationResponse = await axiosInstance.post(
+          "http://127.0.0.1:8000/conversations/",
+          conversationData
+        );
+        let conversationId = conversationResponse.data.id;
+        console.log("New conversation created", conversationId);
+        const NotiData = {
+          receiver: 1,
+          message: video.제목,
+          image: video.사진,
+          conversation_id: conversationResponse.data.id,
+        };
+        await axiosInstance.post(
+          "http://127.0.0.1:8000/notifications/",
+          NotiData
+        );
+        console.log("New notification created");
       }
-
-      const conversationData = {
-        teamName: video.제목,
-        selected_choices: selectedChoices,
-        contest_id: contestId,
-        image: video.사진,
-        ai_response: newPredictions, // AI 응답 데이터 추가
-        matching_type: matchingType, // 매칭 타입 추가
-        participants: selectedParticipants.map(
-          (participant) => participant.user_id
-        ), // 선택된 참가자들 추가
-      };
-      console.log("Conversation data being sent:", conversationData);
-
-      const conversationResponse = await axiosInstance.post(
-        "http://127.0.0.1:8000/conversations/",
-        conversationData
-      );
-      const conversationId = conversationResponse.data.id; // 생성된 conversation의 ID를 가져옴
-      console.log("New conversation created", conversationId);
-      // 로딩 상태를 false로 설정
-
-      // video 객체에 ai_response를 추가하여 업데이트
-      video.ai_response = newPredictions;
-
-      // 새로운 알림 생성
-      const NotiData = {
-        receiver: 1, // 사용자 ID
-        message: video.제목,
-        image: video.사진,
-        conversation_id: conversationId, // 새로 생성된 conversation ID 추가
-      };
-      await axiosInstance.post(
-        "http://127.0.0.1:8000/notifications/",
-        NotiData
-      );
-      console.log("New noti created");
     } catch (error) {
       console.error("Error toggling like:", error);
-      // 에러 발생 시 로딩 상태를 false로 설정
       setLoading(false);
     }
   };
+
   // 모달 열기 함수
   const openModal = () => {
     setIsModalOpen(true);
@@ -452,19 +386,24 @@ function PictureDetail() {
 
           <div className="flex justify-center mt-8">
             <Button
-              className="mt-32 mr-24"
-              text="팀원조회"
+              className="mt-32 mr-24 relative"
+              text="신청자조회"
               onClick={handleButtonClick}
-            />
+            ></Button>
+
             {apply ? (
               <Button className="" text="완료" onClick={toggleLike} />
             ) : (
               <Button className="" text="신청하기" onClick={toggleModal} />
             )}
             <Button
+              onClick={() => (
+                (window.location.href =
+                  "https://www.notion.so/e035871677eb43b7bf71d168b8e9981e?pvs=4"),
+                "_blank"
+              )}
               className="mt-32 mr-24 bg-cover text-white"
               text="노션게시판"
-              onClick={() => navigate("/notion-view")}
               style={{}}
             />
           </div>

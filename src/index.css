@@ -71,6 +71,8 @@ code {
 /* Slider */
 .slick-slider {
   position: relative;
+  display: flex;
+  align-items: center;
 
   box-sizing: border-box;
 

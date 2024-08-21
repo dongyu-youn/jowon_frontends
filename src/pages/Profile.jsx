@@ -35,6 +35,9 @@ const StarRating = ({ totalStars = 5, yellowStars = 0 }) => {
 export default function Profile() {
   const [percentages, setPercentages] = useState({});
   const [score, setScore] = useState({});
+  const [coding, setCoding] = useState({});
+
+  const [currentChart, setCurrentChart] = useState("distribution"); // 현재 선택된 차트를 관리
   const queryClient = useQueryClient(); // 변경된 부분
   const userToken = Cookies.get("csrftoken") || "";
 
@@ -55,6 +58,7 @@ export default function Profile() {
         "http://127.0.0.1:8000/users/me/"
       );
       setScore(response.data.score); // score 정보를 상태에 저장
+      setCoding(response.data.coding); // coding 정보를 상태에 저장
       console.log(response.data.average_rating);
       return response.data;
     } catch (error) {
@@ -109,6 +113,29 @@ export default function Profile() {
       trust: userData.average_rating * 50, // 신뢰도 값을 100으로 설정
       creativity: 150, // 창의성 값을 100으로 설정
     });
+  };
+  // 새로 추가할 레이더 차트 데이터 (Coding 점수 기반)
+  const codingData = {
+    labels: ["백엔드", "프론트엔드", "디자인", "배포", "PPT"],
+    datasets: [
+      {
+        label: "코딩 데이터",
+        data: [
+          coding.backend_score,
+          coding.frontend_score,
+          coding.design_score,
+          coding.deploy_score,
+          coding.ppt_score,
+        ],
+        fill: true,
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        pointBackgroundColor: "rgba(75, 192, 192, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(75, 192, 192, 1)",
+      },
+    ],
   };
 
   const data = {
@@ -298,6 +325,13 @@ export default function Profile() {
                 </div>
               </div>
 
+              <div className="flex items-center py-2  mb-12">
+                <span className="text-2xl font-dongle_light w-1/3 mr-24">
+                  MBTI
+                </span>
+                <p className="text-2xl font-dongle_light  ">ISTP</p>
+              </div>
+
               <div className="flex items-center py-2">
                 <span className="text-2xl font-dongle_light w-1/3 mr-24">
                   자기소개
@@ -310,13 +344,55 @@ export default function Profile() {
                   자기소개 보기
                 </button>
               </div>
-              <div className="mt-24">
-                {" "}
-                <span className="text-2xl font-dongle_light w-1/3 mr-24">
-                  분포도
-                </span>
-                {userData && <Radar data={data} options={options} />}
-              </div>
+
+              {userData && (
+                <>
+                  <div className="w-full basis-5/12 flex flex-col text-left   justify-center mt-12">
+                    {/* 차트 선택 버튼 */}
+
+                    {/* 선택된 차트 표시 */}
+                    {currentChart === "distribution" && (
+                      <div>
+                        <span className="text-2xl font-dongle_light w-1/3 ">
+                          분포도
+                        </span>
+                        <Radar data={data} options={options} />
+                      </div>
+                    )}
+
+                    {currentChart === "coding" && (
+                      <div>
+                        <span className="text-2xl font-dongle_light w-1/3 flex justify-center">
+                          코딩 능력
+                        </span>
+                        <Radar data={codingData} options={options} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-center ">
+                    <button
+                      onClick={() => setCurrentChart("distribution")}
+                      className={`px-4 py-2 rounded-l ${
+                        currentChart === "distribution"
+                          ? "bg-black text-white"
+                          : "bg-gray-300 text-black"
+                      }`}
+                    >
+                      분포도
+                    </button>
+                    <button
+                      onClick={() => setCurrentChart("coding")}
+                      className={`px-4 py-2 rounded-r ${
+                        currentChart === "coding"
+                          ? "bg-black text-white"
+                          : "bg-gray-300 text-black"
+                      }`}
+                    >
+                      코딩 능력
+                    </button>
+                  </div>
+                </>
+              )}
 
               <span className="flex justify-center ">
                 <button

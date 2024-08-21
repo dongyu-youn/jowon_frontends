@@ -16,6 +16,9 @@ import { Radar } from "react-chartjs-2";
 import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
 import TeamEvaluation from "./TeamEvaluation";
 import { FaTrophy, FaMedal, FaStar, FaCheck, FaUpload } from "react-icons/fa";
+import { useRef } from "react";
+import CustomModal from "./CustomModal";
+import RadarModal from "./RadarModal";
 
 const NextArrow = (props) => (
   <div {...props}>
@@ -35,10 +38,21 @@ const Conversation = () => {
   const [messages, setMessages] = useState(""); // 입력된 메시지 상태
   const [loading, setLoading] = useState(false); // 분석 요청 중인지 여부를 나타내는 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
+  const [isModalOpens, setIsModalOpens] = useState(false); // 모달 상태 관리
   const [percentages, setPercentages] = useState({});
   const [userData, setUserData] = useState({});
   const [selectedFile, setSelectedFile] = useState(null);
+  const [participants, setParticipants] = useState([]); // 참가자 상태 관리
+
+  const [isModalOpenRadar, setIsModalOpenRadar] = useState(false);
+
+  const [codingScores, setCodingScores] = useState([]); // 코딩 점수를 저장할 상태
+
+  const [selectedLabel, setSelectedLabel] = useState(null); // 클릭된 label 상태
+
   const navigate = useNavigate();
+
+  const chartRef = useRef(null); // 차트 인스턴스 참조
 
   const navigateToNoti = () => {
     navigate("/pictures/messages");
@@ -109,9 +123,20 @@ const Conversation = () => {
           `http://127.0.0.1:8000/conversations/${id}`
         ); // id 값을 이용하여 서버로 요청
         setVideo(response.data);
-        console.log(response.data.teamName);
-        console.log(response.data.ai_response);
-        calculateAverages(response.data.ai_response); // ai_response 데이터를 calculateAverages 함수에 전달
+        if (
+          response.data.matching_type === "random" ||
+          response.data.matching_type === "same"
+        ) {
+          const participants = response.data.participants;
+
+          const codingScores = participants.map(
+            (participant) => participant.coding
+          );
+
+          setCodingScores(codingScores);
+
+          console.log("Coding Scores:", codingScores);
+        }
       } catch (error) {
         console.error("Error fetching video:", error);
       }
@@ -198,62 +223,253 @@ const Conversation = () => {
     );
   };
 
-  // 레이더 차트 데이터를 percentages 상태에 기반하여 설정
+  // // 레이더 차트 데이터를 percentages 상태에 기반하여 설정
+  // const data = {
+  //   labels: ["프론트", "백엔드", "디자인", "ppt", "배포"],
+  //   datasets: [
+  //     {
+  //       label: "팀원 1 데이터",
+  //       data: [
+  //         percentages[0] ? percentages[0].result : 0,
+  //         percentages[0] ? percentages[0].performance : 0,
+  //         percentages[0] ? percentages[0].experience : 0,
+  //         percentages[0] ? percentages[0].trust : 0,
+  //         percentages[0] ? percentages[0].creativity : 0,
+  //       ],
+  //       fill: true,
+  //       backgroundColor: "rgba(255, 99, 132, 0.2)",
+  //       borderColor: "rgba(255, 99, 132, 1)",
+  //       pointBackgroundColor: "rgba(255, 99, 132, 1)",
+  //       pointBorderColor: "#fff",
+  //       pointHoverBackgroundColor: "#fff",
+  //       pointHoverBorderColor: "rgba(255, 99, 132, 1)",
+  //     },
+  //     {
+  //       label: "팀원 2 데이터",
+  //       data: [
+  //         percentages[1] ? percentages[1].result : 0,
+  //         percentages[1] ? percentages[1].performance : 0,
+  //         percentages[1] ? percentages[1].experience : 0,
+  //         percentages[1] ? percentages[1].trust : 0,
+  //         percentages[1] ? percentages[1].creativity : 0,
+  //       ],
+  //       fill: true,
+  //       backgroundColor: "rgba(54, 162, 235, 0.2)",
+  //       borderColor: "rgba(54, 162, 235, 1)",
+  //       pointBackgroundColor: "rgba(54, 162, 235, 1)",
+  //       pointBorderColor: "#fff",
+  //       pointHoverBackgroundColor: "#fff",
+  //       pointHoverBorderColor: "rgba(54, 162, 235, 1)",
+  //     },
+  //     {
+  //       label: "팀원 3 데이터",
+  //       data: [
+  //         percentages[2] ? percentages[2].result : 0,
+  //         percentages[2] ? percentages[2].performance : 0,
+  //         percentages[2] ? percentages[2].experience : 0,
+  //         percentages[2] ? percentages[2].trust : 0,
+  //         percentages[2] ? percentages[2].creativity : 0,
+  //       ],
+  //       fill: true,
+  //       backgroundColor: "rgba(75, 192, 192, 0.2)",
+  //       borderColor: "rgba(75, 192, 192, 1)",
+  //       pointBackgroundColor: "rgba(75, 192, 192, 1)",
+  //       pointBorderColor: "#fff",
+  //       pointHoverBackgroundColor: "#fff",
+  //       pointHoverBorderColor: "rgba(75, 192, 192, 1)",
+  //     },
+  //   ],
+  // };
+
+  // const options = {
+  //   scales: {
+  //     r: {
+  //       angleLines: {
+  //         display: true,
+  //       },
+  //       grid: {
+  //         color: "#fff", // 레이더 그리드의 색상을 흰색으로 설정
+  //       },
+  //       pointLabels: {
+  //         display: true,
+  //         font: {
+  //           size: 20, // 라벨 글자 크기를 24px로 설정합니다.
+  //         },
+  //       },
+  //       ticks: {
+  //         beginAtZero: true,
+  //       },
+  //     },
+  //   },
+  //   layout: {
+  //     padding: {
+  //       top: 100, // 상단 패딩을 50px로 설정하여 그래프를 아래로 내립니다.
+  //     },
+  //   },
+  // };
+
+  const addBestCandidate = async (minAverageLabel) => {
+    try {
+      const response = await axiosInstance.get(
+        `http://127.0.0.1:8000/conversations/${id}`
+      );
+      const videoData = response.data;
+
+      if (
+        videoData.matching_type === "random" ||
+        videoData.matching_type === "same"
+      ) {
+        const participants = videoData.participants;
+        const codingScores = participants.map(
+          (participant) => participant.coding
+        );
+
+        setCodingScores(codingScores);
+
+        console.log("Coding Scores:", codingScores);
+
+        // 각 항목의 평균 계산
+        const averageScores = {
+          frontend_score: (
+            codingScores.reduce((sum, score) => sum + score.frontend_score, 0) /
+            codingScores.length
+          ).toFixed(2),
+          backend_score: (
+            codingScores.reduce((sum, score) => sum + score.backend_score, 0) /
+            codingScores.length
+          ).toFixed(2),
+          design_score: (
+            codingScores.reduce((sum, score) => sum + score.design_score, 0) /
+            codingScores.length
+          ).toFixed(2),
+          ppt_score: (
+            codingScores.reduce((sum, score) => sum + score.ppt_score, 0) /
+            codingScores.length
+          ).toFixed(2),
+          deploy_score: (
+            codingScores.reduce((sum, score) => sum + score.deploy_score, 0) /
+            codingScores.length
+          ).toFixed(2),
+        };
+
+        console.log("Average Scores:", averageScores);
+
+        // 가장 작은 항목 찾기
+        let minLabel = null;
+        let minValue = Infinity;
+
+        for (const [label, value] of Object.entries(averageScores)) {
+          if (value < minValue) {
+            minValue = value;
+            minLabel = label;
+          }
+        }
+
+        console.log(
+          `"Label with the lowest average score": ${minLabel} (${minValue})`
+        );
+
+        // 해당 라벨에 대해 가장 높은 점수를 가진 지원자 조회
+        try {
+          const applicantsResponse = await axiosInstance.get(
+            "http://127.0.0.1:8000/contests/47/applicants/"
+          );
+
+          const applicants = applicantsResponse.data;
+
+          // 현재 팀원들의 ID 목록
+          const currentParticipantIds = participants.map((p) => p.id);
+
+          // 해당 라벨에서 가장 높은 점수를 가진 지원자 찾기 (현재 팀원 제외)
+          let bestCandidate = null;
+          let maxScore = -Infinity;
+
+          for (const applicant of applicants) {
+            if (
+              applicant.coding &&
+              !currentParticipantIds.includes(applicant.id) && // 현재 팀원이 아닌 경우
+              applicant.coding[minLabel] > maxScore
+            ) {
+              maxScore = applicant.coding[minLabel];
+              bestCandidate = applicant;
+            }
+          }
+
+          if (bestCandidate) {
+            console.log(
+              `Best candidate for ${minAverageLabel}:`,
+              bestCandidate
+            );
+
+            // 해당 지원자를 conversation participants에 추가
+            const updatedParticipants = [...participants, bestCandidate];
+
+            // 서버에 업데이트된 participants 전송
+            await axiosInstance.put(
+              `http://127.0.0.1:8000/conversations/${id}`,
+              {
+                participants: updatedParticipants.map((p) => p.id),
+              }
+            );
+
+            // video 상태의 participants를 업데이트
+            setVideo((prevVideo) => ({
+              ...prevVideo,
+              participants: updatedParticipants,
+            }));
+
+            console.log("Participants updated successfully");
+          } else {
+            console.log("No suitable candidate found");
+          }
+        } catch (error) {
+          console.error("Error fetching applicants:", error);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching video:", error);
+    }
+  };
+
+  const openModals = () => {
+    setIsModalOpens(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpens(false);
+  };
+
+  const handleConfirm = () => {
+    console.log("Team member will be added.");
+    addBestCandidate(); // 팀원 추가 로직 호출
+    closeModal(); // 모달 닫기
+  };
+
   const data = {
-    labels: ["프론트", "백엔드", "디자인", "ppt", "배포"],
-    datasets: [
-      {
-        label: "팀원 1 데이터",
-        data: [
-          percentages[0] ? percentages[0].result : 0,
-          percentages[0] ? percentages[0].performance : 0,
-          percentages[0] ? percentages[0].experience : 0,
-          percentages[0] ? percentages[0].trust : 0,
-          percentages[0] ? percentages[0].creativity : 0,
-        ],
-        fill: true,
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderColor: "rgba(255, 99, 132, 1)",
-        pointBackgroundColor: "rgba(255, 99, 132, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(255, 99, 132, 1)",
-      },
-      {
-        label: "팀원 2 데이터",
-        data: [
-          percentages[1] ? percentages[1].result : 0,
-          percentages[1] ? percentages[1].performance : 0,
-          percentages[1] ? percentages[1].experience : 0,
-          percentages[1] ? percentages[1].trust : 0,
-          percentages[1] ? percentages[1].creativity : 0,
-        ],
-        fill: true,
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        pointBackgroundColor: "rgba(54, 162, 235, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(54, 162, 235, 1)",
-      },
-      {
-        label: "팀원 3 데이터",
-        data: [
-          percentages[2] ? percentages[2].result : 0,
-          percentages[2] ? percentages[2].performance : 0,
-          percentages[2] ? percentages[2].experience : 0,
-          percentages[2] ? percentages[2].trust : 0,
-          percentages[2] ? percentages[2].creativity : 0,
-        ],
-        fill: true,
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        pointBackgroundColor: "rgba(75, 192, 192, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(75, 192, 192, 1)",
-      },
-    ],
+    labels: ["프론트", "백엔드", "디자인", "ppt/리더쉽", "배포"],
+    datasets: codingScores.map((score, index) => ({
+      label: `팀원 ${index + 1} 데이터`,
+      data: [
+        score.frontend_score,
+        score.backend_score,
+        score.design_score,
+        score.ppt_score,
+        score.deploy_score,
+      ],
+      fill: true,
+      backgroundColor: `rgba(${255 - index * 50}, ${
+        99 + index * 50
+      }, 132, 0.2)`,
+      borderColor: `rgba(${255 - index * 50}, ${99 + index * 50}, 132, 1)`,
+      pointBackgroundColor: `rgba(${255 - index * 50}, ${
+        99 + index * 50
+      }, 132, 1)`,
+      pointBorderColor: "#fff",
+      pointHoverBackgroundColor: "#fff",
+      pointHoverBorderColor: `rgba(${255 - index * 50}, ${
+        99 + index * 50
+      }, 132, 1)`,
+    })),
   };
 
   const options = {
@@ -263,12 +479,12 @@ const Conversation = () => {
           display: true,
         },
         grid: {
-          color: "#fff", // 레이더 그리드의 색상을 흰색으로 설정
+          color: "#fff", // 그리드 라인의 색상
         },
         pointLabels: {
           display: true,
           font: {
-            size: 20, // 라벨 글자 크기를 24px로 설정합니다.
+            size: 20,
           },
         },
         ticks: {
@@ -278,9 +494,47 @@ const Conversation = () => {
     },
     layout: {
       padding: {
-        top: 100, // 상단 패딩을 50px로 설정하여 그래프를 아래로 내립니다.
+        top: 100, // 상단 패딩
       },
     },
+    onClick: (event) => {
+      console.log("hello");
+
+      openModals(); // 모달 열기();
+
+      // if (confirmAdd) {
+      //   console.log("Team member will be added.");
+      //   // addBestCandidate(minAverageLabel);
+      //   // 여기에 추가적인 로직을 넣을 수 있습니다.
+      //   addBestCandidate();
+      // }
+    },
+  };
+
+  const handleChartClick = (event) => {
+    const chart = chartRef.current; // 차트 인스턴스를 가져옴
+
+    if (chart) {
+      const elements = chart.getElementsAtEventForMode(
+        event,
+        "nearest", // 가장 가까운 데이터 포인트를 기준으로 이벤트 처리
+        { intersect: true },
+        false
+      );
+
+      if (elements.length > 0) {
+        const clickedIndex = elements[0].index; // 클릭된 요소의 인덱스
+        const minAverageLabel = data.labels[clickedIndex]; // 클릭된 요소의 라벨
+
+        const confirmAdd = window.confirm(
+          `${minAverageLabel} 라벨에서 가장 높은 점수를 가진 지원자를 팀에 추가하시겠습니까?`
+        );
+
+        if (confirmAdd) {
+          addBestCandidate(minAverageLabel); // 사용자 확인 시, 후보자 추가 로직 호출
+        }
+      }
+    }
   };
 
   const handleFileChange = (e) => {
@@ -493,71 +747,27 @@ const Conversation = () => {
           </button>
         </div>
       </div>
-      {video.matching_type !== "random" && (
-        <div className={`border p-10 container mx-auto min-h-80 mt-24 mb-40`}>
-          {isSameMatchingType ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <div style={{ width: "800px", height: "800px" }}>
-                <Radar data={data} options={options} />
-              </div>
+      {/* 기타 컴포넌트 내용 생략 */}
+      {
+        <div className="border p-10 container mx-auto min-h-80 mt-24 mb-40">
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ width: "800px", height: "800px" }}>
+              <Radar
+                ref={chartRef} // chartRef를 Radar 차트에 연결
+                data={data}
+                options={options}
+                getElementAtEvent={handleChartClick}
+              />
+              {selectedLabel && <div>Clicked on: {selectedLabel}</div>}
             </div>
-          ) : video.matching_type === "top_two" ? (
-            <div>
-              <div className="grid grid-cols-2 gap-3 mt-10 items-start">
-                {video.ai_response.slice(0, 4).map((prediction, index) => {
-                  const predictionValue =
-                    prediction.predictions["GCGF 혁신 아이디어 공모"].toFixed(
-                      2
-                    ); // 예측 값을 가져옵니다.
-                  return (
-                    <div key={prediction.user_id} className="flex items-start">
-                      <div className="mr-4">
-                        <MiniProfileCard participant={prediction} />
-                      </div>
-                      <div>
-                        <p className="text-sm">
-                          <strong>{prediction.user_name}</strong> 님은 총{" "}
-                          <strong>{predictionValue}%</strong>의 확률로 성공할
-                          것으로 분석되었습니다. 이는 대회에서 중요한 학점과
-                          끈기 부분에서 높은 점수를 보였기 때문입니다.
-                        </p>
-                        <div className="flex items-center mt-2">
-                          <div className="w-20 h-4 bg-gray-300 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-green-500"
-                              style={{ width: `${predictionValue}%` }}
-                            ></div>
-                          </div>
-                          <p className="ml-2 text-lg font-bold">
-                            {predictionValue}%
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-10">
-                <Slider {...settings}>
-                  {graphImages.map((image, index) => (
-                    <div key={index} className="flex justify-center">
-                      <img src={image} alt={`분석 그래프 ${index + 1}`} />
-                    </div>
-                  ))}
-                </Slider>
-                <p className="text-3xl font-bold mt-4">
-                  {/* 전체 확률: {averagePrediction} */}
-                </p>
-              </div>
-            </div>
-          ) : null}
+          </div>
+          <RadarModal
+            isOpens={isModalOpens}
+            onRequestClose={closeModal}
+            onConfirm={handleConfirm}
+          />
         </div>
-      )}
+      }
 
       <TeamEvaluation
         participants={video.participants}
