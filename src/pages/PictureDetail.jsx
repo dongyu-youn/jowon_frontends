@@ -22,6 +22,8 @@ function PictureDetail() {
   const [predictions, setPredictions] = useState([]); // 추가된 부분
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태를 저장하는 state
 
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   const [isModalOpenC, setIsModalOpenC] = useState(false);
 
   const [result, setResult] = useState(null);

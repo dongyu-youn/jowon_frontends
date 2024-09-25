@@ -1,70 +1,83 @@
-# Getting Started with Create React App
+# AI 기반 팀 매칭 웹사이트
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 소개
 
-## Available Scripts
+AI 기반 팀 매칭 웹사이트에 오신 것을 환영합니다! 우리 플랫폼은 인공지능을 활용하여 다양한 대회와 프로젝트에 적합한 팀을 매칭해 줍니다. 각 팀이 잘 균형 잡히고 성공 가능성이 높도록 구성됩니다. 이 README는 웹사이트의 기능, 설정 및 사용법을 안내합니다.
 
-In the project directory, you can run:
+## 기능
 
-### `npm start`
+1. **대회 목록 및 크롤링**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+   - 우리 웹사이트는 다양한 대회의 목록을 제공하며, 정기적으로 웹 크롤링을 통해 업데이트됩니다.
+   - ![대회 목록](./images/a.png)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. **AI가 분석한 팀 매칭**
 
-### `npm test`
+   - 인공지능이 각 참가자의 장단점을 분석하여 최적의 팀을 구성합니다.
+   - ![AI 팀 매칭](./images/b.png)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. **팀원의 장점을 파악하여 부족한 점 보완**
 
-### `npm run build`
+   - 각 팀원의 장점을 파악하고, 부족한 점을 보완해 줄 수 있는 팀원을 매칭합니다.
+   - ![팀원의 장점 보완](./images/c.png)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. **수업에서도 활용 가능한 재미있는 팀 매칭**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   - 수업에서도 활용할 수 있는 재미있고 효율적인 팀 매칭 기능을 제공합니다.
+   - ![수업 팀 매칭](./images/d.png)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+5. **나의 능력치를 한눈에 보기 쉽게**
+   - 사용자의 능력치를 한눈에 볼 수 있는 기능을 제공합니다.
+   - ![능력치 한눈에 보기](./images/e.png)
 
-### `npm run eject`
+## 작동 원리
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. 사용자들이 대회에 참가 신청을 합니다.
+2. 인공지능이 참가자의 프로필과 능력을 분석합니다.
+3. 분석 결과를 바탕으로 최적의 팀을 구성합니다.
+4. 팀원 간의 소통과 협력을 도와주는 다양한 도구를 제공합니다.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 기술 스택
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- 프론트엔드: HTML, CSS, JavaScript, React
+- 백엔드: Django Rest Api
+- 데이터베이스: SQL DB
+- 인공지능: Python, TensorFlow
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 설치 및 설정
 
-## Learn More
+1. 저장소를 클론합니다:
+   ```bash
+   git clone https://github.com/your-repo/team-matching.git
+   ```
+2. 프로젝트 디렉토리로 이동합니다:
+   ```bash
+   cd team-matching
+   ```
+3. 필요한 패키지를 설치합니다:
+   ```bash
+   npm install
+   ```
+4. 서버를 시작합니다:
+   ```bash
+   npm start
+   ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 사용법
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. 웹사이트에 접속하여 계정을 생성합니다.
+2. 대회 목록에서 참여하고 싶은 대회를 선택합니다.
+3. Ace, Balance, Random 매칭중 선택해 참가 신청을 하고 팀 매칭을 기다립니다.
+   - ![설문조사](./images/f.png)
+4. 매칭된 팀원들과 소통하며 프로젝트를 진행합니다.
 
-### Code Splitting
+- ![설문조사](./images/g.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 기여
 
-### Analyzing the Bundle Size
+1. 이 프로젝트에 기여하고 싶다면, 이슈를 생성하거나 풀 리퀘스트를 보내주세요.
+2. 자세한 기여 방법은 `CONTRIBUTING.md` 파일을 참조하세요.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 라이선스
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 `LICENSE` 파일을 참조하세요.
